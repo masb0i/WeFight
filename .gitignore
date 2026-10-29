@@ -56,3 +56,8 @@ app.*.map.json
 
 # Materi kuliah dari dosen — tidak ikut di-commit (bukan bagian aplikasi)
 /modulmateri/
+
+# Dokumen persiapan pribadi & materi dosen — sengaja tidak dipublikasikan
+docs/DEMO_UAS.md
+worksheet/*Modul Minggu 4.docx
+worksheet/*Tutorial Praktik Minggu 4.docx
