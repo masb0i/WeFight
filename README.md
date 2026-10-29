@@ -61,7 +61,7 @@ Pemeriksaan kualitas:
 
 ```bash
 flutter analyze
-flutter test                 # 140 test
+flutter test                 # 144 test
 flutter build web            # build produksi
 firebase deploy --only hosting   # unggah build/web ke Hosting
 ```
@@ -140,7 +140,7 @@ Perilaku per lebar layar:
 
 | Lebar | Navigasi | Dashboard | Aksi "Catat Berat" |
 |---|---|---|---|
-| < 600 px | Bottom nav 3 destinasi | Satu kolom | FAB di tengah bar + tombol di konten |
+| < 600 px | Bottom nav 3 destinasi | Satu kolom | FAB melayang di tengah, di atas bar + tombol di konten |
 | 600–1023 px | Sidebar ringkas (ikon) | Satu kolom, maks 720 px | Tombol di konten |
 | ≥ 1024 px | Sidebar 240 px + label | **Dua kolom** (3 : 2) | Tombol di konten (Dashboard), kanan atas header (Riwayat) |
 
@@ -158,14 +158,15 @@ Hasilnya tersimpan di `docs/screenshots/` (15 gambar: mobile, tablet, web).
 
 ## Pengujian
 
-**140 test**, semuanya lulus tanpa Firebase (Auth dan Firestore diganti fake):
+**144 test**, semuanya lulus tanpa Firebase (Auth dan Firestore diganti fake):
 
 | Berkas | Isi |
 |---|---|
-| `test/widget_test.dart` | 92 widget test: kerangka & guard login, validasi form autentikasi, Target Timbang, Catat Berat (termasuk aturan satu catatan per tanggal dan mode ubah), Riwayat Berat, ringkasan Dashboard, grafik tren, keadaan galat, responsif 360/768/1440 px |
+| `test/widget_test.dart` | 76 widget test: kerangka & guard login, validasi form autentikasi, Target Timbang, Catat Berat (termasuk aturan satu catatan per tanggal dan mode ubah), Riwayat Berat, ringkasan Dashboard, grafik tren, keadaan galat, geometri navigasi bawah, responsif 360/768/1440 px |
 | `test/validators_test.dart` | 21 unit test `Validators` — batas 30 dan 200 kg diuji **inklusif**, koma desimal, dan target yang boleh kosong |
 | `test/weight_math_test.dart` | 19 unit test `WeightMath` — selisih 0/positif/negatif, pembulatan satu desimal, sisa hari 0 dan negatif |
 | `test/weight_log_test.dart` | 8 unit test `urutkanTerbaruDulu` — urutan tanggal terbaru dulu, tanggal sama, daftar masukan tidak berubah, hasil tidak bisa diubah pemanggil |
+| `test/models_test.dart` | 20 unit test model `Target`/`WeightLog`/`UserProfile` — pembacaan peta Firestore, data rusak menjadi null, dan penulisan `uid` |
 
 Logika yang bisa salah tanpa terlihat di layar (aritmetika selisih, hitung mundur, validasi rentang) diuji sebagai fungsi murni lebih dulu, baru ditempel ke widget. Tampilan yang tidak bisa dijamin test — label terpotong, tombol melebar, teks bertumpuk — ditangkap lewat render golden di atas.
 

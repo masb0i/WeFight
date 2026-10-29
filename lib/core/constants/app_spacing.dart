@@ -17,6 +17,17 @@ abstract final class AppSpacing {
 
   /// Jarak antar-kartu.
   static const gap = 20.0;
+
+  /// Ruang bawah konten mobile supaya kartu terakhir tidak tertutup FAB
+  /// melayang (D26). Bar 64 px + jarak FAB 16 px + tinggi FAB 56 px + sisa 16.
+  static const bottomFab = 152.0;
+
+  /// Ruang bawah konten di layar lebar (FAB di pojok, bukan di tengah).
+  static const bottomWide = 96.0;
+
+  /// Ruang bawah konten sesuai lebar layar.
+  static double bottomFor(double width) =>
+      width < AppBreakpoints.mobile ? bottomFab : bottomWide;
 }
 
 abstract final class AppRadius {

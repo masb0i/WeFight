@@ -57,7 +57,8 @@ class ProfilPage extends ConsumerWidget {
       title: AppStrings.halamanProfil,
       showFab: false,
       child: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(padding, padding, padding, 96),
+        padding: EdgeInsets.fromLTRB(padding, padding, padding,
+              AppSpacing.bottomFor(MediaQuery.sizeOf(context).width)),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 720),

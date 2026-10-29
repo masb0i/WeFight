@@ -94,47 +94,50 @@ class _MobileShell extends StatelessWidget {
             ),
       body: SafeArea(bottom: false, child: child),
       floatingActionButton: showFab ? const _CatatBeratFab() : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _BottomNav(index: index, showFab: showFab),
+      // D26: FAB "terangkat di atas bar", bukan menembus bar.
+      //
+      // Sebelumnya `centerDocked` + notch dipakai bersama **tiga** item menu.
+      // Tiga item yang dibagi rata menempatkan item tengah tepat di titik
+      // tengah, jadi FAB selalu menimpa "Riwayat Berat" — dan kalau gap-nya
+      // digeser supaya tidak menimpa, jarak antar item jadi tidak rata.
+      // Dengan FAB melayang di atas bar, bar bisa rata tiga dan tidak ada
+      // yang tertutup.
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      bottomNavigationBar: _BottomNav(index: index),
     );
   }
 }
 
 class _BottomNav extends StatelessWidget {
-  const _BottomNav({required this.index, required this.showFab});
+  const _BottomNav({required this.index});
 
   final int index;
 
-  /// Bila FAB tidak ditampilkan, bar tidak memakai notch dan ketiga menu
-  /// dibagi rata — supaya tidak ada cekungan kosong di tengah.
-  final bool showFab;
-
   @override
   Widget build(BuildContext context) {
-    return BottomAppBar(
-      color: AppColors.cream200,
-      surfaceTintColor: Colors.transparent,
-      elevation: 0,
-      height: 72,
-      padding: EdgeInsets.zero,
-      shape: showFab ? const CircularNotchedRectangle() : null,
-      notchMargin: 8,
-      child: Row(
-        children: [
-          Expanded(
-            child: _NavItem(destination: appDestinations[0], selected: index == 0),
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: AppColors.cream200,
+        // Garis atas tipis: tanpa ini bar menyatu dengan latar halaman dan
+        // terlihat seperti konten yang terpotong.
+        border: Border(top: BorderSide(color: AppColors.border)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 64,
+          child: Row(
+            children: [
+              for (var i = 0; i < appDestinations.length; i++)
+                Expanded(
+                  child: _NavItem(
+                    destination: appDestinations[i],
+                    selected: index == i,
+                  ),
+                ),
+            ],
           ),
-          Expanded(
-            child: _NavItem(destination: appDestinations[1], selected: index == 1),
-          ),
-          if (showFab)
-            const SizedBox(width: 76)
-          else
-            const SizedBox.shrink(),
-          Expanded(
-            child: _NavItem(destination: appDestinations[2], selected: index == 2),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -159,10 +162,21 @@ class _NavItem extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              selected ? destination.activeIcon : destination.icon,
-              size: 22,
-              color: color,
+            // Pil di belakang ikon: penanda aktif yang tidak bergantung pada
+            // warna saja (labelnya juga menebal).
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 160),
+              curve: Curves.easeOut,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 3),
+              decoration: BoxDecoration(
+                color: selected ? AppColors.peach200 : Colors.transparent,
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Icon(
+                selected ? destination.activeIcon : destination.icon,
+                size: 21,
+                color: color,
+              ),
             ),
             const SizedBox(height: 2),
             Text(
@@ -170,8 +184,10 @@ class _NavItem extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: AppTextStyles.caption.copyWith(
+                fontSize: 11,
+                height: 1.1,
                 color: color,
-                fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
               ),
             ),
           ],

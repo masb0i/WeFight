@@ -188,6 +188,7 @@ Halaman hanya berisi tampilan; query Firestore tidak pernah ditulis di `lib/page
 | D23 | Di layar **≥600 px FAB disembunyikan** dan aksi "Catat Berat" pindah ke tombol di area konten (Dashboard) atau kanan atas header (Riwayat) | Satu aksi cukup satu tombol. FAB tetap wajib di mobile karena merupakan bagian dari bar navigasi (D11, UI_SPEC §6) | disetujui (2026-10-29) |
 | D24 | Query `weightLogs` memakai **`.where('uid')` saja**; pengurutan tanggal dilakukan di Dart (`urutkanTerbaruDulu`) | `where('uid') + orderBy('tanggal')` menuntut **indeks komposit** yang harus dibuat manual per project. Selama indeks itu belum aktif Firestore menolak query dengan `FAILED_PRECONDITION`, dan aplikasi tampil seolah tidak ada koneksi. Pengurutan di Dart memberi hasil sama tanpa syarat infrastruktur, tetap satu tempat, dan bisa diuji sebagai fungsi murni. Kunci tanggal `yyyy-MM-dd` sehingga perbandingan teks sudah kronologis (D4) | disetujui (2026-10-30) |
 | D25 | **Galat memuat dibedakan dari keadaan kosong** di Dashboard dan Riwayat: keduanya memakai widget `GagalMuat` + tombol "Coba lagi" | Sebelumnya kegagalan query tampil sebagai "Belum ada catatan berat" dan angka `—`, sehingga pengguna mengira catatannya hilang. Keadaan kosong berarti benar-benar tidak ada data; galat berarti data tidak berhasil diambil. Spinner juga tidak boleh berputar terus saat galat | disetujui (2026-10-30) |
+| D26 | `BottomNav` mobile **tanpa notch**: 3 destinasi dibagi rata, FAB "Catat Berat" memakai `centerFloat` (melayang di tengah **di atas** bar) | Notch Material hanya simetris untuk 2 atau 4 tujuan. Dengan 3 tujuan, item tengah pasti berada tepat di titik tengah sehingga FAB selalu menutupi "Riwayat Berat"; menggeser gap agar tidak menutupi membuat jarak antar item tidak rata. FAB melayang menyelesaikan keduanya: bar rata tiga dan tidak ada item tertutup. Konten bawah memakai `AppSpacing.bottomFab` (152 px) supaya kartu terakhir tidak tertutup FAB saat digulir penuh | disetujui (2026-10-30) |
 
 **Belum diputuskan / perlu tanya pemilik:**
 - (tidak ada)
@@ -536,6 +537,21 @@ Kalau suatu saat `orderBy` dikembalikan, indeks kompositnya wajib ada lebih dulu
 tampak sama. Akibatnya pengguna mengira catatannya hilang. Periksa
 `hasError` lebih dulu dan tampilkan kartu galat + tombol coba lagi (D25).
 Spinner juga harus berhenti saat galat, bukan berputar terus.
+
+**Jebakan: notch `BottomAppBar` tidak simetris untuk tiga tujuan menu.**
+`CircularNotchedRectangle` + `centerDocked` hanya rapi bila jumlah tujuan menu
+**genap** (2 atau 4), karena notch berada tepat di titik tengah. Dengan tiga
+tujuan, item tengah selalu berada di titik tengah juga, sehingga FAB menimpa
+ikon dan label item itu. Menambahkan `SizedBox` sebagai celah tidak menolong:
+`Expanded` yang tersisa membagi lebar secara tidak sama, jadi celahnya bergeser
+dari tengah dan jarak antar item jadi tidak rata. Solusi yang dipakai: bar tanpa
+notch, tiga item `Expanded` rata, FAB `centerFloat` di atas bar (D26).
+
+**Jebakan: mengubah jumlah test per berkas membuat README melenceng.**
+Angka "N test" di README dihitung dari hasil `flutter test`, bukan dari jumlah
+`testWidgets` di berkas — grup `Responsif` memakai perulangan sehingga satu blok
+menghasilkan tiga test. Hitung ulang per berkas dengan menjalankan
+`flutter test <berkas>` sebelum memperbarui README.
 
 ---
 

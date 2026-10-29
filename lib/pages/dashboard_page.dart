@@ -148,7 +148,8 @@ class DashboardPage extends ConsumerWidget {
       child: memuat
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(padding, padding, padding, 96),
+              padding: EdgeInsets.fromLTRB(padding, padding, padding,
+              AppSpacing.bottomFor(MediaQuery.sizeOf(context).width)),
               child: Center(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(

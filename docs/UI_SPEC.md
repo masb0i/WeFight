@@ -154,7 +154,7 @@ Prinsip: **permukaan dibedakan lewat warna, bukan bayangan.** Referensi hampir t
 - Urutan vertikal: `TopBar` (sapaan + avatar) → `HeroWeightCard` → `Progres Menuju Target` → `WeightChart` (ringkas) → kartu terakhir → `BottomNav` menempel bawah.
 - `displayWeight` tetap 40 px; hero card padding 20.
 - Semua kartu selebar layar dikurangi margin 16.
-- `BottomNav` 3 destinasi dengan FAB "Catat Berat" menonjol di tengah bar, sedikit terangkat di atas bar. FAB adalah **aksi**, bukan tujuan menu.
+- `BottomNav` 3 destinasi dibagi rata, dengan garis atas tipis sebagai pemisah dari konten. FAB "Catat Berat" **melayang di tengah, di atas bar** — bukan memotong bar. Bar tidak memakai notch karena notch hanya simetris untuk 2 atau 4 tujuan, sedangkan menu ada 3 (D26). FAB adalah **aksi**, bukan tujuan menu; item aktif ditandai pil di belakang ikon **dan** label yang menebal, bukan warna saja.
 - Splash: gradient `splash`, siluet petinju, wordmark "WeFight", tagline, kutipan di bawah.
 
 ---

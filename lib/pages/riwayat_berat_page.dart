@@ -143,7 +143,8 @@ class _Daftar extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 720),
         child: ListView.builder(
-          padding: EdgeInsets.fromLTRB(padding, padding, padding, 96),
+          padding: EdgeInsets.fromLTRB(padding, padding, padding,
+              AppSpacing.bottomFor(MediaQuery.sizeOf(context).width)),
           // Indeks 0 adalah kepala daftar, sisanya catatan.
           itemCount: logs.length + 1,
           itemBuilder: (context, index) {
@@ -217,7 +218,8 @@ class _Kosong extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(padding, padding, padding, 96),
+      padding: EdgeInsets.fromLTRB(padding, padding, padding,
+              AppSpacing.bottomFor(MediaQuery.sizeOf(context).width)),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 720),

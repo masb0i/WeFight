@@ -1182,6 +1182,90 @@ void main() {
     });
   });
 
+  // D26: bar bawah sempat memakai notch dengan FAB ditengah, padahal menu ada
+  // tiga. Tiga item yang dibagi rata menaruh item tengah tepat di titik tengah,
+  // jadi FAB selalu menutupi "Riwayat Berat". Test ini mengunci geometrinya.
+  group('Navigasi bawah', () {
+    Rect rectItem(WidgetTester tester, String label) {
+      return tester.getRect(
+        find
+            .ancestor(
+              of: find.text(label),
+              matching: find.byType(InkWell),
+            )
+            .first,
+      );
+    }
+
+    testWidgets('FAB tidak menimpa satu pun item menu', (tester) async {
+      final router = await pumpApp(tester);
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      final fab = tester.getRect(find.byType(FloatingActionButton));
+      for (final label in [
+        AppStrings.navDashboard,
+        AppStrings.navRiwayat,
+        AppStrings.navProfil,
+      ]) {
+        expect(
+          fab.overlaps(rectItem(tester, label)),
+          isFalse,
+          reason: 'FAB menimpa menu "$label"',
+        );
+      }
+    });
+
+    testWidgets('FAB berada di atas bar, bukan menembusnya', (tester) async {
+      final router = await pumpApp(tester);
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      final fab = tester.getRect(find.byType(FloatingActionButton));
+      final item = rectItem(tester, AppStrings.navDashboard);
+
+      // Seluruh badan FAB harus berakhir sebelum bar dimulai.
+      expect(fab.bottom, lessThanOrEqualTo(item.top));
+    });
+
+    testWidgets('tiga item menu berjarak rata', (tester) async {
+      final router = await pumpApp(tester);
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      final tengah = [
+        for (final label in [
+          AppStrings.navDashboard,
+          AppStrings.navRiwayat,
+          AppStrings.navProfil,
+        ])
+          tester.getCenter(find.text(label)).dx,
+      ];
+
+      final jarakKiri = tengah[1] - tengah[0];
+      final jarakKanan = tengah[2] - tengah[1];
+      expect(jarakKiri, greaterThan(0));
+      expect(
+        (jarakKiri - jarakKanan).abs(),
+        lessThan(1.0),
+        reason: 'jarak antar menu tidak rata: $jarakKiri vs $jarakKanan',
+      );
+    });
+
+    testWidgets('item aktif ditandai teks tebal, bukan warna saja',
+        (tester) async {
+      final router = await pumpApp(tester);
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      final aktif = tester.widget<Text>(find.text(AppStrings.navDashboard));
+      final pasif = tester.widget<Text>(find.text(AppStrings.navProfil));
+
+      expect(aktif.style?.fontWeight, FontWeight.w700);
+      expect(pasif.style?.fontWeight, isNot(FontWeight.w700));
+    });
+  });
+
   group('Responsif', () {
     List<WeightLog> contoh() => [
           WeightLog(id: 'b', tanggal: AppDate.hariIni(), berat: 73.6),
