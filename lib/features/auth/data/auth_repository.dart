@@ -11,6 +11,9 @@ abstract interface class AuthRepository {
   /// Status saat ini, dibaca sinkron oleh guard router.
   bool get isSignedIn;
 
+  /// uid pengguna yang sedang masuk, null bila belum masuk.
+  String? get currentUid;
+
   Future<void> signIn({required String email, required String password});
 
   Future<void> signUp({
@@ -38,6 +41,9 @@ class FirebaseAuthRepository implements AuthRepository {
   bool get isSignedIn => _auth.currentUser != null;
 
   @override
+  String? get currentUid => _auth.currentUser?.uid;
+
+  @override
   Future<void> signIn({
     required String email,
     required String password,
@@ -58,7 +64,8 @@ class FirebaseAuthRepository implements AuthRepository {
       email: email.trim(),
       password: password,
     );
-    // Nama disimpan di profil Auth; dokumen users/{uid} ditulis di M8.
+    // Nama disimpan di profil Auth; dokumen users/{uid} ditulis oleh layar
+    // Daftar lewat UserRepository (lihat M8 di docs/PLAN.md §8).
     final trimmedName = nama.trim();
     if (trimmedName.isNotEmpty) {
       await credential.user?.updateDisplayName(trimmedName);

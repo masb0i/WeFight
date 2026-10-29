@@ -16,6 +16,14 @@ final authStateProvider = StreamProvider<User?>((ref) {
   return ref.watch(authRepositoryProvider).authStateChanges;
 });
 
+/// uid pengguna yang sedang masuk. Null saat belum masuk atau masih dimuat.
+///
+/// Semua query Firestore memakai uid ini — tidak pernah uid dari parameter
+/// luar — sehingga data tidak mungkin tercampur antar akun.
+final currentUidProvider = Provider<String?>((ref) {
+  return ref.watch(authStateProvider).asData?.value?.uid;
+});
+
 /// Nama tampilan pengguna, dengan cadangan bila kosong.
 final currentUserNameProvider = Provider<String>((ref) {
   final user = ref.watch(authStateProvider).asData?.value;

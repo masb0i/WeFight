@@ -67,9 +67,12 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Profil: hanya pemilik.
+    // Profil: hanya pemilik. uid ikut diperiksa agar isi dokumen konsisten.
     match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.data.uid == uid;
     }
 
     // Target: document id = uid, hanya pemilik.
@@ -82,10 +85,10 @@ service cloud.firestore {
       allow read, delete: if request.auth != null
         && resource.data.uid == request.auth.uid;
       allow create: if request.auth != null
-        && request.data.uid == request.auth.uid;
+        && request.resource.data.uid == request.auth.uid;
       allow update: if request.auth != null
         && resource.data.uid == request.auth.uid
-        && request.data.uid == request.auth.uid;
+        && request.resource.data.uid == request.auth.uid;
     }
   }
 }
@@ -96,8 +99,30 @@ service cloud.firestore {
 `.where('uid', isEqualTo: user.uid)` — bukan mengambil semua lalu memfilter di
 Dart. Sudah dijadwalkan di M8-3.
 
-**Uji nanti (M8-4):** masuk sebagai akun A, buat catatan, keluar, masuk akun B —
-akun B tidak boleh melihat catatan akun A.
+**Nama field yang benar adalah `request.resource.data`, bukan `request.data`.**
+`request.data` tidak dikenal aturan Firestore sehingga setiap penulisan ditolak
+dengan `Missing or insufficient permissions` — dan gejalanya menipu, karena
+koleksi yang diperiksa lewat id dokumen (`targets/{uid}`) tetap berhasil.
+
+**Cara kedua (dipakai sejak M8):** aturan yang sama disimpan di berkas
+`firestore.rules` di akar proyek, jadi bisa dipasang lewat CLI tanpa membuka
+console:
+
+```bash
+firebase deploy --only firestore:rules
+```
+
+Kalau kedua cara dipakai bergantian, **berkas `firestore.rules` yang menang** —
+tempel ulang isinya ke console hanya bila kamu mengubahnya di sana.
+
+**Uji isolasi (M8-4) — sudah otomatis:**
+
+```bash
+dart run tool/cek_isolasi.dart
+```
+
+Skrip ini masuk sebagai dua akun (demo + pembanding) lalu memastikan akun B
+ditolak saat membaca/menulis data akun A.
 
 ---
 

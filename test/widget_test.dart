@@ -13,6 +13,9 @@ import 'package:wefight/core/constants/app_routes.dart';
 import 'package:wefight/core/constants/app_strings.dart';
 import 'package:wefight/features/auth/data/auth_repository.dart';
 import 'package:wefight/features/auth/presentation/auth_providers.dart';
+import 'package:wefight/features/profile/data/user_repository.dart';
+import 'package:wefight/features/profile/models/user_profile.dart';
+import 'package:wefight/features/profile/presentation/profile_providers.dart';
 
 /// Repository palsu — tidak menyentuh Firebase sama sekali.
 class FakeAuthRepository implements AuthRepository {
@@ -23,6 +26,9 @@ class FakeAuthRepository implements AuthRepository {
 
   @override
   bool get isSignedIn => signedIn;
+
+  @override
+  String? get currentUid => signedIn ? 'uid-uji' : null;
 
   @override
   Stream<User?> get authStateChanges => _changes.stream;
@@ -53,6 +59,20 @@ class FakeAuthRepository implements AuthRepository {
   Future<void> sendPasswordReset(String email) async {}
 }
 
+/// Repository profil palsu — layar Daftar menulis `users/{uid}` setelah
+/// pendaftaran berhasil, jadi provider ini wajib di-override di test.
+class FakeUserRepository implements UserRepository {
+  final disimpan = <UserProfile>[];
+
+  @override
+  Future<void> simpanProfil(UserProfile profil) async => disimpan.add(profil);
+
+  @override
+  Future<UserProfile?> ambil(String uid) async => disimpan.isEmpty
+      ? null
+      : disimpan.firstWhere((profil) => profil.uid == uid);
+}
+
 /// Memasang aplikasi dengan ukuran layar tertentu.
 ///
 /// `auth` null berarti guard login dimatikan.
@@ -73,6 +93,7 @@ Future<GoRouter> pumpApp(
         authStateProvider.overrideWith(
           (ref) => auth?.authStateChanges ?? Stream<User?>.value(null),
         ),
+        userRepositoryProvider.overrideWithValue(FakeUserRepository()),
       ],
       child: MaterialApp.router(
         theme: buildAppTheme(),

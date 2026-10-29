@@ -68,3 +68,22 @@ Rencana dan checklist ada di [`PLAN.md`](./PLAN.md) — log ini mencatat apa yan
 
 
 
+
+## 2026-10-29 20:21 — M8 Lapisan data Firestore
+- **Status:** selesai
+- **Yang dikerjakan:** Tiga model immutable (`Target`, `WeightLog`, `UserProfile`) lengkap dengan `fromMap`/`fromDoc`, `toMap`, dan `copyWith` yang bisa mengosongkan field. `AppDate` di `core/utils/date_format.dart` jadi satu-satunya tempat konversi tanggal ↔ kunci `yyyy-MM-dd`, plus nama bulan Indonesia dan hitung selisih hari. Tiga repository: `FirestoreTargetRepository` (doc id = uid), `FirestoreWeightLogRepository` (query wajib `where uid`, urut tanggal menurun, ada `cariTanggal` untuk aturan satu-catatan-per-tanggal), `FirestoreUserRepository` (`users/{uid}`). Provider `currentUidProvider`, `targetProvider`, `weightLogsProvider`, `beratTerakhirProvider`. Layar Daftar sekarang menulis `users/{uid}` setelah akun dibuat. Aturan keamanan dipindah ke `firestore.rules` + `.firebaserc` dan **berhasil di-deploy** ke `wefight-38409`. Data demo terisi: akun `fighter@wefight.demo` dengan target 71 kg, hari timbang 14 hari lagi, dan 6 catatan berat 76,4 → 73,6 kg. Test naik dari 11 ke 31 (20 test model/tanggal baru).
+- **File disentuh:** `lib/core/utils/date_format.dart`, `lib/features/target/{models/target,data/target_repository,presentation/target_providers}.dart`, `lib/features/weight_log/{models/weight_log,data/weight_log_repository,presentation/weight_log_providers}.dart`, `lib/features/profile/{models/user_profile,data/user_repository,presentation/profile_providers}.dart`, `lib/features/auth/data/auth_repository.dart` (getter `currentUid`), `lib/features/auth/presentation/{auth_providers,register_screen}.dart`, `test/{models_test,widget_test}.dart`, `tool/{firebase_rest,seed_demo,cek_isolasi}.dart`, `firestore.rules`, `.firebaserc`, `firebase.json`, `docs/{PLAN,FIREBASE_SETUP,PROGRESS}.md`
+- **Keputusan/kompromi:** Pertanyaan terbuka di §5 dijawab pemilik: `users/{uid}` **ditulis saat daftar** (D12), dan data demo diisi **skrip REST** (D13), bukan tombol dev di aplikasi. `weightLogs` memakai `id` kosong sebagai penanda "belum tersimpan" — menghindari null-check di mana-mana. `Target.fromMap` mengembalikan `Target.kosong` (bukan null) supaya layar tidak perlu membedakan "memuat" dan "belum diatur". `copyWith` memakai flag `hapusX` karena parameter nullable tidak bisa membedakan "tidak diubah" dan "dijadikan null".
+- **Kendala:** Dua bug nyata ketemu saat verifikasi. (1) `AppDate.relatif` awalnya membalik tanda — kemarin menghasilkan −1, bukan +1; ketahuan dari unit test. (2) Aturan Firestore memakai `request.data`, yang **bukan field yang dikenal** sehingga semua penulisan `weightLogs` ditolak `Missing or insufficient permissions`; nama yang benar `request.resource.data`. Gejalanya menipu karena `targets/{uid}` (diperiksa lewat id) tetap berhasil. Keduanya sudah diperbaiki dan dicatat di PLAN §14. Skrip seed juga sempat gagal karena koneksi keep-alive basi (`Connection closed before full header was received`) — sekarang tiap permintaan memakai koneksi baru + satu retry.
+- **Berikutnya:** M9-1 form Target Timbang (batas berat + `showDatePicker`), memakai `targetProvider` dan `TargetRepository.simpan`.
+
+### Verifikasi M8-4 (isolasi data per uid)
+`dart run tool/cek_isolasi.dart` → **5/5 lulus** dengan dua akun:
+
+```
+LULUS  Akun A membaca catatannya sendiri ... 6 catatan
+LULUS  Akun B membaca catatan akun A ... ditolak aturan
+LULUS  Akun B membaca catatan miliknya ... 0 catatan (memang kosong)
+LULUS  Akun B membuka target akun A ... ditolak aturan
+LULUS  Akun B menulis catatan atas nama akun A ... ditolak aturan
+```

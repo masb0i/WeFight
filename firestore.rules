@@ -1,0 +1,41 @@
+rules_version = '2';
+
+// Aturan keamanan WeFight — sumber kebenaran ada di file ini.
+// Isi yang sama juga ditampilkan di docs/FIREBASE_SETUP.md §D untuk
+// pemasangan manual lewat console.
+//
+// Prinsip: pengguna hanya boleh membaca/menulis dokumen miliknya sendiri
+// (aturan bisnis §3 poin 8 — data terisolasi per uid).
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Profil: hanya pemilik. uid ikut diperiksa agar isi dokumen konsisten.
+    match /users/{uid} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.data.uid == uid;
+    }
+
+    // Target: document id = uid, hanya pemilik.
+    match /targets/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Catatan berat: document id auto, uid adalah field.
+    // Query wajib menyaring uid (lihat weight_log_repository.dart).
+    //
+    // Catatan: nama field yang benar adalah `request.resource.data` (isi
+    // dokumen setelah ditulis), BUKAN `request.data` — yang terakhir tidak
+    // dikenal aturan Firestore sehingga selalu berakhir "permission denied".
+    match /weightLogs/{logId} {
+      allow read, delete: if request.auth != null
+        && resource.data.uid == request.auth.uid;
+      allow create: if request.auth != null
+        && request.resource.data.uid == request.auth.uid;
+      allow update: if request.auth != null
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == request.auth.uid;
+    }
+  }
+}

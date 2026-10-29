@@ -11,6 +11,8 @@ import '../../../core/utils/validators.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/error_text.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../profile/models/user_profile.dart';
+import '../../profile/presentation/profile_providers.dart';
 import '../data/auth_error.dart';
 import 'auth_providers.dart';
 import 'widgets/auth_shell.dart';
@@ -48,17 +50,38 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     setState(() => _loading = true);
     try {
-      await ref.read(authRepositoryProvider).signUp(
-            nama: _nama.text,
-            email: _email.text,
-            password: _password.text,
-          );
+      final auth = ref.read(authRepositoryProvider);
+      await auth.signUp(
+        nama: _nama.text,
+        email: _email.text,
+        password: _password.text,
+      );
+      await _simpanProfil(auth.currentUid);
       // Navigasi ditangani redirect router.
     } catch (e) {
       if (!mounted) return;
       setState(() => _error = authErrorMessage(e));
     } finally {
       if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  /// Menulis dokumen `users/{uid}` sesuai skema PLAN §1.3.
+  ///
+  /// Kegagalan di sini **tidak** menggagalkan pendaftaran: akun Auth sudah
+  /// dibuat dan nama masih terbaca dari `displayName`.
+  Future<void> _simpanProfil(String? uid) async {
+    if (uid == null) return;
+    try {
+      await ref.read(userRepositoryProvider).simpanProfil(
+            UserProfile(
+              uid: uid,
+              nama: _nama.text.trim(),
+              email: _email.text.trim(),
+            ),
+          );
+    } catch (error) {
+      debugPrint('Gagal menyimpan profil users/$uid: $error');
     }
   }
 

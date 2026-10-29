@@ -130,7 +130,8 @@ lib/
     weight_log/ data/weight_log_repository.dart, models/weight_log.dart,
                 presentation/{catat_berat_screen,riwayat_berat_screen,weight_log_controller}
     dashboard/  presentation/{dashboard_screen, widgets/{ringkasan_kartu,tren_chart,ajakan_target}}
-    profile/    presentation/profil_screen.dart
+    profile/    data/user_repository.dart, models/user_profile.dart,
+                presentation/profil_screen.dart
 ```
 
 **Aturan penulisan kode** (dari panduan Flutter):
@@ -157,12 +158,17 @@ lib/
 | D9 | **Sumber kebenaran visual = `docs/ui-reference/` + `UI_SPEC.md`**, menggantikan style guide Figma Minggu 4 | Figma terlalu sederhana menurut pemilik; referensi punya gradient & layout final | disetujui (2026-10-29) |
 | D10 | Baseline grafik progres ("sudah turun X dari Y") dihitung dari catatan **terawal**, bukan field baru | Tidak perlu ubah skema `targets`; tetap sesuai worksheet | disetujui |
 | D11 | Menu navigasi **3 destinasi sesuai worksheet** (Dashboard · Riwayat Berat · Profil) + FAB "Catat Berat" di tengah bar | Pemilik memilih tetap sesuai worksheet yang sudah dinilai; FAB adalah aksi, bukan tujuan menu, sehingga tidak menambah halaman | disetujui (2026-10-29) |
+| D12 | Dokumen `users/{uid}` **ditulis saat Daftar** (nama dari form + email + `dibuatPada`), lewat `UserRepository` | Skema §1.3 jadi lengkap dan aturan keamanan punya contoh koleksi milik pengguna. Nama di UI tetap dibaca dari `displayName` Auth supaya Dashboard tidak perlu pembacaan tambahan | disetujui (2026-10-29) |
+| D13 | Data simulasi diisi skrip **`tool/seed_demo.dart`** (REST API + API key publik), bukan tombol dev di aplikasi | Tidak menambah tombol yang tidak ada di worksheet, tidak perlu service account (Spark), dan idempoten sehingga bisa diulang saat demo | disetujui (2026-10-29) |
+| D14 | Aturan keamanan disimpan di **`firestore.rules`** dan di-deploy lewat `firebase deploy --only firestore:rules`; isi yang sama tetap ditampilkan di FIREBASE_SETUP §D untuk pemasangan manual | Satu sumber kebenaran yang bisa di-diff di git, tidak bergantung pada tempel-tempel di console | disetujui (2026-10-29) |
 
 **Belum diputuskan / perlu tanya pemilik:**
-- Apakah `users` perlu ditulis saat register (nama diambil dari form) atau cukup `displayName` Auth.
+- (tidak ada)
 
 **Sudah diputuskan (2026-10-29):**
 - D11 → **opsi A**: ikut visual & layout referensi, **tetapi tidak menambah fitur**. Menu 3 destinasi sesuai worksheet, kartu "Jadwal Latihan & Timbang" diganti "Riwayat Terbaru", fitur jadwal tidak dibuat. Detail di §13.
+- D12 → `users/{uid}` **ditulis saat daftar**. Sebelumnya ini pertanyaan terbuka; pemilik memilih skema tetap lengkap sesuai §1.3.
+- D13 → data demo diisi lewat **skrip REST**, bukan tombol dev di Profil maupun input manual di console.
 
 ---
 
@@ -249,11 +255,11 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 - [x] M7-7 Hapus tombol sementara "Lanjut ke Dashboard" di Login
 
 ### M8 — Lapisan data Firestore
-- [ ] M8-1 Model `Target` + `WeightLog` (immutable, `copyWith`, `fromDoc`/`toMap`)
-- [ ] M8-2 `target_repository` (watch/save, doc id = uid)
-- [ ] M8-3 `weight_log_repository` (watch by uid, add, update, delete, cek tanggal sudah ada)
-- [ ] M8-4 Firestore rules: hanya pemilik uid (uji dengan 2 akun)
-- [ ] M8-5 Seed data simulasi 5–7 catatan berat untuk akun demo
+- [x] M8-1 Model `Target` + `WeightLog` (immutable, `copyWith`, `fromDoc`/`toMap`)
+- [x] M8-2 `target_repository` (watch/save, doc id = uid)
+- [x] M8-3 `weight_log_repository` (watch by uid, add, update, delete, cek tanggal sudah ada)
+- [x] M8-4 Firestore rules: hanya pemilik uid (uji dengan 2 akun)
+- [x] M8-5 Seed data simulasi 5–7 catatan berat untuk akun demo
 
 ### M9 — Target Timbang
 - [ ] M9-1 Form `batasBerat` (angka, >0) + `tanggalTimbang` (`showDatePicker`)
@@ -428,3 +434,21 @@ flutter test --update-goldens tool/render_screens_test.dart
 ```
 
 Skrip ini memuat font Plus Jakarta Sans dan font ikon Material dari SDK. Letaknya di `tool/` (bukan `test/`) supaya `flutter test` biasa tidak ikut membandingkan golden — perbandingan golden rapuh antar mesin. Perbarui gambar setiap kali UI berubah.
+
+**Perintah Firebase & data demo** (butuh `firebase-tools` dan sudah `firebase login`):
+
+```bash
+firebase deploy --only firestore:rules      # pasang aturan keamanan dari firestore.rules
+dart run tool/seed_demo.dart                # isi akun demo + 6 catatan berat (idempoten)
+dart run tool/cek_isolasi.dart              # buktikan akun B tidak bisa melihat data akun A
+```
+
+Akun demo: `fighter@wefight.demo` / `wefight123` · akun pembanding: `rival@wefight.demo` / `wefight123`.
+Keduanya dibuat oleh skrip, tidak perlu didaftarkan manual di aplikasi.
+
+**Jebakan: `request.data` bukan field yang dikenal aturan Firestore.**
+Aturan yang memakai `request.data.uid` **selalu** menolak dengan
+`Missing or insufficient permissions` — nama yang benar adalah
+`request.resource.data` (isi dokumen setelah ditulis). Gejalanya menipu: dokumen
+yang aturannya memakai id (`targets/{uid}`) tetap berhasil, hanya koleksi yang
+memeriksa field (`weightLogs`) yang gagal.
