@@ -104,6 +104,10 @@ class FakeTargetRepository implements TargetRepository {
 ///
 /// [gagalTambah] mensimulasikan kegagalan jaringan/aturan Firestore supaya
 /// jalur "gagal simpan" (M10-5) bisa diuji tanpa Firebase.
+///
+/// `watchAll` meniru kontrak repository sungguhan: mengirim isi terbaru lebih
+/// dulu, lalu setiap perubahan (tambah/ubah/hapus) — itulah yang membuat
+/// daftar Riwayat ikut berubah tanpa memuat ulang halaman (M11-5).
 class FakeWeightLogRepository implements WeightLogRepository {
   FakeWeightLogRepository({List<WeightLog>? awal, this.gagalTambah = false})
       : daftar = [...?awal];
@@ -114,6 +118,8 @@ class FakeWeightLogRepository implements WeightLogRepository {
   final dihapus = <String>[];
   final bool gagalTambah;
 
+  final _perubahan = StreamController<List<WeightLog>>.broadcast();
+
   WeightLog? _cari(bool Function(WeightLog) uji) {
     for (final log in daftar) {
       if (uji(log)) return log;
@@ -121,9 +127,21 @@ class FakeWeightLogRepository implements WeightLogRepository {
     return null;
   }
 
+  /// Meniru `orderBy('tanggal', descending: true)` di repository Firestore.
+  List<WeightLog> get _urut => [...daftar]
+    ..sort((a, b) => b.tanggal.compareTo(a.tanggal));
+
+  void _kabarkan() {
+    if (!_perubahan.isClosed) {
+      _perubahan.add(List<WeightLog>.unmodifiable(_urut));
+    }
+  }
+
   @override
-  Stream<List<WeightLog>> watchAll(String uid) =>
-      Stream.value(List<WeightLog>.unmodifiable(daftar));
+  Stream<List<WeightLog>> watchAll(String uid) async* {
+    yield List<WeightLog>.unmodifiable(_urut);
+    yield* _perubahan.stream;
+  }
 
   @override
   Future<WeightLog?> ambil(String id) async => _cari((log) => log.id == id);
@@ -138,6 +156,7 @@ class FakeWeightLogRepository implements WeightLogRepository {
     ditambah.add(log);
     final id = 'baru-${ditambah.length}';
     daftar.add(log.copyWith(id: id));
+    _kabarkan();
     return id;
   }
 
@@ -145,11 +164,19 @@ class FakeWeightLogRepository implements WeightLogRepository {
   Future<void> ubah(String uid, WeightLog log) async {
     if (gagalTambah) throw Exception('jaringan mati');
     diubah.add(log);
+    final posisi = daftar.indexWhere((item) => item.id == log.id);
+    if (posisi != -1) {
+      daftar[posisi] = log;
+      _kabarkan();
+    }
   }
 
   @override
   Future<void> hapus(String id) async {
+    if (gagalTambah) throw Exception('jaringan mati');
     dihapus.add(id);
+    daftar.removeWhere((log) => log.id == id);
+    _kabarkan();
   }
 }
 
@@ -650,6 +677,124 @@ void main() {
 
       expect(repo.ditambah, hasLength(1));
       expect(find.text(AppStrings.dashboardKosongJudul), findsOneWidget);
+    });
+  });
+
+  group('Riwayat Berat', () {
+    /// Dua catatan: hari ini dan dua hari lalu.
+    List<WeightLog> duaCatatan() => [
+          WeightLog(
+            id: 'baru',
+            tanggal: AppDate.hariIni(),
+            berat: 73.6,
+            catatan: 'Latihan pagi',
+          ),
+          WeightLog(
+            id: 'lama',
+            tanggal: AppDate.hariIni().subtract(const Duration(days: 2)),
+            berat: 74.2,
+          ),
+        ];
+
+    testWidgets('daftar menampilkan berat, tanggal, dan catatan', (tester) async {
+      final router = await pumpApp(
+        tester,
+        logRepo: FakeWeightLogRepository(awal: duaCatatan()),
+      );
+      router.go(AppRoutes.riwayat);
+      await tester.pumpAndSettle();
+
+      expect(find.text('73.6 kg'), findsOneWidget);
+      expect(find.text('74.2 kg'), findsOneWidget);
+      expect(find.text(AppDate.panjang(AppDate.hariIni())), findsOneWidget);
+      expect(find.text('Latihan pagi'), findsOneWidget);
+      expect(find.text(AppStrings.riwayatJumlah(2)), findsOneWidget);
+    });
+
+    testWidgets('catatan terbaru tampil paling atas', (tester) async {
+      final router = await pumpApp(
+        tester,
+        logRepo: FakeWeightLogRepository(awal: duaCatatan()),
+      );
+      router.go(AppRoutes.riwayat);
+      await tester.pumpAndSettle();
+
+      final atas = tester.getTopLeft(find.text('73.6 kg')).dy;
+      final bawah = tester.getTopLeft(find.text('74.2 kg')).dy;
+      expect(atas, lessThan(bawah));
+    });
+
+    testWidgets('keadaan kosong mengarahkan ke Catat Berat', (tester) async {
+      final router = await pumpApp(tester);
+      router.go(AppRoutes.riwayat);
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.riwayatKosongJudul), findsOneWidget);
+      expect(find.text(AppStrings.catatBerat), findsOneWidget);
+    });
+
+    testWidgets('ketuk catatan membuka mode ubah', (tester) async {
+      final router = await pumpApp(
+        tester,
+        logRepo: FakeWeightLogRepository(awal: duaCatatan()),
+      );
+      router.go(AppRoutes.riwayat);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('74.2 kg'));
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.catatSubtitleEdit), findsOneWidget);
+      expect(find.text('74.2'), findsOneWidget);
+    });
+
+    testWidgets('hapus menampilkan dialog konfirmasi yang bisa dibatalkan',
+        (tester) async {
+      final repo = FakeWeightLogRepository(awal: duaCatatan());
+      final router = await pumpApp(tester, logRepo: repo);
+      router.go(AppRoutes.riwayat);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.delete_outline).first);
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.hapusCatatanJudul), findsOneWidget);
+
+      await tester.tap(find.text(AppStrings.batal));
+      await tester.pumpAndSettle();
+
+      expect(repo.dihapus, isEmpty);
+      expect(find.text('73.6 kg'), findsOneWidget);
+    });
+
+    testWidgets('konfirmasi hapus menghilangkan catatan dari daftar',
+        (tester) async {
+      final repo = FakeWeightLogRepository(awal: duaCatatan());
+      final router = await pumpApp(tester, logRepo: repo);
+      router.go(AppRoutes.riwayat);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.delete_outline).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(AppStrings.hapus));
+      await tester.pumpAndSettle();
+
+      expect(repo.dihapus, ['baru']);
+      expect(find.text('73.6 kg'), findsNothing);
+      expect(find.text('74.2 kg'), findsOneWidget);
+      expect(find.text(AppStrings.riwayatJumlah(1)), findsOneWidget);
+    });
+
+    testWidgets('tombol tambah di halaman riwayat membuka Catat Berat',
+        (tester) async {
+      final router = await pumpApp(tester);
+      router.go(AppRoutes.riwayat);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.catatSubtitleTambah), findsOneWidget);
     });
   });
 }

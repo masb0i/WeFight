@@ -18,6 +18,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:wefight/app/router.dart';
 import 'package:wefight/app/theme.dart';
 import 'package:wefight/core/constants/app_routes.dart';
+import 'package:wefight/core/utils/date_format.dart';
 import 'package:wefight/features/auth/presentation/auth_providers.dart';
 import 'package:wefight/features/target/models/target.dart';
 import 'package:wefight/features/target/presentation/target_providers.dart';
@@ -38,6 +39,32 @@ final _logContoh = WeightLog(
   berat: 73.6,
   catatan: 'Latihan pagi, badan terasa ringan.',
 );
+
+/// Enam catatan contoh — sama dengan data demo `tool/seed_demo.dart`
+/// (tren turun 76,4 → 73,6 kg) supaya tangkapan layar Riwayat tidak kosong.
+///
+/// Urutannya **terbaru lebih dulu**, meniru `orderBy('tanggal', descending)`.
+List<WeightLog> _catatanContoh() {
+  const pola = <({int mundur, double berat, String? catatan})>[
+    (mundur: 0, berat: 73.6, catatan: 'Timbang pagi'),
+    (mundur: 3, berat: 73.9, catatan: 'Hampir di batas'),
+    (mundur: 7, berat: 74.3, catatan: null),
+    (mundur: 14, berat: 75.1, catatan: 'Latihan pagi'),
+    (mundur: 21, berat: 75.8, catatan: null),
+    (mundur: 28, berat: 76.4, catatan: 'Awal program'),
+  ];
+  final hariIni = AppDate.hariIni();
+
+  return [
+    for (var i = 0; i < pola.length; i++)
+      WeightLog(
+        id: 'demo-0$i',
+        tanggal: hariIni.subtract(Duration(days: pola[i].mundur)),
+        berat: pola[i].berat,
+        catatan: pola[i].catatan,
+      ),
+  ];
+}
 
 /// Repository catatan palsu — alat render tidak boleh menyentuh Firestore.
 class _LogPalsu implements WeightLogRepository {
@@ -102,6 +129,7 @@ Future<void> _shoot(
   required String route,
   required String file,
   Target? target,
+  List<WeightLog>? logs,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1.0;
@@ -122,6 +150,11 @@ Future<void> _shoot(
           (ref) => Stream<Target>.value(target ?? const Target()),
         ),
         weightLogRepositoryProvider.overrideWithValue(const _LogPalsu()),
+        // Daftar Riwayat dibaca dari stream ini; tanpa override ia akan
+        // memanggil Firestore.
+        weightLogsProvider.overrideWith(
+          (ref) => Stream<List<WeightLog>>.value(logs ?? const <WeightLog>[]),
+        ),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
@@ -172,6 +205,7 @@ void main() {
       size: const Size(390, 844),
       route: AppRoutes.riwayat,
       file: '05_riwayat_mobile.png',
+      logs: _catatanContoh(),
     );
     await _shoot(
       tester,
@@ -196,6 +230,7 @@ void main() {
       size: const Size(1440, 900),
       route: AppRoutes.riwayat,
       file: '09_riwayat_web.png',
+      logs: _catatanContoh(),
     );
     await _shoot(
       tester,
@@ -223,6 +258,13 @@ void main() {
       size: const Size(1440, 900),
       route: AppRoutes.editBeratPath(_logContoh.id),
       file: '13_catat_berat_web.png',
+      target: _targetContoh,
+    );
+    await _shoot(
+      tester,
+      size: const Size(390, 844),
+      route: AppRoutes.riwayat,
+      file: '14_riwayat_kosong_mobile.png',
       target: _targetContoh,
     );
   });

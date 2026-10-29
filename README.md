@@ -55,7 +55,7 @@ Pemeriksaan kualitas:
 
 ```bash
 flutter analyze
-flutter test                 # 49 test
+flutter test                 # 56 test
 flutter build web            # build produksi
 ```
 
@@ -81,7 +81,7 @@ Akun demo berisi target 71 kg, hari timbang 14 hari ke depan, dan 6 catatan bera
   <tr>
     <td><img src="docs/screenshots/02_login_mobile.png" width="220" alt="Login"><br><sub>Login</sub></td>
     <td><img src="docs/screenshots/04_dashboard_mobile.png" width="220" alt="Dashboard"><br><sub>Dashboard (mobile)</sub></td>
-    <td><img src="docs/screenshots/05_riwayat_mobile.png" width="220" alt="Riwayat Berat"><br><sub>Riwayat Berat</sub></td>
+    <td><img src="docs/screenshots/05_riwayat_mobile.png" width="220" alt="Riwayat Berat"><br><sub>Riwayat Berat (daftar)</sub></td>
     <td><img src="docs/screenshots/06_profil_mobile.png" width="220" alt="Profil"><br><sub>Profil</sub></td>
   </tr>
   <tr>
@@ -93,6 +93,13 @@ Akun demo berisi target 71 kg, hari timbang 14 hari ke depan, dan 6 catatan bera
       Form Catat Berat: tanggal terisi hari ini, berat 30–200 kg, catatan opsional. Kalau tanggal
       itu sudah punya catatan, aplikasi menawarkan mengubah catatan lama — tidak pernah membuat
       duplikat.</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/14_riwayat_kosong_mobile.png" width="220" alt="Riwayat Berat kosong"><br><sub>Riwayat Berat (kosong)</sub></td>
+    <td colspan="3" valign="top"><sub>Daftar Riwayat: urut tanggal terbaru, satu kartu per catatan.
+      Ketuk kartu untuk mengubah, ikon hapus meminta konfirmasi lebih dulu.<br><br>
+      Setiap halaman punya keadaan kosong yang menjelaskan dan mengarahkan, bukan layar kosong
+      (PLAN §10).</sub></td>
   </tr>
 </table>
 
@@ -107,7 +114,7 @@ sehingga selalu sesuai kode terakhir:
 flutter test --update-goldens tool/render_screens_test.dart
 ```
 
-Hasilnya tersimpan di `docs/screenshots/` (13 gambar: mobile, tablet, web).
+Hasilnya tersimpan di `docs/screenshots/` (14 gambar: mobile, tablet, web).
 
 ## Struktur project
 

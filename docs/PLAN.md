@@ -182,6 +182,7 @@ Halaman hanya berisi tampilan; query Firestore tidak pernah ditulis di `lib/page
 | D17 | Setiap form memakai **`AutovalidateMode.onUserInteraction`** + **SnackBar** pesan status (`AppSnackBar`) untuk berhasil dan gagal | Rubrik Minggu 7 menilai "validasi & pesan 25%" termasuk pesan status. Inline `ErrorText` tetap dipakai sebagai penjelas tambahan | disetujui (2026-10-29) |
 | D18 | Catat Berat memakai **satu halaman untuk dua mode**: `/weight/new` (tambah) dan `/weight/:id/edit` (ubah), dibedakan oleh `logId` | Menghindari dua halaman yang isinya 95% sama; aturan validasi dan format angka pasti konsisten. Satu-satunya percabangan ada di `_simpan` dan judul | disetujui (2026-10-29) |
 | D19 | Format & parsing angka kg dipusatkan di **`lib/core/utils/angka.dart`** (`Angka.kg`, `Angka.parseKg`), bukan helper privat per halaman | Target Timbang dan Catat Berat menampilkan angka yang sama; satu tempat untuk aturan "koma diterima, nol desimal dibuang" | disetujui (2026-10-29) |
+| D20 | Baris Riwayat menampilkan **tanggal · berat · catatan**; kolom "Perubahan" (selisih antar catatan) menyusul di M12 | Selisih harus dihitung dengan aturan yang sama seperti kartu Dashboard; menaruhnya di dua tempat sebelum `weight_math` ada berarti dua versi aturan yang bisa berbeda | disetujui (2026-10-29) |
 
 **Belum diputuskan / perlu tanya pemilik:**
 - (tidak ada)
@@ -308,11 +309,11 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 - [x] M10-6 Jalur ≤3 langkah dari Dashboard ke tersimpan
 
 ### M11 — Riwayat Berat
-- [ ] M11-1 `ListView.builder` urut tanggal terbaru, `ValueKey` per item
-- [ ] M11-2 Tap item → edit; aksi hapus dengan dialog konfirmasi
-- [ ] M11-3 `EmptyState` "Belum ada catatan berat" + CTA
-- [ ] M11-4 FAB "Catat Berat"
-- [ ] M11-5 Daftar ikut berubah setelah tambah/edit/hapus
+- [x] M11-1 `ListView.builder` urut tanggal terbaru, `ValueKey` per item
+- [x] M11-2 Tap item → edit; aksi hapus dengan dialog konfirmasi
+- [x] M11-3 `EmptyState` "Belum ada catatan berat" + CTA
+- [x] M11-4 FAB "Catat Berat"
+- [x] M11-5 Daftar ikut berubah setelah tambah/edit/hapus
 
 ### M12 — Logika Dashboard
 - [ ] M12-1 `weight_math`: `hitungSelisih`, `labelSelisih`, `hitungSisaHari`, `labelHitungMundur`

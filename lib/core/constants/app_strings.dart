@@ -132,6 +132,27 @@ abstract final class AppStrings {
   static const riwayatKosongJudul = 'Belum ada catatan berat';
   static const riwayatKosongPesan =
       'Catatan pertamamu akan muncul di sini setelah kamu menimbang.';
+  static const riwayatSubtitle = 'Semua catatan beratmu, yang terbaru di atas.';
+  static const riwayatTapHint = 'Ketuk catatan untuk mengubahnya.';
+
+  /// Jumlah catatan, misalnya "6 catatan".
+  static String riwayatJumlah(int jumlah) =>
+      jumlah == 1 ? '1 catatan' : '$jumlah catatan';
+
+  static const hapusCatatanJudul = 'Hapus catatan ini?';
+  static const hapusCatatanTooltip = 'Hapus catatan';
+  static const catatanDihapus = 'Catatan berat dihapus.';
+  static const hapusGagal = 'Gagal menghapus. Periksa koneksi lalu coba lagi.';
+  static const muatGagal = 'Gagal memuat catatan. Periksa koneksi.';
+  static const muatGagalPesan =
+      'Daftar catatan tidak bisa diambil. Periksa koneksi internet lalu coba '
+      'lagi.';
+  static const coba = 'Coba lagi';
+
+  /// Pesan dialog konfirmasi hapus.
+  static String hapusCatatanPesan(String berat, String tanggal) =>
+      'Catatan $berat kg pada $tanggal akan dihapus permanen. '
+      'Tindakan ini tidak bisa dibatalkan.';
 
   // Profil.
   static const profilBelumAda = 'Info akun dan pengaturan akan tampil di sini.';
