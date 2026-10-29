@@ -202,3 +202,11 @@ LULUS  Akun B menulis catatan atas nama akun A ... ditolak aturan
 - **Keputusan/kompromi:** Naskah mengikuti kondisi aplikasi yang sebenarnya, bukan urutan yang "ideal". Dua hal dikoreksi saat menulis: (a) kartu ajakan "Atur Target Timbang" hanya muncul bila batas berat **dan** tanggal sama-sama kosong (M12-4), jadi langkah demonya mengosongkan keduanya — bukan hanya batas berat; (b) teks chip saat lewat adalah "Hari timbang terlewat N hari", bukan "terlewat N hari".
 - **Perbaikan dokumen lain:** `UJI_FORM.md` menulis "26 otomatis dan 6 manual" padahal kasus manual ada **8** (nomor 5, 6, 9, 10, 17, 18, 31, 32); PLAN §15.1 masih menulis "34/34" test dan §15.4 hanya menyebut empat kasus manual. Ketiganya diperbarui.
 - **Berikutnya:** tidak ada pekerjaan kode. Sisa: mengisi 8 kasus uji manual dan menjalankan `flutter run -d chrome` (P6) — keduanya tindakan pemilik.
+
+## 2026-10-30 01:29 — Uji manual form selesai
+- **Status:** selesai
+- **Yang dikerjakan:** Delapan kasus uji manual di `docs/UJI_FORM.md` (nomor 5, 6, 9, 10, 17, 18, 31, 32) diisi hasilnya setelah dicoba pemilik lewat aplikasi online dengan akun sungguhan. Kedelapannya **sesuai harapan**: kredensial salah menampilkan pesan di form + SnackBar tanpa berpindah halaman; login valid masuk ke Dashboard; email terdaftar ditolak dengan pesan yang benar; pendaftaran membuat `users/{uid}`; kalender hanya menerima hari ini dan sebelumnya; menghapus tanggal menyimpan `tanggalTimbang` null; membuka id yang sudah dihapus menampilkan keadaan "Catatan tidak ditemukan".
+- **File disentuh:** `docs/UJI_FORM.md`, `docs/{PLAN,DEMO_UAS}.md`, `README.md`
+- **Keputusan/kompromi:** Kolom **Bukti** diisi "dicoba manual, 30 Okt 2026" agar jelas mana yang berasal dari test otomatis dan mana dari pengujian manusia — bukan disamakan seolah semuanya otomatis. Status berkas diubah dari "24 otomatis dan 8 perlu dicoba" menjadi "32 kasus, semua sesuai".
+- **Dampak:** `docs/PLAN.md` §15.4 kini hanya menyisakan **P6** (`flutter run -d chrome`) sebagai tindakan pemilik. Butir kasus uji manual ditandai selesai.
+- **Berikutnya:** tidak ada pekerjaan kode. Menunggu P6.

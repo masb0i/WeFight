@@ -170,6 +170,8 @@ Hasilnya tersimpan di `docs/screenshots/` (15 gambar: mobile, tablet, web).
 
 Logika yang bisa salah tanpa terlihat di layar (aritmetika selisih, hitung mundur, validasi rentang) diuji sebagai fungsi murni lebih dulu, baru ditempel ke widget. Tampilan yang tidak bisa dijamin test — label terpotong, tombol melebar, teks bertumpuk — ditangkap lewat render golden di atas.
 
+Selain test otomatis, [`docs/UJI_FORM.md`](docs/UJI_FORM.md) mencatat **32 kasus uji form** beserta hasil yang diharapkan dan hasil nyatanya: 24 dibuktikan test, 8 dicoba manual (login/daftar sungguhan, kalender, menghapus tanggal, membuka id yang sudah dihapus). Seluruhnya berstatus sesuai.
+
 ## Struktur project
 
 ```

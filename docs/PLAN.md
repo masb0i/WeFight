@@ -598,9 +598,9 @@ Teks hasil ekstraksi: `.workbuddy-ai/tmp/modul/*.txt`.
 ### 15.4 Yang masih perlu tindakan pemilik
 
 - **P6** `flutter run -d chrome` untuk membuktikan DoD Minggu 5 di perangkat nyata.
-- Kasus uji form nomor 5, 6, 9, 10, 17, 18, 31, dan 32 di `UJI_FORM.md` baru bisa
-  dibuktikan setelah aplikasi dijalankan dengan Firebase sungguhan atau lewat
-  aplikasi online; isi kolom "Hasil nyata" setelah dicoba.
+- ~~Kasus uji form nomor 5, 6, 9, 10, 17, 18, 31, dan 32~~ — **selesai** dicoba
+  manual pada 30 Oktober 2026 lewat aplikasi online; seluruh 32 kasus di
+  `UJI_FORM.md` kini berstatus "Sesuai".
 
 ### 15.5 Repository
 
