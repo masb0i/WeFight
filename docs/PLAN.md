@@ -229,13 +229,14 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 - [x] M5-9 `flutter analyze` bersih, `flutter build web` berhasil
 
 ### M6 — Kerangka UI & navigasi
-- [ ] M6-1 `core/widgets/app_scaffold.dart` — bottom nav <600 px, rail ≥600 px, item sama
-- [ ] M6-2 `core/widgets/primary_button.dart`, `empty_state.dart`, `error_text.dart`, `status_chip.dart`
-- [ ] M6-3 `dashboard_screen` shell: AppBar "Dashboard" + area konten
-- [ ] M6-4 `EmptyState` Dashboard: target/catatan belum ada + CTA "Atur Target Timbang" & "Catat Berat"
-- [ ] M6-5 Uji lebar 360 px dan 1440 px — menu tidak berubah isi/urutan
-- [ ] M6-6 Gradient shell + `HeroWeightCard` sesuai UI_SPEC §1.1, §5, §6
-- [ ] M6-7 Splash sederhana (gradient `splash` + wordmark) sebelum Login
+- [x] M6-1 `core/widgets/app_scaffold.dart` — bottom nav <600 px, rail ≥600 px, item sama
+- [x] M6-2 `core/widgets/primary_button.dart`, `empty_state.dart`, `error_text.dart`, `status_chip.dart`
+- [x] M6-3 `dashboard_screen` shell: AppBar "Dashboard" + area konten
+- [x] M6-4 `EmptyState` Dashboard: target/catatan belum ada + CTA "Atur Target Timbang" & "Catat Berat"
+- [x] M6-5 Uji lebar 390 px, 820 px, dan 1440 px — menu tidak berubah isi/urutan
+- [x] M6-6 Gradient shell + `HeroWeightCard` sesuai UI_SPEC §1.1, §5, §6
+- [x] M6-7 Splash sederhana (gradient `splash` + wordmark) sebelum Login
+- [x] M6-8 `AppCard`, `AppTopBar`, dan `tool/render_screens_test.dart` (render layar ke `docs/screenshots/`)
 
 ### M7 — Autentikasi
 - [ ] M7-1 `Firebase.initializeApp` + `flutterfire configure` (project Firebase baru, Spark)
@@ -416,3 +417,11 @@ env -u HTTP_PROXY -u HTTPS_PROXY -u http_proxy -u https_proxy \
 Perintah `flutter analyze`, `flutter build web`, dan `flutter run` tidak terpengaruh.
 
 **Konvensi commit:** `<tipe>(<milestone>): <ringkasan>` — misalnya `feat(M6): app shell responsif`. Tipe: `feat`, `fix`, `chore`, `docs`, `test`, `refactor`.
+
+**Render layar jadi PNG** (tanpa emulator, hasil ke `docs/screenshots/`):
+
+```bash
+flutter test --update-goldens tool/render_screens_test.dart
+```
+
+Skrip ini memuat font Plus Jakarta Sans dan font ikon Material dari SDK. Letaknya di `tool/` (bukan `test/`) supaya `flutter test` biasa tidak ikut membandingkan golden — perbandingan golden rapuh antar mesin. Perbarui gambar setiap kali UI berubah.

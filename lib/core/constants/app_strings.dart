@@ -30,6 +30,31 @@ abstract final class AppStrings {
   static const lihatSemua = 'Lihat Semua';
   static const catatBerat = 'Catat Berat';
 
+  // Splash.
+  static const splashQuote = 'Latih diri, capai berat ideal.';
+
+  // Dashboard.
+  static const sapaan = 'Halo, Fighter!';
+  static const sapaanSub = 'Ayo catat progresmu hari ini.';
+  static const labelBeratSaatIni = 'Berat Badan Saat Ini';
+  static const labelTargetBerat = 'Target Berat';
+  static const satuanKg = 'kg';
+  static const nilaiKosong = '—';
+  static const heroBelumAdaCatatan = 'Belum ada catatan berat';
+
+  static const dashboardKosongJudul = 'Belum ada data';
+  static const dashboardKosongPesan =
+      'Mulai dengan mengatur target timbang, lalu catat berat pertamamu.';
+  static const aturTarget = 'Atur Target Timbang';
+
+  // Riwayat.
+  static const riwayatKosongJudul = 'Belum ada catatan berat';
+  static const riwayatKosongPesan =
+      'Catatan pertamamu akan muncul di sini setelah kamu menimbang.';
+
+  // Profil.
+  static const profilBelumAda = 'Info akun dan pengaturan akan tampil di sini.';
+
   // Placeholder saat pengembangan.
   static const placeholderBelumDibangun = 'Halaman ini belum dibangun.';
 }
