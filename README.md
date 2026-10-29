@@ -156,6 +156,10 @@ flutter test --update-goldens tool/render_screens_test.dart
 
 Hasilnya tersimpan di `docs/screenshots/` (15 gambar: mobile, tablet, web).
 
+Foto layar yang diambil manual — bukan hasil render — disimpan terpisah di
+`docs/bukti/`, mis. [`p6-flutter-run-chrome.png`](docs/bukti/p6-flutter-run-chrome.png)
+sebagai bukti aplikasi berjalan lewat `flutter run -d chrome`.
+
 ## Pengujian
 
 **144 test**, semuanya lulus tanpa Firebase (Auth dan Firestore diganti fake):

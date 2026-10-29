@@ -210,3 +210,11 @@ LULUS  Akun B menulis catatan atas nama akun A ... ditolak aturan
 - **Keputusan/kompromi:** Kolom **Bukti** diisi "dicoba manual, 30 Okt 2026" agar jelas mana yang berasal dari test otomatis dan mana dari pengujian manusia — bukan disamakan seolah semuanya otomatis. Status berkas diubah dari "24 otomatis dan 8 perlu dicoba" menjadi "32 kasus, semua sesuai".
 - **Dampak:** `docs/PLAN.md` §15.4 kini hanya menyisakan **P6** (`flutter run -d chrome`) sebagai tindakan pemilik. Butir kasus uji manual ditandai selesai.
 - **Berikutnya:** tidak ada pekerjaan kode. Menunggu P6.
+
+## 2026-10-30 01:31 — P6 selesai, checklist pemilik habis
+- **Status:** selesai — tidak ada butir tersisa
+- **Yang dikerjakan:** Pemilik menjalankan `flutter run -d chrome` di laptopnya dan mengirim tangkapan layar jendela Chrome pada `localhost` yang menampilkan Dashboard versi web: sidebar gradient dengan label, konten dua kolom (hero + tombol + hari timbang di kiri, grafik tren di kanan), serta angka nyata dari Firestore (73,5 kg, "2.5 kg di atas batas", target 71 kg, chip "14 hari lagi", grafik 6 titik dengan garis batas putus-putus). Gambar disimpan sebagai `docs/bukti/p6-flutter-run-chrome.png` — folder terpisah dari `docs/screenshots/` karena isinya foto layar manual, bukan hasil render golden.
+- **File disentuh:** `docs/bukti/p6-flutter-run-chrome.png` (baru), `docs/{PLAN,PROGRESS,DEMO_UAS}.md`, `README.md`
+- **Keputusan/kompromi:** Bukti manual dipisah foldernya dari render otomatis supaya tidak ada kerancuan saat menilai: `docs/screenshots/` selalu bisa dibuat ulang dengan `--update-goldens`, sedangkan `docs/bukti/` tidak bisa.
+- **Dampak:** `docs/PLAN.md` P6 dicentang dan §15.4 berubah menjadi "Tidak ada lagi". Seluruh checklist proyek (P1–P6, M5–M16, 32 kasus uji form, 144 test) kini tertutup.
+- **Berikutnya:** tidak ada. Proyek siap dinilai.

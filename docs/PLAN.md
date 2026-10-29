@@ -297,7 +297,7 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 - [x] P3 SnackBar pesan status + `AutovalidateMode.onUserInteraction` di form Login & Daftar
 - [x] P4 Tabel uji form ≥5 kasus → [`UJI_FORM.md`](./UJI_FORM.md)
 - [x] P5 Push repository ke GitHub + isi tautan di README → https://github.com/masb0i/WeFight
-- [ ] P6 `flutter run -d chrome` sebagai bukti DoD Minggu 5 (**tindakan pemilik**)
+- [x] P6 `flutter run -d chrome` sebagai bukti DoD Minggu 5 → bukti: [`bukti/p6-flutter-run-chrome.png`](./bukti/p6-flutter-run-chrome.png) (localhost, 30 Okt 2026)
 
 ### M9 — Target Timbang
 - [x] M9-1 Form `batasBerat` (angka, >0) + `tanggalTimbang` (`showDatePicker`)
@@ -597,10 +597,12 @@ Teks hasil ekstraksi: `.workbuddy-ai/tmp/modul/*.txt`.
 
 ### 15.4 Yang masih perlu tindakan pemilik
 
-- **P6** `flutter run -d chrome` untuk membuktikan DoD Minggu 5 di perangkat nyata.
-- ~~Kasus uji form nomor 5, 6, 9, 10, 17, 18, 31, dan 32~~ — **selesai** dicoba
-  manual pada 30 Oktober 2026 lewat aplikasi online; seluruh 32 kasus di
-  `UJI_FORM.md` kini berstatus "Sesuai".
+**Tidak ada lagi.** Semua butir tertutup per 30 Oktober 2026:
+
+- **P6** `flutter run -d chrome` — **selesai**, bukti di
+  [`bukti/p6-flutter-run-chrome.png`](./bukti/p6-flutter-run-chrome.png).
+- Kasus uji form nomor 5, 6, 9, 10, 17, 18, 31, dan 32 — **selesai** dicoba
+  manual; seluruh 32 kasus di `UJI_FORM.md` berstatus "Sesuai".
 
 ### 15.5 Repository
 
