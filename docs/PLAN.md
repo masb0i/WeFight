@@ -291,11 +291,11 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 - [ ] P6 `flutter run -d chrome` sebagai bukti DoD Minggu 5 (**tindakan pemilik**)
 
 ### M9 — Target Timbang
-- [ ] M9-1 Form `batasBerat` (angka, >0) + `tanggalTimbang` (`showDatePicker`)
-- [ ] M9-2 Keduanya boleh kosong; Simpan tetap berhasil
-- [ ] M9-3 Nilai galat tampil di bawah kolom
-- [ ] M9-4 Memuat nilai tersimpan saat dibuka ulang (mode edit)
-- [ ] M9-5 Setelah simpan → kembali ke Dashboard dengan data terbarui
+- [x] M9-1 Form `batasBerat` (angka, >0) + `tanggalTimbang` (`showDatePicker`)
+- [x] M9-2 Keduanya boleh kosong; Simpan tetap berhasil
+- [x] M9-3 Nilai galat tampil di bawah kolom
+- [x] M9-4 Memuat nilai tersimpan saat dibuka ulang (mode edit)
+- [x] M9-5 Setelah simpan → kembali ke Dashboard dengan data terbarui
 
 ### M10 — Catat Berat
 - [ ] M10-1 Form: tanggal (default hari ini), berat, catatan opsional

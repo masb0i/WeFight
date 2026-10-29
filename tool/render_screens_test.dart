@@ -19,6 +19,14 @@ import 'package:wefight/app/router.dart';
 import 'package:wefight/app/theme.dart';
 import 'package:wefight/core/constants/app_routes.dart';
 import 'package:wefight/features/auth/presentation/auth_providers.dart';
+import 'package:wefight/features/target/models/target.dart';
+import 'package:wefight/features/target/presentation/target_providers.dart';
+
+/// Target contoh supaya form terlihat terisi, bukan kosong.
+final _targetContoh = Target(
+  batasBerat: 71,
+  tanggalTimbang: DateTime(2026, 11, 12),
+);
 
 Future<void> _loadFonts(WidgetTester tester) async {
   await tester.runAsync(() async {
@@ -57,6 +65,7 @@ Future<void> _shoot(
   required Size size,
   required String route,
   required String file,
+  Target? target,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1.0;
@@ -64,9 +73,18 @@ Future<void> _shoot(
   final router = buildAppRouter();
   await tester.pumpWidget(
     ProviderScope(
+      // Key unik per layar: tanpa ini ProviderScope dipakai ulang antar
+      // pengambilan gambar, sehingga data dari layar sebelumnya terbawa.
+      key: ValueKey(file),
       overrides: [
         // Tanpa override, provider akan memanggil FirebaseAuth.instance.
         authStateProvider.overrideWith((ref) => Stream<User?>.value(null)),
+        // Jumlah override harus tetap sama di setiap pemanggilan: ProviderScope
+        // menolak daftar override yang panjangnya berubah antar rebuild.
+        currentUidProvider.overrideWithValue('uid-demo'),
+        targetProvider.overrideWith(
+          (ref) => Stream<Target>.value(target ?? const Target()),
+        ),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
@@ -141,6 +159,20 @@ void main() {
       size: const Size(1440, 900),
       route: AppRoutes.riwayat,
       file: '09_riwayat_web.png',
+    );
+    await _shoot(
+      tester,
+      size: const Size(390, 844),
+      route: AppRoutes.target,
+      file: '10_target_mobile.png',
+      target: _targetContoh,
+    );
+    await _shoot(
+      tester,
+      size: const Size(1440, 900),
+      route: AppRoutes.target,
+      file: '11_target_web.png',
+      target: _targetContoh,
     );
   });
 }

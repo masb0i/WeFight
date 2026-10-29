@@ -49,6 +49,9 @@ abstract final class AppStrings {
   static const validasiSandiKosong = 'Kata sandi wajib diisi.';
   static const validasiSandiPendek = 'Kata sandi minimal 6 karakter.';
   static const validasiSandiBeda = 'Kata sandi tidak sama.';
+  static const validasiBeratKosong = 'Berat wajib diisi.';
+  static const validasiBeratAngka = 'Berat harus berupa angka.';
+  static const validasiBeratRentang = 'Berat harus antara 30 dan 200 kg.';
 
   // Pesan status (SnackBar) setelah tombol Kirim — modul Minggu 7.
   static const periksaIsian = 'Periksa kembali isian yang ditandai merah.';
@@ -73,6 +76,21 @@ abstract final class AppStrings {
 
   // Splash.
   static const splashQuote = 'Latih diri, capai berat ideal.';
+
+  // Target Timbang.
+  static const targetSubtitle =
+      'Atur batas berat dan hari timbang. Keduanya boleh dikosongkan.';
+  static const labelBatasBerat = 'Batas Berat (kg)';
+  static const labelTanggalTimbang = 'Tanggal Timbang';
+  static const targetBantuanBatas = 'Boleh dikosongkan. Contoh: 71 atau 71,5';
+  static const targetBantuanTanggal = 'Boleh dikosongkan.';
+  static const pilihTanggal = 'Pilih tanggal';
+  static const hapusTanggal = 'Hapus tanggal';
+  static const targetInfoKosong =
+      'Tanpa target, Dashboard hanya menampilkan berat terakhir tanpa selisih '
+      'dan hitung mundur.';
+  static const targetTersimpan = 'Target timbang tersimpan.';
+  static const simpanGagal = 'Gagal menyimpan. Periksa koneksi lalu coba lagi.';
 
   // Dashboard.
   static const sapaan = 'Halo, Fighter!';

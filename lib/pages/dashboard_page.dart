@@ -11,6 +11,8 @@ import '../core/widgets/app_top_bar.dart';
 import '../core/widgets/empty_state.dart';
 import '../features/auth/presentation/auth_providers.dart';
 import '../features/dashboard/presentation/widgets/hero_weight_card.dart';
+import '../features/target/models/target.dart';
+import '../features/target/presentation/target_providers.dart';
 
 /// H3 Dashboard.
 ///
@@ -25,6 +27,10 @@ class DashboardPage extends ConsumerWidget {
 
     final name = ref.watch(currentUserNameProvider);
     final initial = ref.watch(currentUserInitialProvider);
+
+    // M9: target sudah tampil di kartu utama supaya hasil form langsung
+    // terlihat. Selisih, hitung mundur, dan grafik menyusul di M12–M13.
+    final target = ref.watch(targetProvider).asData?.value ?? const Target();
 
     return AppScaffold(
       index: 0,
@@ -42,7 +48,10 @@ class DashboardPage extends ConsumerWidget {
                   name: name,
                 ),
                 const SizedBox(height: AppSpacing.xl),
-                const HeroWeightCard(),
+                HeroWeightCard(
+                  targetKg: target.batasBerat,
+                  onEdit: () => context.push(AppRoutes.target),
+                ),
                 const SizedBox(height: AppSpacing.gap),
                 AppCard(
                   child: EmptyState(

@@ -16,6 +16,9 @@ import 'package:wefight/features/auth/presentation/auth_providers.dart';
 import 'package:wefight/features/profile/data/user_repository.dart';
 import 'package:wefight/features/profile/models/user_profile.dart';
 import 'package:wefight/features/profile/presentation/profile_providers.dart';
+import 'package:wefight/features/target/data/target_repository.dart';
+import 'package:wefight/features/target/models/target.dart';
+import 'package:wefight/features/target/presentation/target_providers.dart';
 
 /// Repository palsu — tidak menyentuh Firebase sama sekali.
 class FakeAuthRepository implements AuthRepository {
@@ -73,6 +76,26 @@ class FakeUserRepository implements UserRepository {
       : disimpan.firstWhere((profil) => profil.uid == uid);
 }
 
+/// Repository target palsu — mencatat setiap penyimpanan agar bisa diperiksa.
+class FakeTargetRepository implements TargetRepository {
+  FakeTargetRepository({this.awal = const Target()});
+
+  Target awal;
+  final disimpan = <Target>[];
+
+  @override
+  Stream<Target> watch(String uid) => Stream<Target>.value(awal);
+
+  @override
+  Future<Target> ambil(String uid) async => awal;
+
+  @override
+  Future<void> simpan(String uid, Target target) async {
+    disimpan.add(target);
+    awal = target;
+  }
+}
+
 /// Memasang aplikasi dengan ukuran layar tertentu.
 ///
 /// `auth` null berarti guard login dimatikan.
@@ -80,6 +103,8 @@ Future<GoRouter> pumpApp(
   WidgetTester tester, {
   Size size = const Size(390, 844),
   AuthRepository? auth,
+  Target targetAwal = const Target(),
+  FakeTargetRepository? targetRepo,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1.0;
@@ -94,6 +119,14 @@ Future<GoRouter> pumpApp(
           (ref) => auth?.authStateChanges ?? Stream<User?>.value(null),
         ),
         userRepositoryProvider.overrideWithValue(FakeUserRepository()),
+        // Target: tanpa override, provider akan memanggil FirebaseFirestore.
+        currentUidProvider.overrideWithValue('uid-uji'),
+        targetProvider.overrideWith(
+          (ref) => Stream<Target>.value(targetAwal),
+        ),
+        targetRepositoryProvider.overrideWithValue(
+          targetRepo ?? FakeTargetRepository(),
+        ),
       ],
       child: MaterialApp.router(
         theme: buildAppTheme(),
@@ -286,6 +319,66 @@ void main() {
       await tester.pump(); // biarkan SnackBar mulai tampil
 
       expect(find.text(AppStrings.periksaIsian), findsOneWidget);
+    });
+  });
+
+  group('Form Target Timbang', () {
+    testWidgets('kedua kolom kosong tetap bisa disimpan', (tester) async {
+      final repo = FakeTargetRepository();
+      final router = await pumpApp(tester, targetRepo: repo);
+      router.go(AppRoutes.target);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.widgetWithText(FilledButton, AppStrings.simpan));
+      await tester.pumpAndSettle();
+
+      expect(repo.disimpan, hasLength(1));
+      expect(repo.disimpan.single.batasBerat, isNull);
+      expect(repo.disimpan.single.tanggalTimbang, isNull);
+    });
+
+    testWidgets('batas berat di luar rentang ditolak', (tester) async {
+      final repo = FakeTargetRepository();
+      final router = await pumpApp(tester, targetRepo: repo);
+      router.go(AppRoutes.target);
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextFormField).first, '250');
+      await tester.tap(find.widgetWithText(FilledButton, AppStrings.simpan));
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.validasiBeratRentang), findsOneWidget);
+      expect(repo.disimpan, isEmpty);
+    });
+
+    testWidgets('batas berat dengan koma desimal tersimpan sebagai angka',
+        (tester) async {
+      final repo = FakeTargetRepository();
+      final router = await pumpApp(tester, targetRepo: repo);
+      router.go(AppRoutes.target);
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextFormField).first, '71,5');
+      await tester.tap(find.widgetWithText(FilledButton, AppStrings.simpan));
+      await tester.pumpAndSettle();
+
+      expect(repo.disimpan.single.batasBerat, 71.5);
+    });
+
+    testWidgets('nilai target tersimpan langsung terisi saat dibuka',
+        (tester) async {
+      final router = await pumpApp(
+        tester,
+        targetAwal: Target(
+          batasBerat: 71.5,
+          tanggalTimbang: DateTime(2026, 11, 12),
+        ),
+      );
+      router.go(AppRoutes.target);
+      await tester.pumpAndSettle();
+
+      expect(find.text('71.5'), findsOneWidget);
+      expect(find.text('12 November 2026'), findsOneWidget);
     });
   });
 }

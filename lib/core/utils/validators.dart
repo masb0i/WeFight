@@ -32,4 +32,25 @@ abstract final class Validators {
     if (value != asli) return AppStrings.validasiSandiBeda;
     return null;
   }
+
+  /// Berat badan: wajib, angka, 30–200 kg (asumsi yang ditandai di worksheet,
+  /// PLAN §3 poin 2).
+  ///
+  /// Koma desimal diterima karena pengguna Indonesia mengetik `71,5`.
+  static String? berat(String? value) {
+    final teks = (value ?? '').trim().replaceAll(',', '.');
+    if (teks.isEmpty) return AppStrings.validasiBeratKosong;
+
+    final angka = double.tryParse(teks);
+    if (angka == null) return AppStrings.validasiBeratAngka;
+    if (angka < 30 || angka > 200) return AppStrings.validasiBeratRentang;
+    return null;
+  }
+
+  /// Batas berat target: **boleh kosong** (PLAN §3 poin 3). Kalau diisi,
+  /// aturannya sama dengan berat badan — target adalah berat juga.
+  static String? batasBeratOpsional(String? value) {
+    if ((value ?? '').trim().isEmpty) return null;
+    return berat(value);
+  }
 }

@@ -3,8 +3,8 @@
 Latihan 3 modul Minggu 7: setiap aturan validasi diuji, hasil yang diharapkan
 ditulis lebih dulu, lalu hasil nyata dicatat.
 
-Status: **Login** dan **Daftar** sudah diuji. Tabel untuk **Target Timbang** dan
-**Catat Berat** ditambahkan pada M9 dan M10.
+Status: **Login**, **Daftar**, dan **Target Timbang** sudah diuji. Tabel untuk
+**Catat Berat** ditambahkan pada M10.
 
 Cara menjalankan uji otomatis:
 
@@ -47,7 +47,22 @@ Aturan berat badan **30–200 kg** (Catat Berat) sudah disiapkan di
 | 9 | Email sudah terdaftar | email akun demo | "Email sudah terdaftar. Silakan masuk." | **Perlu dicoba manual** di Chrome | — |
 | 10 | Semua valid | nama + email baru + sandi | Akun dibuat, `users/{uid}` tertulis, diarahkan ke Dashboard, SnackBar "Akun berhasil dibuat." | **Perlu dicoba manual** di Chrome | — |
 
-## 4. Catatan pengujian
+## 4. Tabel uji Target Timbang
+
+Halaman H4, dibuka dari kartu Dashboard atau ikon ubah di kartu utama.
+
+| # | Kasus uji | Input | Hasil yang diharapkan | Hasil nyata | Bukti |
+|---|---|---|---|---|---|
+| 11 | Kedua kolom kosong | — | Tersimpan sebagai target kosong (tanpa galat), kembali ke Dashboard | **Sesuai.** `batasBerat` dan `tanggalTimbang` tersimpan null | test `kedua kolom kosong tetap bisa disimpan` |
+| 12 | Batas berat di atas rentang | `250` | "Berat harus antara 30 dan 200 kg."; data tidak tersimpan | **Sesuai** | test `batas berat di luar rentang ditolak` |
+| 13 | Batas berat di bawah rentang | `25` | Pesan yang sama seperti #12 | **Sesuai** (aturan yang sama) | `Validators.berat` |
+| 14 | Batas berat dengan koma desimal | `71,5` | Tersimpan sebagai `71.5` (angka, bukan teks) | **Sesuai** | test `batas berat dengan koma desimal tersimpan sebagai angka` |
+| 15 | Batas berat bukan angka | `abc` | Tidak bisa diketik — `FilteringTextInputFormatter` hanya menerima `0-9 . ,` | **Sesuai** | `target_timbang_page.dart` |
+| 16 | Membuka ulang setelah menyimpan | target 71,5 + 12/11/2026 | Kedua kolom langsung terisi nilai tersimpan | **Sesuai** | test `nilai target tersimpan langsung terisi saat dibuka` |
+| 17 | Memilih tanggal lewat kalender | ketuk kolom tanggal | `showDatePicker` terbuka; hari yang sudah lewat tidak bisa dipilih | **Perlu dicoba manual** — dialog kalender tidak bisa dirender di test | — |
+| 18 | Menghapus tanggal | ketuk ikon × | Kolom tanggal kosong; Simpan menyimpan `tanggalTimbang` null | **Perlu dicoba manual** | — |
+
+## 5. Catatan pengujian
 
 - Uji otomatis memakai `FakeAuthRepository` dan `FakeUserRepository`, jadi tidak
   menyentuh Firebase sama sekali — hasilnya tidak berubah karena koneksi internet.

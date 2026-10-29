@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/app_spacing.dart';
@@ -15,6 +16,7 @@ class AppTextField extends StatelessWidget {
     required this.controller,
     required this.label,
     this.hint,
+    this.helper,
     this.obscure = false,
     this.keyboardType,
     this.textInputAction,
@@ -23,12 +25,19 @@ class AppTextField extends StatelessWidget {
     this.autofillHints,
     this.suffixIcon,
     this.enabled = true,
+    this.readOnly = false,
+    this.onTap,
+    this.inputFormatters,
     this.textCapitalization = TextCapitalization.none,
   });
 
   final TextEditingController controller;
   final String label;
   final String? hint;
+
+  /// Keterangan kecil di bawah kolom, mis. "Boleh dikosongkan".
+  final String? helper;
+
   final bool obscure;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
@@ -37,6 +46,12 @@ class AppTextField extends StatelessWidget {
   final Iterable<String>? autofillHints;
   final Widget? suffixIcon;
   final bool enabled;
+
+  /// Untuk kolom tanggal: isian tidak diketik, tetapi dibuka lewat [onTap].
+  final bool readOnly;
+
+  final VoidCallback? onTap;
+  final List<TextInputFormatter>? inputFormatters;
   final TextCapitalization textCapitalization;
 
   @override
@@ -57,12 +72,16 @@ class AppTextField extends StatelessWidget {
       onFieldSubmitted: onFieldSubmitted,
       autofillHints: autofillHints,
       enabled: enabled,
+      readOnly: readOnly,
+      onTap: onTap,
+      inputFormatters: inputFormatters,
       textCapitalization: textCapitalization,
       style: AppTextStyles.body,
       cursorColor: AppColors.burgundy700,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
+        helperText: helper,
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: enabled ? AppColors.white : AppColors.cream100,
@@ -71,6 +90,8 @@ class AppTextField extends StatelessWidget {
           color: AppColors.burgundy700,
         ),
         hintStyle: AppTextStyles.body.copyWith(color: AppColors.ink300),
+        helperStyle: AppTextStyles.caption.copyWith(color: AppColors.ink500),
+        helperMaxLines: 2,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.lg,
           vertical: AppSpacing.lg,
