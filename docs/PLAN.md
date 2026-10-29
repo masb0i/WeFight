@@ -412,8 +412,8 @@ Setiap kali satu tugas implementasi selesai — sekecil apa pun — lakukan **ti
 
 ## 12. Rujukan
 
-- Worksheet asli: `worksheet/*.docx` (Minggu 1–4 + Tutorial Figma)
-- **Modul praktik dosen: `modulmateri/*.docx` (Minggu 5–7)** — kesesuaian di §15
+- Worksheet asli: `worksheet/*.docx` (Minggu 1–4 + Tutorial Figma) — **hanya ada di mesin pemilik**, tidak dipublikasikan (lihat `.gitignore`)
+- **Modul praktik dosen: `modulmateri/*.docx` (Minggu 5–7)** — kesesuaian di §15, juga tidak dipublikasikan
 - Teks hasil ekstraksi: `.workbuddy-ai/tmp/ws/*.txt`, `.workbuddy-ai/tmp/modul/*.txt`
 - **Spesifikasi UI: [`UI_SPEC.md`](./UI_SPEC.md)**
 - **Panduan setup Firebase: [`FIREBASE_SETUP.md`](./FIREBASE_SETUP.md)**
