@@ -55,7 +55,7 @@ Pemeriksaan kualitas:
 
 ```bash
 flutter analyze
-flutter test                 # 31 test
+flutter test                 # 34 test
 flutter build web            # build produksi
 ```
 
