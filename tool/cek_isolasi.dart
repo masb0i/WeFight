@@ -64,18 +64,25 @@ Future<void> main() async {
       ),
     );
 
-    // 3. Akun B hanya melihat catatannya sendiri (tidak ada kebocoran).
+    // 3. Akun B tidak boleh melihat satu pun dokumen milik akun A.
+    //
+    // Yang diuji adalah **tidak ada irisan** antara daftar A dan daftar B,
+    // bukan "daftar B kosong". Akun B boleh saja punya catatan sendiri
+    // (mis. sisa uji coba manual) tanpa berarti aturannya bocor.
     final catatanB = await api.kueri(
       koleksi: 'weightLogs',
       field: 'uid',
       nilai: b.uid,
       idToken: b.idToken,
     );
+    final idA = catatanA.map(_idDokumen).toSet();
+    final idB = catatanB.map(_idDokumen).toSet();
+    final bocor = idB.intersection(idA);
     _periksa(
-      'Akun B membaca catatan miliknya',
-      catatanB.isEmpty,
-      '${catatanB.length} catatan (memang kosong)',
-      '${catatanB.length} catatan — seharusnya kosong',
+      'Akun B tidak melihat catatan akun A',
+      bocor.isEmpty,
+      '${catatanB.length} catatan miliknya, 0 milik A',
+      'bocor ${bocor.length} dokumen milik A: ${bocor.join(', ')}',
     );
 
     // 4. Dokumen target memakai uid sebagai id, jadi ujinya berbeda.
@@ -130,6 +137,14 @@ void _periksa(String label, bool lulus, String pesanLulus, String pesanGagal) {
     _gagal++;
     stdout.writeln('  GAGAL  $label ... $pesanGagal');
   }
+}
+
+/// Document id dari hasil `runQuery` — segmen terakhir field `name`
+/// (`projects/…/documents/weightLogs/<id>`).
+String _idDokumen(Map<String, dynamic> dokumen) {
+  final nama = (dokumen['name'] as String?) ?? '';
+  final potong = nama.split('/');
+  return potong.isEmpty ? nama : potong.last;
 }
 
 /// Pemeriksaan yang **harus** berakhir dengan penolakan aturan Firestore.

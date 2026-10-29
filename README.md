@@ -21,7 +21,8 @@ Proyek individu mata kuliah **Mobile and Web Application Development**
 - Desain Figma (wireframe Minggu 4):
   https://www.figma.com/design/je3J8Dtm45YIgMLQylv0CP/
 - Repository GitHub: https://github.com/masb0i/WeFight
-- Aplikasi online (Firebase Hosting): _(diisi pada pertemuan 16)_
+- **Aplikasi online (Firebase Hosting): https://wefight-38409.web.app**
+  (cadangan: https://wefight-38409.firebaseapp.com)
 
 ## Masalah yang diselesaikan
 
@@ -43,6 +44,11 @@ Aplikasi **hanya menampilkan data** — tidak memberi saran diet, rehidrasi, ata
 
 ## Cara menjalankan
 
+Versi online tidak perlu instalasi apa pun: buka **https://wefight-38409.web.app**
+lalu masuk dengan akun demo di bawah.
+
+Menjalankan sendiri:
+
 ```bash
 git clone https://github.com/masb0i/WeFight.git
 cd WeFight
@@ -57,6 +63,7 @@ Pemeriksaan kualitas:
 flutter analyze
 flutter test                 # 140 test
 flutter build web            # build produksi
+firebase deploy --only hosting   # unggah build/web ke Hosting
 ```
 
 Tidak ada langkah Firebase tambahan yang wajib: aturan keamanan sudah terpasang
@@ -70,16 +77,20 @@ perangkat terhubung internet serta `firestore.rules` sudah ter-deploy.
 Data simulasi diisi dengan skrip (bukan diketik manual):
 
 ```bash
-dart run tool/seed_demo.dart
+dart run tool/seed_demo.dart              # tulis/perbarui data demo
+dart run tool/seed_demo.dart --bersihkan  # + hapus catatan di luar data demo
+dart run tool/cek_isolasi.dart            # buktikan data terisolasi per akun
 ```
 
-| Akun | Email | Kata sandi |
-|---|---|---|
-| Demo | `fighter@wefight.demo` | `wefight123` |
-| Pembanding (untuk uji isolasi) | `rival@wefight.demo` | `wefight123` |
+| Akun | Email | Kata sandi | Isi |
+|---|---|---|---|
+| Demo | `fighter@wefight.demo` | `wefight123` | Target 71 kg, hari timbang 14 hari ke depan, 6 catatan 76,4 → 73,6 kg |
+| Pembanding | `rival@wefight.demo` | `wefight123` | Kosong — untuk membuktikan data terisolasi |
 
-Akun demo berisi target 71 kg, hari timbang 14 hari ke depan, dan 6 catatan berat
-76,4 → 73,6 kg. Skrip ini idempoten — menjalankannya dua kali menimpa data yang sama.
+Skrip ini idempoten — menjalankannya dua kali menimpa data yang sama, bukan
+menduplikasi. **Jalankan `--bersihkan` sebelum demo** kalau sebelumnya sudah
+mencoba menambah catatan lewat aplikasi: catatan uji coba bisa bertanggal sama
+dengan data demo sehingga Riwayat tampak dobel dan Dashboard memilih angka lain.
 
 ## Tangkapan layar
 

@@ -158,7 +158,7 @@ class DashboardPage extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       AppTopBar(
-                        greeting: 'Halo, ${name.split(' ').first}!',
+                        greeting: AppStrings.sapaanNama(name),
                         initial: initial,
                         name: name,
                       ),

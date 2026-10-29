@@ -117,6 +117,13 @@ abstract final class AppStrings {
   // Dashboard.
   static const sapaan = 'Halo, Fighter!';
   static const sapaanSub = 'Ayo catat progresmu hari ini.';
+
+  /// Sapaan dengan nama depan. Jatuh ke [sapaan] bila nama kosong supaya
+  /// tidak pernah muncul "Halo, !".
+  static String sapaanNama(String nama) {
+    final depan = nama.trim().split(' ').first;
+    return depan.isEmpty ? sapaan : 'Halo, $depan!';
+  }
   static const labelBeratSaatIni = 'Berat Badan Saat Ini';
   static const labelTargetBerat = 'Target Berat';
   static const satuanKg = 'kg';

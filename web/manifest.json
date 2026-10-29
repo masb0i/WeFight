@@ -1,12 +1,12 @@
 {
-    "name": "wefight",
-    "short_name": "wefight",
+    "name": "WeFight: Weight for Fight Tracker",
+    "short_name": "WeFight",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#F8E9DF",
+    "theme_color": "#59171B",
+    "description": "Catat berat badan harian, atur target timbang, dan lihat tren menuju kelas pertandingan.",
+    "orientation": "any",
     "prefer_related_applications": false,
     "icons": [
         {

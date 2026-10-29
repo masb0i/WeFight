@@ -2,6 +2,7 @@
 //
 //   dart run tool/seed_demo.dart
 //   dart run tool/seed_demo.dart --email=fighter@wefight.demo --password=wefight123
+//   dart run tool/seed_demo.dart --bersihkan     # + hapus catatan di luar data demo
 //
 // Kenapa lewat REST dan bukan SDK Firestore:
 //  * SDK butuh konteks Flutter, skrip ini cukup `dart run`.
@@ -102,6 +103,40 @@ Future<void> main(List<String> args) async {
           '(${kunciTanggal(tanggal)}, ${pola.berat} kg)');
     }
 
+    // `--bersihkan` menghapus catatan yang bukan bagian dari data demo.
+    //
+    // Berguna sebelum demo UAS: sisa uji coba manual (mis. catatan yang
+    // ditambahkan lewat aplikasi) bisa membuat dua catatan pada tanggal yang
+    // sama, sehingga Riwayat tampak dobel dan Dashboard memilih angka yang
+    // salah. Default TIDAK menghapus apa pun.
+    if (opsi.bersihkan) {
+      final semua = await api.kueri(
+        koleksi: 'weightLogs',
+        field: 'uid',
+        nilai: sesi.uid,
+        idToken: sesi.idToken,
+      );
+      final idDemo = {
+        for (var i = 0; i < _polaCatatan.length; i++)
+          '$prefix-demo-${(i + 1).toString().padLeft(2, '0')}',
+      };
+      var dihapus = 0;
+      for (final dokumen in semua) {
+        final nama = (dokumen['name'] as String?) ?? '';
+        final id = nama.split('/').last;
+        if (idDemo.contains(id)) continue;
+        await api.hapusDokumen(
+          path: 'weightLogs/$id',
+          idToken: sesi.idToken,
+        );
+        stdout.writeln('  hapus weightLogs/$id ... ok (bukan data demo)');
+        dihapus++;
+      }
+      stdout.writeln(dihapus == 0
+          ? '  tidak ada catatan di luar data demo.'
+          : '  $dihapus catatan di luar data demo dihapus.');
+    }
+
     stdout.writeln('');
     stdout.writeln('Selesai. Masuk ke aplikasi dengan:');
     stdout.writeln('  email     : ${opsi.email}');
@@ -130,12 +165,14 @@ String _petunjuk(ApiException e) {
   };
 }
 
-({String email, String password}) _bacaArgumen(List<String> args) {
+({String email, String password, bool bersihkan}) _bacaArgumen(List<String> args) {
   var email = _defaultEmail;
   var password = _defaultPassword;
+  var bersihkan = false;
   for (final arg in args) {
     if (arg.startsWith('--email=')) email = arg.substring(8);
     if (arg.startsWith('--password=')) password = arg.substring(11);
+    if (arg == '--bersihkan') bersihkan = true;
   }
-  return (email: email, password: password);
+  return (email: email, password: password, bersihkan: bersihkan);
 }

@@ -195,6 +195,20 @@ class FirebaseRest {
     return teks.isEmpty ? const {} : jsonDecode(teks) as Map<String, dynamic>;
   }
 
+  /// Menghapus satu dokumen berdasarkan path lengkap, mis. `weightLogs/abc`.
+  Future<void> hapusDokumen({
+    required String path,
+    required String idToken,
+  }) async {
+    final uri = _dokumen.replace(path: '${_dokumen.path}/$path');
+    await _minta(
+      'DELETE',
+      uri,
+      null,
+      {'Authorization': 'Bearer $idToken'},
+    );
+  }
+
   Future<Map<String, dynamic>> _post(
     String url,
     Map<String, dynamic> body,

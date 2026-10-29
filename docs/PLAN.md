@@ -347,10 +347,13 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 - [x] M15-5 `flutter analyze` bersih, `flutter test` hijau
 
 ### M16 — Deploy & penutupan
-- [ ] M16-1 `flutter build web` + `firebase deploy --only hosting`
-- [ ] M16-2 README: cara jalan, akun demo, screenshot, link hosting
-- [ ] M16-3 Data simulasi siap untuk demo UAS
-- [ ] M16-4 Jalankan ulang checklist §10
+- [x] M16-1 `flutter build web` + `firebase deploy --only hosting`
+- [x] M16-2 README: cara jalan, akun demo, screenshot, link hosting
+- [x] M16-3 Data simulasi siap untuk demo UAS
+- [x] M16-4 Jalankan ulang checklist §10
+
+**URL produksi:** https://wefight-38409.web.app (cadangan https://wefight-38409.firebaseapp.com)
+Deploy ulang kapan saja: `flutter build web && firebase deploy --only hosting`.
 
 ---
 
@@ -478,7 +481,9 @@ Skrip ini memuat font Plus Jakarta Sans dan font ikon Material dari SDK. Letakny
 ```bash
 firebase deploy --only firestore:rules      # pasang aturan keamanan dari firestore.rules
 dart run tool/seed_demo.dart                # isi akun demo + 6 catatan berat (idempoten)
+dart run tool/seed_demo.dart --bersihkan    # + hapus catatan di luar data demo
 dart run tool/cek_isolasi.dart              # buktikan akun B tidak bisa melihat data akun A
+flutter build web && firebase deploy --only hosting   # terbitkan ke wefight-38409.web.app
 ```
 
 Akun demo: `fighter@wefight.demo` / `wefight123` · akun pembanding: `rival@wefight.demo` / `wefight123`.
