@@ -53,3 +53,6 @@ app.*.map.json
 
 # Agent workspace (bukan bagian aplikasi)
 .workbuddy-ai/
+
+# Materi kuliah dari dosen — tidak ikut di-commit (bukan bagian aplikasi)
+/modulmateri/

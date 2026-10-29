@@ -10,14 +10,14 @@ import '../core/constants/app_spacing.dart';
 import '../core/constants/app_strings.dart';
 import '../core/constants/app_text_styles.dart';
 import '../features/auth/data/auth_repository.dart';
-import '../features/auth/presentation/login_screen.dart';
-import '../features/auth/presentation/register_screen.dart';
-import '../features/dashboard/presentation/dashboard_screen.dart';
-import '../features/profile/presentation/profil_screen.dart';
-import '../features/splash/presentation/splash_screen.dart';
-import '../features/target/presentation/target_screen.dart';
-import '../features/weight_log/presentation/catat_berat_screen.dart';
-import '../features/weight_log/presentation/riwayat_berat_screen.dart';
+import '../pages/login_page.dart';
+import '../pages/daftar_page.dart';
+import '../pages/dashboard_page.dart';
+import '../pages/profil_page.dart';
+import '../pages/splash_page.dart';
+import '../pages/target_timbang_page.dart';
+import '../pages/catat_berat_page.dart';
+import '../pages/riwayat_berat_page.dart';
 
 /// Membuat router baru.
 ///
@@ -33,49 +33,49 @@ GoRouter buildAppRouter({AuthRepository? auth}) {
       GoRoute(
         path: AppRoutes.splash,
         name: 'splash',
-        builder: (context, state) => const SplashScreen(),
+        builder: (context, state) => const SplashPage(),
       ),
       GoRoute(
         path: AppRoutes.login,
         name: 'login',
-        builder: (context, state) => const LoginScreen(),
+        builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
         path: AppRoutes.register,
         name: 'register',
-        builder: (context, state) => const RegisterScreen(),
+        builder: (context, state) => const DaftarPage(),
       ),
       GoRoute(
         path: AppRoutes.dashboard,
         name: 'dashboard',
-        builder: (context, state) => const DashboardScreen(),
+        builder: (context, state) => const DashboardPage(),
       ),
       GoRoute(
         path: AppRoutes.target,
         name: 'target',
-        builder: (context, state) => const TargetScreen(),
+        builder: (context, state) => const TargetTimbangPage(),
       ),
       GoRoute(
         path: AppRoutes.catatBerat,
         name: 'catatBerat',
-        builder: (context, state) => const CatatBeratScreen(),
+        builder: (context, state) => const CatatBeratPage(),
       ),
       GoRoute(
         path: AppRoutes.editBerat,
         name: 'editBerat',
-        builder: (context, state) => CatatBeratScreen(
+        builder: (context, state) => CatatBeratPage(
           logId: state.pathParameters['id'],
         ),
       ),
       GoRoute(
         path: AppRoutes.riwayat,
         name: 'riwayat',
-        builder: (context, state) => const RiwayatBeratScreen(),
+        builder: (context, state) => const RiwayatBeratPage(),
       ),
       GoRoute(
         path: AppRoutes.profil,
         name: 'profil',
-        builder: (context, state) => const ProfilScreen(),
+        builder: (context, state) => const ProfilPage(),
       ),
     ],
     errorBuilder: (context, state) =>

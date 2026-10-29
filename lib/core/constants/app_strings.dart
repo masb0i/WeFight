@@ -50,6 +50,11 @@ abstract final class AppStrings {
   static const validasiSandiPendek = 'Kata sandi minimal 6 karakter.';
   static const validasiSandiBeda = 'Kata sandi tidak sama.';
 
+  // Pesan status (SnackBar) setelah tombol Kirim — modul Minggu 7.
+  static const periksaIsian = 'Periksa kembali isian yang ditandai merah.';
+  static const loginBerhasil = 'Berhasil masuk.';
+  static const daftarBerhasil = 'Akun berhasil dibuat.';
+
   // Pesan galat autentikasi.
   static const authEmailSalah = 'Email atau kata sandi salah.';
   static const authEmailTerdaftar = 'Email sudah terdaftar. Silakan masuk.';

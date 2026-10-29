@@ -3,25 +3,25 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_gradients.dart';
-import '../../../core/constants/app_routes.dart';
-import '../../../core/constants/app_spacing.dart';
-import '../../../core/constants/app_strings.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../core/constants/app_colors.dart';
+import '../core/constants/app_gradients.dart';
+import '../core/constants/app_routes.dart';
+import '../core/constants/app_spacing.dart';
+import '../core/constants/app_strings.dart';
+import '../core/constants/app_text_styles.dart';
 
 /// Layar pembuka.
 ///
 /// Bukan halaman bernavigasi — hanya tampil sebentar lalu pindah ke Login.
 /// Sumber: `docs/UI_SPEC.md` §6.
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+class SplashPage extends StatefulWidget {
+  const SplashPage({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashPageState extends State<SplashPage> {
   static const _durasi = Duration(milliseconds: 1200);
   Timer? _timer;
 

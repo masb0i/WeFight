@@ -100,7 +100,9 @@ weightLogs/{autoId}    { tanggal (yyyy-MM-dd), berat (num), catatan?, dibuatPada
 
 ## 4. Arsitektur & struktur folder
 
-Pola: **feature-first**, satu arah `presentation → data`, tanpa lapisan domain terpisah (terlalu berat untuk proyek individu).
+Pola: **satu file per halaman di `lib/pages/`** (sesuai modul Minggu 6) + **lapisan data
+per fitur** di `lib/features/` (keputusan D15). Arah dependensi satu arah:
+`pages → features/presentation (provider) → features/data → Firestore`.
 
 ```
 lib/
@@ -120,19 +122,33 @@ lib/
       date_format.dart          # format & parse yyyy-MM-dd
     widgets/
       app_scaffold.dart         # AppBar + NavigationBar/NavigationRail responsif
+      app_snackbar.dart         # pesan status berhasil/galat (modul Minggu 7)
       primary_button.dart
       empty_state.dart          # ikon + judul + penjelasan + CTA
       error_text.dart
       status_chip.dart
+  pages/                        # SATU FILE PER HALAMAN — H1–H7
+    splash_page.dart            # Splash
+    login_page.dart             # H1 Login
+    daftar_page.dart            # H2 Daftar
+    dashboard_page.dart         # H3 Dashboard
+    target_timbang_page.dart    # H4 Target Timbang
+    catat_berat_page.dart       # H5 Catat Berat
+    riwayat_berat_page.dart     # H6 Riwayat Berat
+    profil_page.dart            # H7 Profil
   features/
-    auth/       data/auth_repository.dart, presentation/{login_screen,register_screen,auth_controller}
-    target/     data/target_repository.dart, models/target.dart, presentation/{target_screen,target_controller}
-    weight_log/ data/weight_log_repository.dart, models/weight_log.dart,
-                presentation/{catat_berat_screen,riwayat_berat_screen,weight_log_controller}
-    dashboard/  presentation/{dashboard_screen, widgets/{ringkasan_kartu,tren_chart,ajakan_target}}
-    profile/    data/user_repository.dart, models/user_profile.dart,
-                presentation/profil_screen.dart
+    auth/       data/auth_repository.dart, presentation/auth_providers.dart,
+                presentation/widgets/auth_shell.dart
+    target/     models/target.dart, data/target_repository.dart,
+                presentation/target_providers.dart
+    weight_log/ models/weight_log.dart, data/weight_log_repository.dart,
+                presentation/weight_log_providers.dart
+    dashboard/  presentation/widgets/hero_weight_card.dart
+    profile/    models/user_profile.dart, data/user_repository.dart,
+                presentation/profile_providers.dart
 ```
+
+Halaman hanya berisi tampilan; query Firestore tidak pernah ditulis di `lib/pages/`.
 
 **Aturan penulisan kode** (dari panduan Flutter):
 - `const` constructor pada semua widget statis; pecah widget besar ke file sendiri.
@@ -161,6 +177,9 @@ lib/
 | D12 | Dokumen `users/{uid}` **ditulis saat Daftar** (nama dari form + email + `dibuatPada`), lewat `UserRepository` | Skema §1.3 jadi lengkap dan aturan keamanan punya contoh koleksi milik pengguna. Nama di UI tetap dibaca dari `displayName` Auth supaya Dashboard tidak perlu pembacaan tambahan | disetujui (2026-10-29) |
 | D13 | Data simulasi diisi skrip **`tool/seed_demo.dart`** (REST API + API key publik), bukan tombol dev di aplikasi | Tidak menambah tombol yang tidak ada di worksheet, tidak perlu service account (Spark), dan idempoten sehingga bisa diulang saat demo | disetujui (2026-10-29) |
 | D14 | Aturan keamanan disimpan di **`firestore.rules`** dan di-deploy lewat `firebase deploy --only firestore:rules`; isi yang sama tetap ditampilkan di FIREBASE_SETUP §D untuk pemasangan manual | Satu sumber kebenaran yang bisa di-diff di git, tidak bergantung pada tempel-tempel di console | disetujui (2026-10-29) |
+| D15 | Tujuh halaman dipindah ke **`lib/pages/`** dengan nama `*_page.dart`, kelas `*Page`; lapisan data tetap di `lib/features/` | Modul Minggu 6 menuntut "satu file per halaman di `lib/pages/`". Memisahkan tampilan dari data membuat kode Firestore tidak tercampur dengan kode UI | disetujui (2026-10-29) |
+| D16 | Warna primer **tetap burgundy `#59171B`**, bukan navy `#1F3A5F` style guide mini Minggu 4 | Modul menyebut warna style guide sebagai opsional; pemilik sudah memilih gambar referensi sendiri (D9). Alasan penggantian ditulis di README supaya bisa dipertanggungjawabkan saat penilaian | disetujui (2026-10-29) |
+| D17 | Setiap form memakai **`AutovalidateMode.onUserInteraction`** + **SnackBar** pesan status (`AppSnackBar`) untuk berhasil dan gagal | Rubrik Minggu 7 menilai "validasi & pesan 25%" termasuk pesan status. Inline `ErrorText` tetap dipakai sebagai penjelas tambahan | disetujui (2026-10-29) |
 
 **Belum diputuskan / perlu tanya pemilik:**
 - (tidak ada)
@@ -260,6 +279,16 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 - [x] M8-3 `weight_log_repository` (watch by uid, add, update, delete, cek tanggal sudah ada)
 - [x] M8-4 Firestore rules: hanya pemilik uid (uji dengan 2 akun)
 - [x] M8-5 Seed data simulasi 5–7 catatan berat untuk akun demo
+
+### P — Penyesuaian modul praktik Minggu 5–7
+> Modul dosen baru diterima 2026-10-29 (folder `modulmateri/`). Pemeriksaan lengkap: §15.
+
+- [x] P1 README berisi identitas, deskripsi, tautan Figma, cara menjalankan, screenshot
+- [x] P2 Pindahkan 7 halaman ke `lib/pages/` + ganti nama kelas menjadi `*Page`
+- [x] P3 SnackBar pesan status + `AutovalidateMode.onUserInteraction` di form Login & Daftar
+- [x] P4 Tabel uji form ≥5 kasus → [`UJI_FORM.md`](./UJI_FORM.md)
+- [ ] P5 Push repository ke GitHub + isi tautan di README (**tindakan pemilik**)
+- [ ] P6 `flutter run -d chrome` sebagai bukti DoD Minggu 5 (**tindakan pemilik**)
 
 ### M9 — Target Timbang
 - [ ] M9-1 Form `batasBerat` (angka, >0) + `tanggalTimbang` (`showDatePicker`)
@@ -372,7 +401,8 @@ Setiap kali satu tugas implementasi selesai — sekecil apa pun — lakukan **ti
 ## 12. Rujukan
 
 - Worksheet asli: `worksheet/*.docx` (Minggu 1–4 + Tutorial Figma)
-- Teks hasil ekstraksi: `.workbuddy-ai/tmp/ws/*.txt`
+- **Modul praktik dosen: `modulmateri/*.docx` (Minggu 5–7)** — kesesuaian di §15
+- Teks hasil ekstraksi: `.workbuddy-ai/tmp/ws/*.txt`, `.workbuddy-ai/tmp/modul/*.txt`
 - **Spesifikasi UI: [`UI_SPEC.md`](./UI_SPEC.md)**
 - **Panduan setup Firebase: [`FIREBASE_SETUP.md`](./FIREBASE_SETUP.md)**
 - **Gambar referensi UI: `docs/ui-reference/`** (palet gradient, dashboard web, 8 layar mobile)
@@ -452,3 +482,52 @@ Aturan yang memakai `request.data.uid` **selalu** menolak dengan
 `request.resource.data` (isi dokumen setelah ditulis). Gejalanya menipu: dokumen
 yang aturannya memakai id (`targets/{uid}`) tetap berhasil, hanya koleksi yang
 memeriksa field (`weightLogs`) yang gagal.
+
+---
+
+## 15. Kesesuaian dengan modul praktik dosen (Minggu 5–7)
+
+Sumber: `modulmateri/` — tiga docx (`modul-minggu-05-setup-project-repository`,
+`modul-minggu-06-widget-layout-navigasi`, `modul-minggu-07-form-validasi-state`).
+Folder itu **tidak di-commit** (materi dosen, bukan bagian aplikasi — ada di `.gitignore`).
+Teks hasil ekstraksi: `.workbuddy-ai/tmp/modul/*.txt`.
+
+### 15.1 Sudah sesuai
+
+| Tuntutan modul | Bukti di proyek |
+|---|---|
+| Project berjalan, judul & beranda sesuai aplikasi | `lib/main.dart`, `AppStrings.appName` |
+| Repository + ≥2 commit dengan pesan jelas | 7 commit, konvensi `feat(M6): …` (§14) |
+| Satu file per halaman, judul AppBar = nama halaman final | `lib/pages/` (8 berkas), nama dari §1.1 |
+| `NavigationBar` untuk tujuan utama | `AppScaffold` <600 px |
+| `NavigationRail` di layar lebar (opsional di modul) | `AppScaffold` ≥600 px + sidebar penuh ≥1024 px |
+| Push/pop ke halaman turunan | `context.push` (GoRouter) ke `/weight/new`, `/target` |
+| Keadaan kosong, bukan hanya jalur bahagia | `EmptyState` di Dashboard & Riwayat |
+| `Form` + `GlobalKey<FormState>` + `validator` + controller di-dispose | `login_page.dart`, `daftar_page.dart` |
+| `flutter analyze` bersih, test lulus | 34/34 |
+
+### 15.2 Selisih yang sudah diselesaikan (blok P di §8)
+
+| Tuntutan | Sebelum | Sesudah |
+|---|---|---|
+| README lengkap + screenshot | README bawaan `flutter create` | `README.md` baru + 5 gambar dari `docs/screenshots/` |
+| Halaman di `lib/pages/` | `lib/features/*/presentation/*_screen.dart` | `lib/pages/*_page.dart`, kelas `*Page` (D15) |
+| SnackBar pesan status | tidak ada | `AppSnackBar` di Login & Daftar (D17) |
+| `AutovalidateMode.onUserInteraction` | tidak ada | dipasang di kedua `Form` |
+| Tabel uji form ≥5 kasus | tidak ada | `docs/UJI_FORM.md` (10 kasus) |
+
+### 15.3 Selisih yang diterima sengaja
+
+| Hal | Modul | Proyek | Alasan |
+|---|---|---|---|
+| Warna primer | navy `#1F3A5F` (style guide M4) | burgundy `#59171B` (gambar referensi) | D16 — modul menyebutnya opsional |
+| Urutan Firebase | setelah UTS | sudah aktif di pertemuan 7 | Lebih cepat, bukan menambah fitur; daftar fitur tetap §2 |
+| Paket pub.dev | hanya widget bawaan di Minggu 6–7 | Riverpod, GoRouter, fl_chart | Menggantikan kode yang harus ditulis sendiri; menghemat waktu |
+| Penyimpanan data | list di memori (hilang saat restart) | Cloud Firestore | Data harus bertahan antar perangkat; sudah jadi scope Must |
+
+### 15.4 Yang masih perlu tindakan pemilik
+
+- **P5** Push ke GitHub + tautan di README (syarat UTS).
+- **P6** `flutter run -d chrome` untuk membuktikan DoD Minggu 5 di perangkat nyata.
+- Kasus uji form nomor 5, 6, 9, 10 di `UJI_FORM.md` baru bisa dibuktikan setelah
+  aplikasi dijalankan dengan Firebase sungguhan.

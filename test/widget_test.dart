@@ -245,5 +245,47 @@ void main() {
 
       expect(find.text(AppStrings.registerSubtitle), findsOneWidget);
     });
+
+    testWidgets('Login menolak kata sandi kurang dari 6 karakter',
+        (tester) async {
+      final router = await pumpApp(tester);
+      router.go(AppRoutes.login);
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextFormField).at(0), 'a@b.com');
+      await tester.enterText(find.byType(TextFormField).at(1), '123');
+      await tester.tap(find.widgetWithText(FilledButton, AppStrings.masuk));
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.validasiSandiPendek), findsOneWidget);
+    });
+
+    testWidgets('Daftar menolak kolom nama kosong', (tester) async {
+      final router = await pumpApp(tester);
+      router.go(AppRoutes.register);
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextFormField).at(1), 'a@b.com');
+      await tester.enterText(find.byType(TextFormField).at(2), '123456');
+      await tester.enterText(find.byType(TextFormField).at(3), '123456');
+      await tester.tap(
+        find.widgetWithText(FilledButton, AppStrings.halamanDaftar),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.validasiNamaKosong), findsOneWidget);
+    });
+
+    testWidgets('Kirim form tidak valid menampilkan pesan status',
+        (tester) async {
+      final router = await pumpApp(tester);
+      router.go(AppRoutes.login);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.widgetWithText(FilledButton, AppStrings.masuk));
+      await tester.pump(); // biarkan SnackBar mulai tampil
+
+      expect(find.text(AppStrings.periksaIsian), findsOneWidget);
+    });
   });
 }

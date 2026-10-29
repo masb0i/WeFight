@@ -2,30 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_routes.dart';
-import '../../../core/constants/app_spacing.dart';
-import '../../../core/constants/app_strings.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../core/utils/validators.dart';
-import '../../../core/widgets/app_text_field.dart';
-import '../../../core/widgets/error_text.dart';
-import '../../../core/widgets/primary_button.dart';
-import '../../profile/models/user_profile.dart';
-import '../../profile/presentation/profile_providers.dart';
-import '../data/auth_error.dart';
-import 'auth_providers.dart';
-import 'widgets/auth_shell.dart';
+import '../core/constants/app_colors.dart';
+import '../core/constants/app_routes.dart';
+import '../core/constants/app_spacing.dart';
+import '../core/constants/app_strings.dart';
+import '../core/constants/app_text_styles.dart';
+import '../core/utils/validators.dart';
+import '../core/widgets/app_text_field.dart';
+import '../core/widgets/app_snackbar.dart';
+import '../core/widgets/error_text.dart';
+import '../core/widgets/primary_button.dart';
+import '../features/profile/models/user_profile.dart';
+import '../features/profile/presentation/profile_providers.dart';
+import '../features/auth/data/auth_error.dart';
+import '../features/auth/presentation/auth_providers.dart';
+import '../features/auth/presentation/widgets/auth_shell.dart';
 
 /// H2 Daftar — prioritas Should.
-class RegisterScreen extends ConsumerStatefulWidget {
-  const RegisterScreen({super.key});
+class DaftarPage extends ConsumerStatefulWidget {
+  const DaftarPage({super.key});
 
   @override
-  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
+  ConsumerState<DaftarPage> createState() => _DaftarPageState();
 }
 
-class _RegisterScreenState extends ConsumerState<RegisterScreen> {
+class _DaftarPageState extends ConsumerState<DaftarPage> {
   final _formKey = GlobalKey<FormState>();
   final _nama = TextEditingController();
   final _email = TextEditingController();
@@ -46,7 +47,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   Future<void> _submit() async {
     setState(() => _error = null);
-    if (!(_formKey.currentState?.validate() ?? false)) return;
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      AppSnackBar.galat(context, AppStrings.periksaIsian);
+      return;
+    }
 
     setState(() => _loading = true);
     try {
@@ -58,9 +62,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       );
       await _simpanProfil(auth.currentUid);
       // Navigasi ditangani redirect router.
+      if (mounted) AppSnackBar.sukses(context, AppStrings.daftarBerhasil);
     } catch (e) {
       if (!mounted) return;
-      setState(() => _error = authErrorMessage(e));
+      final pesan = authErrorMessage(e);
+      setState(() => _error = pesan);
+      AppSnackBar.galat(context, pesan);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -111,6 +118,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       ),
       child: Form(
         key: _formKey,
+        // Pesan kesalahan ikut diperbarui begitu kolom diubah (modul Minggu 7).
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

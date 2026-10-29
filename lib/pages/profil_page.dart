@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_routes.dart';
-import '../../../core/constants/app_spacing.dart';
-import '../../../core/constants/app_strings.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../core/widgets/app_card.dart';
-import '../../../core/widgets/app_scaffold.dart';
-import '../../auth/presentation/auth_providers.dart';
+import '../core/constants/app_colors.dart';
+import '../core/constants/app_routes.dart';
+import '../core/constants/app_spacing.dart';
+import '../core/constants/app_strings.dart';
+import '../core/constants/app_text_styles.dart';
+import '../core/widgets/app_card.dart';
+import '../core/widgets/app_scaffold.dart';
+import '../features/auth/presentation/auth_providers.dart';
 
 /// H7 Profil — prioritas Should.
-class ProfilScreen extends ConsumerWidget {
-  const ProfilScreen({super.key});
+class ProfilPage extends ConsumerWidget {
+  const ProfilPage({super.key});
 
   Future<void> _konfirmasiKeluar(BuildContext context, WidgetRef ref) async {
     final keluar = await showDialog<bool>(

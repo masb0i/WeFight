@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/app_strings.dart';
-import '../../../core/widgets/placeholder_screen.dart';
+import '../core/constants/app_strings.dart';
+import '../core/widgets/placeholder_screen.dart';
 
 /// H4 Target Timbang.
-class TargetScreen extends StatelessWidget {
-  const TargetScreen({super.key});
+class TargetTimbangPage extends StatelessWidget {
+  const TargetTimbangPage({super.key});
 
   @override
   Widget build(BuildContext context) {
