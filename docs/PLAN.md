@@ -218,15 +218,15 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 ## 8. Checklist tugas
 
 ### M5 — Fondasi proyek
-- [ ] M5-1 `git init` + `.gitignore` Flutter + commit pertama
-- [ ] M5-2 Bersihkan `main.dart` dari counter app; `main()` siap `runApp`
-- [ ] M5-3 Tambah dependency: `flutter_riverpod`, `go_router`, `intl`, `fl_chart`, `firebase_core`, `firebase_auth`, `cloud_firestore`
-- [ ] M5-4 Buat struktur folder §4 (file kosong boleh)
-- [ ] M5-5 `core/constants/` — `app_colors.dart`, `app_spacing.dart`, `app_gradients.dart` sesuai UI_SPEC §1
-- [ ] M5-6 `app/theme.dart` — `ColorScheme` eksplisit (bukan `fromSeed`) + `TextTheme` Plus Jakarta Sans
-- [ ] M5-7 Bundel font `assets/fonts/PlusJakartaSans-*.ttf` + daftar di `pubspec.yaml`
-- [ ] M5-8 `app/router.dart` — 7 route + placeholder screen
-- [ ] M5-9 `flutter analyze` bersih, `flutter run` berhasil di 1 device
+- [x] M5-1 `git init` + `.gitignore` Flutter + commit pertama
+- [x] M5-2 Bersihkan `main.dart` dari counter app; `main()` siap `runApp`
+- [x] M5-3 Tambah dependency: `flutter_riverpod`, `go_router`, `intl`, `fl_chart`, `firebase_core`, `firebase_auth`, `cloud_firestore`
+- [x] M5-4 Buat struktur folder §4 (file kosong boleh)
+- [x] M5-5 `core/constants/` — `app_colors.dart`, `app_spacing.dart`, `app_gradients.dart` sesuai UI_SPEC §1
+- [x] M5-6 `app/theme.dart` — `ColorScheme` eksplisit (bukan `fromSeed`) + `TextTheme` Plus Jakarta Sans
+- [x] M5-7 Bundel font `assets/fonts/PlusJakartaSans-*.ttf` + daftar di `pubspec.yaml`
+- [x] M5-8 `app/router.dart` — 7 route + placeholder screen
+- [x] M5-9 `flutter analyze` bersih, `flutter build web` berhasil
 
 ### M6 — Kerangka UI & navigasi
 - [ ] M6-1 `core/widgets/app_scaffold.dart` — bottom nav <600 px, rail ≥600 px, item sama
@@ -392,3 +392,27 @@ FAB "Catat Berat" menempel di tengah bar sebagai **aksi**, bukan tujuan menu.
 Web: item yang sama di sidebar kiri, FAB diganti tombol utama di area konten.
 
 **Konsekuensi yang sudah diterima:** tampilan tidak akan identik dengan referensi di bagian jadwal. Sisanya (gradient, kartu, hero, grafik, tabel, sidebar, ring progres) diikuti penuh.
+
+---
+
+## 14. Catatan lingkungan pengembangan
+
+| Hal | Nilai / perintah |
+|---|---|
+| Flutter | 3.47.7 stable · Dart 3.13.5 |
+| Versi package terkunci | `flutter_riverpod ^3.4.3` · `go_router ^18.1.1` · `intl ^0.20.3` · `fl_chart ^1.3.0` · `firebase_core ^5.1.0` · `firebase_auth ^7.0.1` · `cloud_firestore ^7.1.0` |
+| Font | Plus Jakarta Sans, 5 weight, dibundel di `assets/fonts/` |
+
+**Jebakan: `flutter test` gagal dengan `WebSocketException: Invalid WebSocket upgrade request`.**
+Penyebab: variabel `HTTP_PROXY`/`HTTPS_PROXY` di shell mencegat koneksi loopback ke `flutter_tester`.
+Solusi — jalankan tanpa proxy:
+
+```bash
+env -u HTTP_PROXY -u HTTPS_PROXY -u http_proxy -u https_proxy \
+    NO_PROXY="127.0.0.1,localhost" no_proxy="127.0.0.1,localhost" \
+    flutter test
+```
+
+Perintah `flutter analyze`, `flutter build web`, dan `flutter run` tidak terpengaruh.
+
+**Konvensi commit:** `<tipe>(<milestone>): <ringkasan>` — misalnya `feat(M6): app shell responsif`. Tipe: `feat`, `fix`, `chore`, `docs`, `test`, `refactor`.
