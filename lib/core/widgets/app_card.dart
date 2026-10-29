@@ -7,6 +7,9 @@ import '../constants/app_spacing.dart';
 ///
 /// Referensi UI membedakan permukaan lewat warna + garis 1 px, bukan bayangan
 /// tebal. Lihat `docs/UI_SPEC.md` §3.
+///
+/// Kartu berwarna solid memakai `Material` sebagai latar, bukan `DecoratedBox`,
+/// supaya ripple `InkWell`/`ListTile` di dalamnya tetap terlihat.
 class AppCard extends StatelessWidget {
   const AppCard({
     super.key,
@@ -27,28 +30,38 @@ class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final decoration = BoxDecoration(
-      color: gradient == null ? color : null,
-      gradient: gradient,
-      borderRadius: BorderRadius.circular(borderRadius),
-      border: Border.all(color: AppColors.border, width: 1),
-    );
+    final radius = BorderRadius.circular(borderRadius);
 
-    final content = Padding(padding: padding, child: child);
+    Widget content = Padding(padding: padding, child: child);
+    if (onTap != null) {
+      content = InkWell(
+        onTap: onTap,
+        borderRadius: radius,
+        child: content,
+      );
+    }
 
-    if (onTap == null) {
-      return DecoratedBox(decoration: decoration, child: content);
+    if (gradient != null) {
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: gradient,
+          borderRadius: radius,
+          border: Border.all(color: AppColors.border, width: 1),
+        ),
+        child: content,
+      );
     }
 
     return Material(
-      color: Colors.transparent,
-      child: Ink(
-        decoration: decoration,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(borderRadius),
-          child: content,
+      color: color,
+      borderRadius: radius,
+      clipBehavior: Clip.antiAlias,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: radius,
+          border: Border.all(color: AppColors.border, width: 1),
         ),
+        child: content,
       ),
     );
   }

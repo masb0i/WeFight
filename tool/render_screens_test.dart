@@ -13,9 +13,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:wefight/app/router.dart';
 import 'package:wefight/app/theme.dart';
 import 'package:wefight/core/constants/app_routes.dart';
+import 'package:wefight/features/auth/presentation/auth_providers.dart';
 
 Future<void> _loadFonts(WidgetTester tester) async {
   await tester.runAsync(() async {
@@ -61,6 +64,10 @@ Future<void> _shoot(
   final router = buildAppRouter();
   await tester.pumpWidget(
     ProviderScope(
+      overrides: [
+        // Tanpa override, provider akan memanggil FirebaseAuth.instance.
+        authStateProvider.overrideWith((ref) => Stream<User?>.value(null)),
+      ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         theme: buildAppTheme(),
@@ -96,32 +103,44 @@ void main() {
     await _shoot(
       tester,
       size: const Size(390, 844),
+      route: AppRoutes.register,
+      file: '03_daftar_mobile.png',
+    );
+    await _shoot(
+      tester,
+      size: const Size(390, 844),
       route: AppRoutes.dashboard,
-      file: '03_dashboard_mobile.png',
+      file: '04_dashboard_mobile.png',
     );
     await _shoot(
       tester,
       size: const Size(390, 844),
       route: AppRoutes.riwayat,
-      file: '04_riwayat_mobile.png',
+      file: '05_riwayat_mobile.png',
+    );
+    await _shoot(
+      tester,
+      size: const Size(390, 844),
+      route: AppRoutes.profil,
+      file: '06_profil_mobile.png',
     );
     await _shoot(
       tester,
       size: const Size(820, 1000),
       route: AppRoutes.dashboard,
-      file: '05_dashboard_tablet.png',
+      file: '07_dashboard_tablet.png',
     );
     await _shoot(
       tester,
       size: const Size(1440, 900),
       route: AppRoutes.dashboard,
-      file: '06_dashboard_web.png',
+      file: '08_dashboard_web.png',
     );
     await _shoot(
       tester,
       size: const Size(1440, 900),
       route: AppRoutes.riwayat,
-      file: '07_riwayat_web.png',
+      file: '09_riwayat_web.png',
     );
   });
 }

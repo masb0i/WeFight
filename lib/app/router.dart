@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -6,6 +9,7 @@ import '../core/constants/app_routes.dart';
 import '../core/constants/app_spacing.dart';
 import '../core/constants/app_strings.dart';
 import '../core/constants/app_text_styles.dart';
+import '../features/auth/data/auth_repository.dart';
 import '../features/auth/presentation/login_screen.dart';
 import '../features/auth/presentation/register_screen.dart';
 import '../features/dashboard/presentation/dashboard_screen.dart';
@@ -17,12 +21,14 @@ import '../features/weight_log/presentation/riwayat_berat_screen.dart';
 
 /// Membuat router baru.
 ///
-/// Dibuat sebagai fungsi (bukan hanya variabel global) supaya test bisa
-/// memakai instance bersih tanpa membawa state dari test sebelumnya.
-GoRouter buildAppRouter() {
+/// Dibuat sebagai fungsi (bukan variabel global) supaya test bisa memakai
+/// instance bersih. Parameter `auth` opsional: bila null, guard login dimatikan
+/// sehingga widget test bisa berjalan tanpa Firebase.
+GoRouter buildAppRouter({AuthRepository? auth}) {
   return GoRouter(
     initialLocation: AppRoutes.splash,
-    // Auth guard (redirect) ditambahkan pada M7.
+    refreshListenable: auth == null ? null : _AuthRefreshNotifier(auth),
+    redirect: (context, state) => _redirect(auth, state),
     routes: [
       GoRoute(
         path: AppRoutes.splash,
@@ -77,8 +83,51 @@ GoRouter buildAppRouter() {
   );
 }
 
-/// Router yang dipakai aplikasi.
-final GoRouter appRouter = buildAppRouter();
+/// Aturan guard: belum masuk tidak boleh melihat halaman data.
+String? _redirect(AuthRepository? auth, GoRouterState state) {
+  if (auth == null) return null; // mode test tanpa Firebase
+
+  final signedIn = auth.isSignedIn;
+  final lokasi = state.matchedLocation;
+  final diHalamanAuth =
+      lokasi == AppRoutes.login || lokasi == AppRoutes.register;
+
+  if (signedIn) {
+    // Sudah masuk tapi membuka Login/Daftar/Splash → langsung ke Dashboard.
+    if (diHalamanAuth || lokasi == AppRoutes.splash) return AppRoutes.dashboard;
+    return null;
+  }
+
+  // Belum masuk: hanya Splash dan halaman auth yang boleh dibuka.
+  if (diHalamanAuth || lokasi == AppRoutes.splash) return null;
+  return AppRoutes.login;
+}
+
+/// Memberi tahu GoRouter saat status login berubah.
+///
+/// Langganan dibuat saat listener pertama dipasang dan dilepas saat listener
+/// terakhir hilang — jadi ikut bersih ketika router di-dispose.
+class _AuthRefreshNotifier extends ChangeNotifier {
+  _AuthRefreshNotifier(this._auth);
+
+  final AuthRepository _auth;
+  StreamSubscription<User?>? _sub;
+
+  @override
+  void addListener(VoidCallback listener) {
+    _sub ??= _auth.authStateChanges.listen((_) => notifyListeners());
+    super.addListener(listener);
+  }
+
+  @override
+  void removeListener(VoidCallback listener) {
+    super.removeListener(listener);
+    if (!hasListeners) {
+      _sub?.cancel();
+      _sub = null;
+    }
+  }
+}
 
 /// Pengganti layar kosong bila pengguna membuka path yang tidak ada.
 class _RuteTidakDikenal extends StatelessWidget {

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "800041175201",
+    "project_id": "wefight-38409",
+    "storage_bucket": "wefight-38409.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:800041175201:android:6857a5da24b949a237c8e0",
+        "android_client_info": {
+          "package_name": "com.example.wefight"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKs6XzbzUWiqheRQymavOLlyhyilNYA3I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

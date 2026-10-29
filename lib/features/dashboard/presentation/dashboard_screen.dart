@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_routes.dart';
@@ -8,18 +9,22 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_scaffold.dart';
 import '../../../core/widgets/app_top_bar.dart';
 import '../../../core/widgets/empty_state.dart';
+import '../../auth/presentation/auth_providers.dart';
 import 'widgets/hero_weight_card.dart';
 
 /// H3 Dashboard.
 ///
 /// M6: kerangka + keadaan kosong. Angka asli dan grafik menyusul di M12–M13.
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isWide = MediaQuery.sizeOf(context).width >= AppBreakpoints.mobile;
     final padding = isWide ? AppSpacing.pageWeb : AppSpacing.pageMobile;
+
+    final name = ref.watch(currentUserNameProvider);
+    final initial = ref.watch(currentUserInitialProvider);
 
     return AppScaffold(
       index: 0,
@@ -31,7 +36,11 @@ class DashboardScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const AppTopBar(),
+                AppTopBar(
+                  greeting: 'Halo, ${name.split(' ').first}!',
+                  initial: initial,
+                  name: name,
+                ),
                 const SizedBox(height: AppSpacing.xl),
                 const HeroWeightCard(),
                 const SizedBox(height: AppSpacing.gap),

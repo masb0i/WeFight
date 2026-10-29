@@ -95,15 +95,19 @@ class _MobileShell extends StatelessWidget {
       body: SafeArea(bottom: false, child: child),
       floatingActionButton: showFab ? const _CatatBeratFab() : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _BottomNav(index: index),
+      bottomNavigationBar: _BottomNav(index: index, showFab: showFab),
     );
   }
 }
 
 class _BottomNav extends StatelessWidget {
-  const _BottomNav({required this.index});
+  const _BottomNav({required this.index, required this.showFab});
 
   final int index;
+
+  /// Bila FAB tidak ditampilkan, bar tidak memakai notch dan ketiga menu
+  /// dibagi rata — supaya tidak ada cekungan kosong di tengah.
+  final bool showFab;
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +117,7 @@ class _BottomNav extends StatelessWidget {
       elevation: 0,
       height: 72,
       padding: EdgeInsets.zero,
-      shape: const CircularNotchedRectangle(),
+      shape: showFab ? const CircularNotchedRectangle() : null,
       notchMargin: 8,
       child: Row(
         children: [
@@ -123,8 +127,10 @@ class _BottomNav extends StatelessWidget {
           Expanded(
             child: _NavItem(destination: appDestinations[1], selected: index == 1),
           ),
-          // Ruang untuk FAB.
-          const SizedBox(width: 76),
+          if (showFab)
+            const SizedBox(width: 76)
+          else
+            const SizedBox.shrink(),
           Expanded(
             child: _NavItem(destination: appDestinations[2], selected: index == 2),
           ),

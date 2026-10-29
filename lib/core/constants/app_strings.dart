@@ -30,6 +30,42 @@ abstract final class AppStrings {
   static const lihatSemua = 'Lihat Semua';
   static const catatBerat = 'Catat Berat';
 
+  // Autentikasi.
+  static const masuk = 'Masuk';
+  static const namaLengkap = 'Nama Lengkap';
+  static const email = 'Email';
+  static const kataSandi = 'Kata Sandi';
+  static const ulangiKataSandi = 'Ulangi Kata Sandi';
+  static const loginSubtitle = 'Masuk untuk menyimpan catatan beratmu.';
+  static const registerSubtitle = 'Buat akun untuk mulai mencatat berat badan.';
+  static const belumPunyaAkun = 'Belum punya akun?';
+  static const sudahPunyaAkun = 'Sudah punya akun?';
+  static const lupaKataSandi = 'Lupa kata sandi?';
+
+  // Validasi form.
+  static const validasiNamaKosong = 'Nama wajib diisi.';
+  static const validasiEmailKosong = 'Email wajib diisi.';
+  static const validasiEmailFormat = 'Format email tidak valid.';
+  static const validasiSandiKosong = 'Kata sandi wajib diisi.';
+  static const validasiSandiPendek = 'Kata sandi minimal 6 karakter.';
+  static const validasiSandiBeda = 'Kata sandi tidak sama.';
+
+  // Pesan galat autentikasi.
+  static const authEmailSalah = 'Email atau kata sandi salah.';
+  static const authEmailTerdaftar = 'Email sudah terdaftar. Silakan masuk.';
+  static const authSandiLemah = 'Kata sandi terlalu lemah (minimal 6 karakter).';
+  static const authJaringan = 'Tidak ada koneksi internet. Coba lagi.';
+  static const authUmum = 'Terjadi kesalahan. Coba lagi.';
+  static const authResetTerkirim = 'Tautan atur ulang dikirim ke emailmu.';
+
+  // Profil.
+  static const keluarJudul = 'Keluar dari akun?';
+  static const keluarPesan =
+      'Kamu perlu masuk lagi untuk melihat catatan beratmu.';
+  static const profilFighter = 'Fighter in Progress';
+  static const pengaturanTarget = 'Pengaturan Target';
+  static const riwayatMenu = 'Riwayat Berat';
+
   // Splash.
   static const splashQuote = 'Latih diri, capai berat ideal.';
 

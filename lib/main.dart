@@ -1,11 +1,23 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app/app.dart';
+import 'firebase_options.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Firebase.initializeApp() ditambahkan pada M7.
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (error) {
+    // Tanpa Firebase aplikasi tidak bisa dipakai — tampilkan penyebabnya
+    // daripada membiarkan layar putih.
+    runApp(BootstrapErrorApp(error: error));
+    return;
+  }
+
   runApp(const ProviderScope(child: WeFightApp()));
 }

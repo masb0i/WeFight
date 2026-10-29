@@ -239,13 +239,14 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 - [x] M6-8 `AppCard`, `AppTopBar`, dan `tool/render_screens_test.dart` (render layar ke `docs/screenshots/`)
 
 ### M7 — Autentikasi
-- [ ] M7-0 Setup Firebase di console (**manual oleh pemilik**) — panduan: [`FIREBASE_SETUP.md`](./FIREBASE_SETUP.md)
-- [ ] M7-1 `Firebase.initializeApp` + `flutterfire configure` (project Firebase baru, Spark)
-- [ ] M7-2 `auth_repository`: `signIn`, `signUp`, `signOut`, `authStateChanges`
-- [ ] M7-3 `login_screen` + state galat (email/password kosong, kredensial salah)
-- [ ] M7-4 `register_screen` + validasi email & password
-- [ ] M7-5 Auth guard GoRouter: belum login → `/login`; sudah login buka `/login` → `/`
-- [ ] M7-6 Tombol Keluar di Profil/AppBar
+- [x] M7-0 Setup Firebase di console (**manual oleh pemilik**) — panduan: [`FIREBASE_SETUP.md`](./FIREBASE_SETUP.md)
+- [x] M7-1 `Firebase.initializeApp` + `flutterfire configure` (project Firebase baru, Spark)
+- [x] M7-2 `auth_repository`: `signIn`, `signUp`, `signOut`, `authStateChanges`
+- [x] M7-3 `login_screen` + state galat (email/password kosong, kredensial salah)
+- [x] M7-4 `register_screen` + validasi email & password
+- [x] M7-5 Auth guard GoRouter: belum login → `/login`; sudah login buka `/login` → `/`
+- [x] M7-6 Tombol Keluar di Profil/AppBar
+- [x] M7-7 Hapus tombol sementara "Lanjut ke Dashboard" di Login
 
 ### M8 — Lapisan data Firestore
 - [ ] M8-1 Model `Target` + `WeightLog` (immutable, `copyWith`, `fromDoc`/`toMap`)
