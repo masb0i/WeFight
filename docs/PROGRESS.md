@@ -95,3 +95,11 @@ LULUS  Akun B menulis catatan atas nama akun A ... ditolak aturan
 - **Keputusan/kompromi:** Pemilik memilih **mengubah struktur ke `lib/pages/`** (D15) meski sebelumnya feature-first, agar sesuai tuntutan modul; lapisan data tetap di `lib/features/` supaya query Firestore tidak tercampur kode tampilan. Warna primer **tetap burgundy** (D16) karena modul menyebut warna style guide sebagai opsional dan pemilik sudah memilih gambar referensi — alasannya ditulis di README supaya bisa dipertanggungjawabkan. Folder `modulmateri/` **tidak di-commit** (materi dosen, bukan bagian aplikasi).
 - **Kendala:** Refactor path sempat meninggalkan impor relatif yang menunjuk kedalaman lama (`'auth_providers.dart'`, `'widgets/auth_shell.dart'`); skrip pemindah hanya menangani impor berawalan titik. Diperbaiki dengan pass kedua yang me-resolve semua impor relatif terhadap folder lama, lalu `flutter analyze` bersih. Screenshot tidak berubah karena tampilan tidak berubah.
 - **Berikutnya:** **P5 push ke GitHub** (pemilik membuat repo kosong lalu memberi URL) dan **P6 `flutter run -d chrome`**. Setelah itu M9-1 form Target Timbang.
+
+## 2026-10-29 20:42 — P5 Repository GitHub
+- **Status:** selesai
+- **Yang dikerjakan:** Remote `origin` dipasang ke https://github.com/masb0i/WeFight dan seluruh riwayat (8 commit) di-push ke branch `main`. Repository GitHub sebelumnya kosong, jadi push pertama diterima tanpa konflik. Tautan repository diisi di README, ditambah perintah `git clone` pada bagian "Cara menjalankan".
+- **File disentuh:** `README.md`, `docs/PLAN.md` (§8 P5, §15.5 baru), `docs/PROGRESS.md`
+- **Keputusan/kompromi:** Nama repository di GitHub `WeFight` (huruf besar) sedangkan nama project Flutter tetap `wefight` (huruf kecil, syarat nama paket Dart). Tidak masalah karena keduanya tidak harus sama.
+- **Kendala:** tidak ada.
+- **Berikutnya:** P6 `flutter run -d chrome` oleh pemilik, lalu M9-1 form Target Timbang.

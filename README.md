@@ -20,7 +20,7 @@ Proyek individu mata kuliah **Mobile and Web Application Development**
 
 - Desain Figma (wireframe Minggu 4):
   https://www.figma.com/design/je3J8Dtm45YIgMLQylv0CP/
-- Repository GitHub: _(diisi setelah repository dibuat)_
+- Repository GitHub: https://github.com/masb0i/WeFight
 - Aplikasi online (Firebase Hosting): _(diisi pada pertemuan 16)_
 
 ## Masalah yang diselesaikan
@@ -44,6 +44,8 @@ Aplikasi **hanya menampilkan data** — tidak memberi saran diet, rehidrasi, ata
 ## Cara menjalankan
 
 ```bash
+git clone https://github.com/masb0i/WeFight.git
+cd WeFight
 flutter pub get
 flutter run -d chrome        # versi web
 flutter run                  # emulator/perangkat Android

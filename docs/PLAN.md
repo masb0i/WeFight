@@ -287,7 +287,7 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 - [x] P2 Pindahkan 7 halaman ke `lib/pages/` + ganti nama kelas menjadi `*Page`
 - [x] P3 SnackBar pesan status + `AutovalidateMode.onUserInteraction` di form Login & Daftar
 - [x] P4 Tabel uji form ≥5 kasus → [`UJI_FORM.md`](./UJI_FORM.md)
-- [ ] P5 Push repository ke GitHub + isi tautan di README (**tindakan pemilik**)
+- [x] P5 Push repository ke GitHub + isi tautan di README → https://github.com/masb0i/WeFight
 - [ ] P6 `flutter run -d chrome` sebagai bukti DoD Minggu 5 (**tindakan pemilik**)
 
 ### M9 — Target Timbang
@@ -527,7 +527,15 @@ Teks hasil ekstraksi: `.workbuddy-ai/tmp/modul/*.txt`.
 
 ### 15.4 Yang masih perlu tindakan pemilik
 
-- **P5** Push ke GitHub + tautan di README (syarat UTS).
 - **P6** `flutter run -d chrome` untuk membuktikan DoD Minggu 5 di perangkat nyata.
 - Kasus uji form nomor 5, 6, 9, 10 di `UJI_FORM.md` baru bisa dibuktikan setelah
   aplikasi dijalankan dengan Firebase sungguhan.
+
+### 15.5 Repository
+
+- Remote: `origin` → https://github.com/masb0i/WeFight (branch `main`)
+- Aturan modul Minggu 5: jangan commit kata sandi, token, atau service account key.
+  Yang ikut di-commit hanya `lib/firebase_options.dart` dan
+  `android/app/google-services.json` — keduanya berisi API key Firebase yang
+  memang publik, dan keamanan data dijaga `firestore.rules` (lihat README).
+- Folder `modulmateri/` dan `.workbuddy-ai/` tidak di-commit.
