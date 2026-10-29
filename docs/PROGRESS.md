@@ -98,7 +98,7 @@ LULUS  Akun B menulis catatan atas nama akun A ... ditolak aturan
 
 ## 2026-10-29 20:42 — P5 Repository GitHub
 - **Status:** selesai
-- **Yang dikerjakan:** Remote `origin` dipasang ke https://github.com/masb0i/WeFight dan seluruh riwayat (8 commit) di-push ke branch `main`. Repository GitHub sebelumnya kosong, jadi push pertama diterima tanpa konflik. Tautan repository diisi di README, ditambah perintah `git clone` pada bagian "Cara menjalankan".
+- **Yang dikerjakan:** Remote `origin` dipasang ke https://github.com/masb0i/WeFight dan seluruh riwayat commit di-push ke branch `main`. Repository GitHub sebelumnya kosong, jadi push pertama diterima tanpa konflik. Tautan repository diisi di README, ditambah perintah `git clone` pada bagian "Cara menjalankan".
 - **File disentuh:** `README.md`, `docs/PLAN.md` (§8 P5, §15.5 baru), `docs/PROGRESS.md`
 - **Keputusan/kompromi:** Nama repository di GitHub `WeFight` (huruf besar) sedangkan nama project Flutter tetap `wefight` (huruf kecil, syarat nama paket Dart). Tidak masalah karena keduanya tidak harus sama.
 - **Kendala:** tidak ada.
