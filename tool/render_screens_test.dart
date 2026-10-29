@@ -199,6 +199,8 @@ void main() {
       size: const Size(390, 844),
       route: AppRoutes.dashboard,
       file: '04_dashboard_mobile.png',
+      target: _targetContoh,
+      logs: _catatanContoh(),
     );
     await _shoot(
       tester,
@@ -218,12 +220,16 @@ void main() {
       size: const Size(820, 1000),
       route: AppRoutes.dashboard,
       file: '07_dashboard_tablet.png',
+      target: _targetContoh,
+      logs: _catatanContoh(),
     );
     await _shoot(
       tester,
       size: const Size(1440, 900),
       route: AppRoutes.dashboard,
       file: '08_dashboard_web.png',
+      target: _targetContoh,
+      logs: _catatanContoh(),
     );
     await _shoot(
       tester,
@@ -266,6 +272,12 @@ void main() {
       route: AppRoutes.riwayat,
       file: '14_riwayat_kosong_mobile.png',
       target: _targetContoh,
+    );
+    await _shoot(
+      tester,
+      size: const Size(390, 844),
+      route: AppRoutes.dashboard,
+      file: '15_dashboard_kosong_mobile.png',
     );
   });
 }

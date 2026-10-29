@@ -130,11 +130,15 @@ class _Daftar extends StatelessWidget {
             }
 
             final log = logs[index - 1];
+            // logs sudah urut terbaru → lebih dulu, jadi pembandingnya adalah
+            // item berikutnya di daftar.
+            final sebelumnya = index < logs.length ? logs[index] : null;
             return Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.md),
               child: RiwayatTile(
                 key: ValueKey('riwayat-${log.id}'),
                 log: log,
+                sebelumnya: sebelumnya,
                 onTap: () => onUbah(log),
                 onHapus: () => onHapus(log),
               ),

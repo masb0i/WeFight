@@ -183,6 +183,7 @@ Halaman hanya berisi tampilan; query Firestore tidak pernah ditulis di `lib/page
 | D18 | Catat Berat memakai **satu halaman untuk dua mode**: `/weight/new` (tambah) dan `/weight/:id/edit` (ubah), dibedakan oleh `logId` | Menghindari dua halaman yang isinya 95% sama; aturan validasi dan format angka pasti konsisten. Satu-satunya percabangan ada di `_simpan` dan judul | disetujui (2026-10-29) |
 | D19 | Format & parsing angka kg dipusatkan di **`lib/core/utils/angka.dart`** (`Angka.kg`, `Angka.parseKg`), bukan helper privat per halaman | Target Timbang dan Catat Berat menampilkan angka yang sama; satu tempat untuk aturan "koma diterima, nol desimal dibuang" | disetujui (2026-10-29) |
 | D20 | Baris Riwayat menampilkan **tanggal · berat · catatan**; kolom "Perubahan" (selisih antar catatan) menyusul di M12 | Selisih harus dihitung dengan aturan yang sama seperti kartu Dashboard; menaruhnya di dua tempat sebelum `weight_math` ada berarti dua versi aturan yang bisa berbeda | disetujui (2026-10-29) |
+| D21 | Dashboard: tombol **"Catat Berat"** selebar konten tepat di bawah hero card; keadaan kosong **tidak** diberi CTA tambahan | Aksi utama hanya boleh punya satu tombol per layar. Kalau kartu kosong juga memuat tombol "Catat Berat", pengguna melihat dua tombol untuk aksi yang sama (M12-5) | disetujui (2026-10-29) |
 
 **Belum diputuskan / perlu tanya pemilik:**
 - (tidak ada)
@@ -316,11 +317,11 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 - [x] M11-5 Daftar ikut berubah setelah tambah/edit/hapus
 
 ### M12 — Logika Dashboard
-- [ ] M12-1 `weight_math`: `hitungSelisih`, `labelSelisih`, `hitungSisaHari`, `labelHitungMundur`
-- [ ] M12-2 Kartu ringkasan: berat terakhir, selisih, hitung mundur
-- [ ] M12-3 State: belum ada target / belum ada catatan / tanggal timbang lewat / hari ini hari timbang
-- [ ] M12-4 Kartu ajakan "Atur Target Timbang" hanya muncul bila target kosong
-- [ ] M12-5 Tombol utama "Catat Berat" menonjol dan konsisten di mobile & web
+- [x] M12-1 `weight_math`: `hitungSelisih`, `labelSelisih`, `hitungSisaHari`, `labelHitungMundur`
+- [x] M12-2 Kartu ringkasan: berat terakhir, selisih, hitung mundur
+- [x] M12-3 State: belum ada target / belum ada catatan / tanggal timbang lewat / hari ini hari timbang
+- [x] M12-4 Kartu ajakan "Atur Target Timbang" hanya muncul bila target kosong
+- [x] M12-5 Tombol utama "Catat Berat" menonjol dan konsisten di mobile & web
 
 ### M13 — Grafik tren
 - [ ] M13-1 `tren_chart.dart` pakai `fl_chart` `LineChart`, sumbu X tanggal
@@ -495,6 +496,13 @@ tanpa `bentrok.id != widget.logId` setiap penyimpanan edit ditolak dengan
 sudah mati.** Setelah `await` dialog, periksa `mounted` dulu. Kalau pengguna
 memilih "Ubah Catatan", gunakan `pushReplacement` (bukan `push`) supaya tombol
 kembali tidak menumpuk dua form yang isinya bertabrakan.
+
+**Jebakan: widget test memakai font pengganti yang jauh lebih lebar.**
+Di `flutter test` semua huruf dirender dengan font kotak bawaan penguji, sehingga
+`Row` yang terlihat rapi di screenshot bisa `overflowed by N pixels`. Gejalanya
+hanya muncul di test, bukan di aplikasi. Solusi: beri `Expanded`/`Flexible` +
+`overflow: TextOverflow.ellipsis` pada teks yang panjangnya bergantung data
+(mis. `29 Oktober 2026` + label perubahan di satu baris).
 
 ---
 

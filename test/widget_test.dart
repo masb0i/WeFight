@@ -676,7 +676,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(repo.ditambah, hasLength(1));
-      expect(find.text(AppStrings.dashboardKosongJudul), findsOneWidget);
+      // Kembali ke Dashboard dan berat terakhir langsung terpakai.
+      expect(find.text(AppStrings.catatSubtitleTambah), findsNothing);
+      expect(find.text('73.6'), findsOneWidget);
     });
   });
 
@@ -709,6 +711,21 @@ void main() {
       expect(find.text(AppDate.panjang(AppDate.hariIni())), findsOneWidget);
       expect(find.text('Latihan pagi'), findsOneWidget);
       expect(find.text(AppStrings.riwayatJumlah(2)), findsOneWidget);
+    });
+
+    testWidgets('kolom perubahan menampilkan selisih terhadap catatan sebelumnya',
+        (tester) async {
+      final router = await pumpApp(
+        tester,
+        logRepo: FakeWeightLogRepository(awal: duaCatatan()),
+      );
+      router.go(AppRoutes.riwayat);
+      await tester.pumpAndSettle();
+
+      // 73,6 − 74,2 = −0,6 → turun.
+      expect(find.text('-0.6 kg'), findsOneWidget);
+      // Catatan paling awal tidak punya pembanding.
+      expect(find.text('Tetap'), findsNothing);
     });
 
     testWidgets('catatan terbaru tampil paling atas', (tester) async {
@@ -792,6 +809,143 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.tap(find.byType(FloatingActionButton));
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.catatSubtitleTambah), findsOneWidget);
+    });
+  });
+
+  group('Ringkasan Dashboard', () {
+    List<WeightLog> catatan(double berat) => [
+          WeightLog(id: 'satu', tanggal: AppDate.hariIni(), berat: berat),
+        ];
+
+    testWidgets('menampilkan berat terakhir dan selisih di atas batas',
+        (tester) async {
+      final router = await pumpApp(
+        tester,
+        targetAwal: const Target(batasBerat: 71),
+        logRepo: FakeWeightLogRepository(awal: catatan(73.6)),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.text('73.6'), findsOneWidget);
+      expect(find.text('71 kg'), findsOneWidget);
+      expect(find.text('2.6 kg di atas batas'), findsOneWidget);
+    });
+
+    testWidgets('selisih negatif memakai "di bawah batas"', (tester) async {
+      final router = await pumpApp(
+        tester,
+        targetAwal: const Target(batasBerat: 71),
+        logRepo: FakeWeightLogRepository(awal: catatan(70)),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.text('1 kg di bawah batas'), findsOneWidget);
+    });
+
+    testWidgets('berat tepat di batas menampilkan "Tepat di batas"',
+        (tester) async {
+      final router = await pumpApp(
+        tester,
+        targetAwal: const Target(batasBerat: 71),
+        logRepo: FakeWeightLogRepository(awal: catatan(71)),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.selisihTepat), findsOneWidget);
+    });
+
+    testWidgets('hitung mundur: masih ada sisa hari', (tester) async {
+      final router = await pumpApp(
+        tester,
+        targetAwal: Target(
+          batasBerat: 71,
+          tanggalTimbang: AppDate.hariIni().add(const Duration(days: 14)),
+        ),
+        logRepo: FakeWeightLogRepository(awal: catatan(73.6)),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.labelHariTimbang), findsOneWidget);
+      expect(find.text('14 hari lagi'), findsOneWidget);
+    });
+
+    testWidgets('hitung mundur: hari ini hari timbang', (tester) async {
+      final router = await pumpApp(
+        tester,
+        targetAwal: Target(
+          batasBerat: 71,
+          tanggalTimbang: AppDate.hariIni(),
+        ),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.hitungMundurHariIni), findsOneWidget);
+    });
+
+    testWidgets('hitung mundur: hari timbang sudah terlewat', (tester) async {
+      final router = await pumpApp(
+        tester,
+        targetAwal: Target(
+          batasBerat: 71,
+          tanggalTimbang: AppDate.hariIni().subtract(const Duration(days: 3)),
+        ),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Hari timbang terlewat 3 hari'), findsOneWidget);
+    });
+
+    testWidgets('kartu ajakan target muncul hanya bila target kosong',
+        (tester) async {
+      final router = await pumpApp(tester);
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.belumAdaTargetJudul), findsOneWidget);
+      expect(find.text(AppStrings.aturTarget), findsOneWidget);
+    });
+
+    testWidgets('kartu ajakan target hilang setelah target diisi',
+        (tester) async {
+      final router = await pumpApp(
+        tester,
+        targetAwal: const Target(batasBerat: 71),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.belumAdaTargetJudul), findsNothing);
+      expect(find.text(AppStrings.aturTarget), findsNothing);
+    });
+
+    testWidgets('belum ada catatan: berat kosong dan kartu penjelasan tampil',
+        (tester) async {
+      final router = await pumpApp(
+        tester,
+        targetAwal: const Target(batasBerat: 71),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.dashboardKosongJudul), findsOneWidget);
+      expect(find.text(AppStrings.heroBelumAdaCatatan), findsOneWidget);
+    });
+
+    testWidgets('tombol Catat Berat membuka form', (tester) async {
+      final router = await pumpApp(tester);
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.widgetWithText(FilledButton, AppStrings.catatBerat));
       await tester.pumpAndSettle();
 
       expect(find.text(AppStrings.catatSubtitleTambah), findsOneWidget);

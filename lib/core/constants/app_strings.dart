@@ -121,12 +121,34 @@ abstract final class AppStrings {
   static const labelTargetBerat = 'Target Berat';
   static const satuanKg = 'kg';
   static const nilaiKosong = '—';
-  static const heroBelumAdaCatatan = 'Belum ada catatan berat';
+  static const heroBelumAdaCatatan = 'Belum ada catatan';
+  static const heroBelumAdaTarget = 'Batas berat belum diatur';
 
-  static const dashboardKosongJudul = 'Belum ada data';
+  static const dashboardKosongJudul = 'Belum ada catatan berat';
   static const dashboardKosongPesan =
-      'Mulai dengan mengatur target timbang, lalu catat berat pertamamu.';
+      'Catatan pertamamu akan muncul di sini setelah kamu menimbang.';
   static const aturTarget = 'Atur Target Timbang';
+
+  // Dashboard — selisih & hitung mundur (PLAN §3 poin 4–5).
+  static const selisihTepat = 'Tepat di batas';
+  static String selisihAtas(String nilai) => '$nilai kg di atas batas';
+  static String selisihBawah(String nilai) => '$nilai kg di bawah batas';
+
+  static const hitungMundurHariIni = 'Hari ini hari timbang';
+  static String hitungMundurLewat(int hari) =>
+      'Hari timbang terlewat $hari hari';
+  static String hitungMundurLagi(int hari) => '$hari hari lagi';
+
+  static const labelHariTimbang = 'Hari Timbang';
+  static const belumAdaTargetJudul = 'Belum ada target berat';
+  static const belumAdaTargetPesan =
+      'Atur batas berat dan hari timbang supaya selisih serta hitung mundur '
+      'bisa ditampilkan di sini.';
+
+  // Perubahan antar catatan (kolom "Perubahan" di Riwayat, UI_SPEC §7).
+  static const perubahanTetap = 'Tetap';
+  static String perubahanNaik(String nilai) => '+$nilai kg';
+  static String perubahanTurun(String nilai) => '-$nilai kg';
 
   // Riwayat.
   static const riwayatKosongJudul = 'Belum ada catatan berat';

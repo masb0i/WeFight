@@ -4,7 +4,9 @@ import '../constants/app_colors.dart';
 import '../constants/app_spacing.dart';
 import '../constants/app_text_styles.dart';
 
-enum StatusChipVariant { sukses, peringatan, galat, netral }
+/// `terang` dipakai di atas permukaan berwarna (mis. `PeachInfoCard`) supaya
+/// chip tetap terbaca — `netral` berlatar krem akan tenggelam di atas peach.
+enum StatusChipVariant { sukses, peringatan, galat, netral, terang }
 
 /// Label status.
 ///
@@ -37,6 +39,10 @@ class StatusChip extends StatelessWidget {
       StatusChipVariant.netral => (
           background: AppColors.cream200,
           foreground: AppColors.ink500,
+        ),
+      StatusChipVariant.terang => (
+          background: AppColors.white,
+          foreground: AppColors.ink900,
         ),
     };
   }

@@ -55,7 +55,7 @@ Pemeriksaan kualitas:
 
 ```bash
 flutter analyze
-flutter test                 # 56 test
+flutter test                 # 86 test
 flutter build web            # build produksi
 ```
 
@@ -97,9 +97,19 @@ Akun demo berisi target 71 kg, hari timbang 14 hari ke depan, dan 6 catatan bera
   <tr>
     <td><img src="docs/screenshots/14_riwayat_kosong_mobile.png" width="220" alt="Riwayat Berat kosong"><br><sub>Riwayat Berat (kosong)</sub></td>
     <td colspan="3" valign="top"><sub>Daftar Riwayat: urut tanggal terbaru, satu kartu per catatan.
-      Ketuk kartu untuk mengubah, ikon hapus meminta konfirmasi lebih dulu.<br><br>
+      Ketuk kartu untuk mengubah, ikon hapus meminta konfirmasi lebih dulu. Kolom perubahan
+      menunjukkan selisih terhadap catatan sebelumnya.<br><br>
       Setiap halaman punya keadaan kosong yang menjelaskan dan mengarahkan, bukan layar kosong
       (PLAN §10).</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/15_dashboard_kosong_mobile.png" width="220" alt="Dashboard kosong"><br><sub>Dashboard (belum ada data)</sub></td>
+    <td colspan="3" valign="top"><sub>Dashboard menghitung sendiri dari data yang ada: berat terakhir dari catatan
+      terbaru, selisih terhadap batas berat (<code>2.6 kg di atas batas</code> / <code>Tepat di batas</code> /
+      <code>1 kg di bawah batas</code>), dan hitung mundur hari timbang (<code>14 hari lagi</code> /
+      <code>Hari ini hari timbang</code> / <code>Hari timbang terlewat 3 hari</code>).<br><br>
+      Keadaan kosong juga ditangani: angka tampil <code>—</code>, kartu "Atur Target Timbang" hanya
+      muncul bila target memang belum diisi, dan tidak ada angka yang dikarang.</sub></td>
   </tr>
 </table>
 
@@ -114,7 +124,7 @@ sehingga selalu sesuai kode terakhir:
 flutter test --update-goldens tool/render_screens_test.dart
 ```
 
-Hasilnya tersimpan di `docs/screenshots/` (14 gambar: mobile, tablet, web).
+Hasilnya tersimpan di `docs/screenshots/` (15 gambar: mobile, tablet, web).
 
 ## Struktur project
 

@@ -5,6 +5,7 @@ import '../../../../core/constants/app_gradients.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/utils/angka.dart';
 
 /// Kartu utama berisi berat terakhir dan target.
 ///
@@ -29,7 +30,7 @@ class HeroWeightCard extends StatelessWidget {
 
   static String _format(double? value) {
     if (value == null) return AppStrings.nilaiKosong;
-    return value.toStringAsFixed(1);
+    return Angka.kg(value);
   }
 
   @override
