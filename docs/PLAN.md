@@ -185,6 +185,7 @@ Halaman hanya berisi tampilan; query Firestore tidak pernah ditulis di `lib/page
 | D20 | Baris Riwayat menampilkan **tanggal · berat · catatan**; kolom "Perubahan" (selisih antar catatan) menyusul di M12 | Selisih harus dihitung dengan aturan yang sama seperti kartu Dashboard; menaruhnya di dua tempat sebelum `weight_math` ada berarti dua versi aturan yang bisa berbeda | disetujui (2026-10-29) |
 | D21 | Dashboard: tombol **"Catat Berat"** selebar konten tepat di bawah hero card; keadaan kosong **tidak** diberi CTA tambahan | Aksi utama hanya boleh punya satu tombol per layar. Kalau kartu kosong juga memuat tombol "Catat Berat", pengguna melihat dua tombol untuk aksi yang sama (M12-5) | disetujui (2026-10-29) |
 | D22 | Sumbu X grafik memakai **indeks titik** (0, 1, 2, …), bukan selisih hari; tanggal asli tampil sebagai label | Jarak antar catatan tidak seragam (3, 4, 7 hari), sehingga sumbu berbasis hari membuat garis menumpuk di satu sisi saat jaraknya tidak rata. Label hanya digambar di awal–tengah–akhir bila titiknya lebih dari 4, supaya tidak bertumpuk di layar 360 px | disetujui (2026-10-29) |
+| D23 | Di layar **≥600 px FAB disembunyikan** dan aksi "Catat Berat" pindah ke tombol di area konten (Dashboard) atau kanan atas header (Riwayat) | Satu aksi cukup satu tombol. FAB tetap wajib di mobile karena merupakan bagian dari bar navigasi (D11, UI_SPEC §6) | disetujui (2026-10-29) |
 
 **Belum diputuskan / perlu tanya pemilik:**
 - (tidak ada)
@@ -331,10 +332,10 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 - [x] M13-4 `RepaintBoundary` membungkus grafik
 
 ### M14 — Versi web & responsif
-- [ ] M14-1 Sidebar + header untuk ≥600 px, item menu sama dengan mobile
-- [ ] M14-2 Dashboard web: konten dua kolom, tombol di area konten
-- [ ] M14-3 Riwayat Berat web: daftar dibatasi lebar, tombol kanan atas
-- [ ] M14-4 Uji 360 / 768 / 1440 px tanpa overflow (`flutter run -d chrome`)
+- [x] M14-1 Sidebar + header untuk ≥600 px, item menu sama dengan mobile
+- [x] M14-2 Dashboard web: konten dua kolom, tombol di area konten
+- [x] M14-3 Riwayat Berat web: daftar dibatasi lebar, tombol kanan atas
+- [x] M14-4 Uji 360 / 768 / 1440 px tanpa overflow (`flutter run -d chrome`)
 
 ### M15 — Testing
 - [ ] M15-1 Unit test `weight_math` (selisih 0, positif, negatif; sisa hari 0/negatif)
@@ -504,6 +505,13 @@ Di `flutter test` semua huruf dirender dengan font kotak bawaan penguji, sehingg
 hanya muncul di test, bukan di aplikasi. Solusi: beri `Expanded`/`Flexible` +
 `overflow: TextOverflow.ellipsis` pada teks yang panjangnya bergantung data
 (mis. `29 Oktober 2026` + label perubahan di satu baris).
+
+**Jebakan: `FilledButton` di dalam `Row` memaksa lebar tak terbatas.**
+Tema memberi `minimumSize: Size.fromHeight(52)` pada `FilledButton` supaya tombol
+selalu selebar konten. Di dalam `Row` (lebar anak tidak dibatasi) nilai itu
+menjadi `width: Infinity` dan melempar `BoxConstraints forces an infinite width`.
+Solusi untuk tombol sekecil aksi di header: override gayanya,
+`FilledButton.styleFrom(minimumSize: const Size(0, 40))`.
 
 ---
 

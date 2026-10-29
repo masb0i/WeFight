@@ -37,13 +37,34 @@ class RiwayatBeratPage extends ConsumerWidget {
     return AppScaffold(
       index: 1,
       title: AppStrings.halamanRiwayat,
+      // M14-3: di layar lebar aksi pindah ke kanan atas header; FAB hanya
+      // dipakai di mobile supaya tidak ada dua tombol untuk aksi yang sama.
+      showFab: !isWide,
+      actions: isWide
+          ? [
+              FilledButton.icon(
+                // Tema memberi `minimumSize: Size.fromHeight(...)` (lebar tak
+                // terbatas) untuk tombol selebar konten. Di dalam Row header
+                // lebar harus mengikuti isi, jadi di-override di sini.
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size(0, 40),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                  ),
+                ),
+                onPressed: () => context.push(AppRoutes.catatBerat),
+                icon: const Icon(Icons.add, size: 18),
+                label: const Text(AppStrings.catatBerat),
+              ),
+            ]
+          : null,
       child: catatan.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, _) => _GagalMuat(
           onCobaLagi: () => ref.invalidate(weightLogsProvider),
         ),
         data: (logs) => logs.isEmpty
-            ? _Kosong(padding: padding)
+            ? _Kosong(padding: padding, tampilkanTombol: !isWide)
             : _Daftar(
                 logs: logs,
                 padding: padding,
@@ -183,10 +204,14 @@ class _KepalaDaftar extends StatelessWidget {
 }
 
 /// M11-3: keadaan kosong menjelaskan dan mengarahkan, bukan layar kosong.
+///
+/// [tampilkanTombol] dimatikan di layar lebar karena tombol "Catat Berat" sudah
+/// ada di kanan atas header — satu aksi cukup satu tombol (D21).
 class _Kosong extends StatelessWidget {
-  const _Kosong({required this.padding});
+  const _Kosong({required this.padding, required this.tampilkanTombol});
 
   final double padding;
+  final bool tampilkanTombol;
 
   @override
   Widget build(BuildContext context) {
@@ -200,8 +225,10 @@ class _Kosong extends StatelessWidget {
               icon: Icons.history,
               title: AppStrings.riwayatKosongJudul,
               message: AppStrings.riwayatKosongPesan,
-              primaryLabel: AppStrings.catatBerat,
-              onPrimary: () => context.push(AppRoutes.catatBerat),
+              primaryLabel: tampilkanTombol ? AppStrings.catatBerat : null,
+              onPrimary: tampilkanTombol
+                  ? () => context.push(AppRoutes.catatBerat)
+                  : null,
             ),
           ),
         ),

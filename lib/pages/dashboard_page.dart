@@ -72,15 +72,65 @@ class DashboardPage extends ConsumerWidget {
     final memuat = targetAsync.isLoading || logsAsync.isLoading;
     final targetKosong = batas == null && tanggalTimbang == null;
 
+    // M14-2: mulai 1024 px konten dipecah dua kolom — angka ringkasan di kiri,
+    // grafik di kanan. Di bawah itu tetap satu kolom supaya tidak sempit.
+    final lebar = MediaQuery.sizeOf(context).width;
+    final duaKolom = lebar >= AppBreakpoints.tablet;
+
+    // Kolom kiri: berat terakhir, aksi utama, hitung mundur.
+    final kiri = <Widget>[
+      HeroWeightCard(
+        beratKg: terakhir?.berat,
+        targetKg: batas,
+        deltaLabel: deltaLabel,
+        onEdit: () => context.push(AppRoutes.target),
+      ),
+      const SizedBox(height: AppSpacing.gap),
+      // M12-5: aksi utama aplikasi, selebar konten, sama di mobile dan web.
+      PrimaryButton(
+        label: AppStrings.catatBerat,
+        icon: Icons.add,
+        onPressed: () => context.push(AppRoutes.catatBerat),
+      ),
+      if (tanggalTimbang != null) ...[
+        const SizedBox(height: AppSpacing.gap),
+        PeachInfoCard(
+          tanggal: tanggalTimbang,
+          sisaHari: WeightMath.hitungSisaHari(tanggalTimbang),
+        ),
+      ],
+    ];
+
+    // Kolom kanan: ajakan target dan grafik tren.
+    final kanan = <Widget>[
+      // M12-4: kartu ajakan hanya untuk target yang benar-benar kosong, bukan
+      // untuk target yang tinggal satu kolom.
+      if (targetKosong) ...[
+        _AjakanTarget(onAtur: () => context.push(AppRoutes.target)),
+        const SizedBox(height: AppSpacing.gap),
+      ],
+      if (logs.isEmpty)
+        const _KosongCatatan()
+      else
+        // M13: grafik tren. Dengan 1 catatan, kartu ini sendiri yang
+        // menampilkan "data belum cukup" (PLAN §3 poin 7).
+        TrenChart(logs: logs, batasBerat: batas),
+    ];
+
     return AppScaffold(
       index: 0,
+      // Di layar lebar tombol "Catat Berat" sudah ada di kolom kiri, jadi FAB
+      // tidak ditampilkan dua kali.
+      showFab: !isWide,
       child: memuat
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(padding, padding, padding, 96),
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 720),
+                  constraints: BoxConstraints(
+                    maxWidth: duaKolom ? AppSizes.maxContent : 720,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -90,44 +140,36 @@ class DashboardPage extends ConsumerWidget {
                         name: name,
                       ),
                       const SizedBox(height: AppSpacing.xl),
-                      HeroWeightCard(
-                        beratKg: terakhir?.berat,
-                        targetKg: batas,
-                        deltaLabel: deltaLabel,
-                        onEdit: () => context.push(AppRoutes.target),
-                      ),
-                      const SizedBox(height: AppSpacing.gap),
-                      // M12-5: aksi utama aplikasi, selebar konten, sama di
-                      // mobile dan web.
-                      PrimaryButton(
-                        label: AppStrings.catatBerat,
-                        icon: Icons.add,
-                        onPressed: () => context.push(AppRoutes.catatBerat),
-                      ),
-                      if (tanggalTimbang != null) ...[
-                        const SizedBox(height: AppSpacing.gap),
-                        PeachInfoCard(
-                          tanggal: tanggalTimbang,
-                          sisaHari: WeightMath.hitungSisaHari(tanggalTimbang),
+                      if (duaKolom)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: kiri,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.gap),
+                            Expanded(
+                              flex: 2,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: kanan,
+                              ),
+                            ),
+                          ],
+                        )
+                      else
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            ...kiri,
+                            const SizedBox(height: AppSpacing.gap),
+                            ...kanan,
+                          ],
                         ),
-                      ],
-                      // M12-4: kartu ajakan hanya untuk target yang benar-benar
-                      // kosong, bukan untuk target yang tinggal satu kolom.
-                      if (targetKosong) ...[
-                        const SizedBox(height: AppSpacing.gap),
-                        _AjakanTarget(
-                          onAtur: () => context.push(AppRoutes.target),
-                        ),
-                      ],
-                      if (logs.isEmpty) ...[
-                        const SizedBox(height: AppSpacing.gap),
-                        const _KosongCatatan(),
-                      ] else ...[
-                        // M13: grafik tren. Dengan 1 catatan, kartu ini sendiri
-                        // yang menampilkan "data belum cukup" (PLAN §3 poin 7).
-                        const SizedBox(height: AppSpacing.gap),
-                        TrenChart(logs: logs, batasBerat: batas),
-                      ],
                     ],
                   ),
                 ),

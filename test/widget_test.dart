@@ -1083,4 +1083,124 @@ void main() {
       expect(find.byType(LineChart), findsNothing);
     });
   });
+
+  group('Responsif', () {
+    List<WeightLog> contoh() => [
+          WeightLog(id: 'b', tanggal: AppDate.hariIni(), berat: 73.6),
+          WeightLog(
+            id: 'a',
+            tanggal: AppDate.hariIni().subtract(const Duration(days: 3)),
+            berat: 74.2,
+          ),
+        ];
+
+    for (final lebar in [360.0, 768.0, 1440.0]) {
+      testWidgets('Dashboard ${lebar.toInt()} px tanpa overflow',
+          (tester) async {
+        final router = await pumpApp(
+          tester,
+          size: Size(lebar, 900),
+          targetAwal: Target(
+            batasBerat: 71,
+            tanggalTimbang: AppDate.hariIni().add(const Duration(days: 14)),
+          ),
+          logRepo: FakeWeightLogRepository(awal: contoh()),
+        );
+        router.go(AppRoutes.dashboard);
+        await tester.pumpAndSettle();
+
+        expect(find.text(AppStrings.labelBeratSaatIni), findsOneWidget);
+        expect(find.text('73.6'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('Riwayat ${lebar.toInt()} px tanpa overflow', (tester) async {
+        final router = await pumpApp(
+          tester,
+          size: Size(lebar, 900),
+          logRepo: FakeWeightLogRepository(awal: contoh()),
+        );
+        router.go(AppRoutes.riwayat);
+        await tester.pumpAndSettle();
+
+        expect(find.text('73.6 kg'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('form Catat Berat ${lebar.toInt()} px tanpa overflow',
+          (tester) async {
+        final router = await pumpApp(tester, size: Size(lebar, 900));
+        router.go(AppRoutes.catatBerat);
+        await tester.pumpAndSettle();
+
+        expect(find.text(AppStrings.labelBeratBadan), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
+
+    testWidgets('menu memakai label yang sama di mobile dan web',
+        (tester) async {
+      final mobile = await pumpApp(tester, size: const Size(390, 844));
+      mobile.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.navDashboard), findsOneWidget);
+      expect(find.text(AppStrings.navRiwayat), findsOneWidget);
+      expect(find.text(AppStrings.navProfil), findsOneWidget);
+
+      final web = await pumpApp(tester, size: const Size(1440, 900));
+      web.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.navDashboard), findsOneWidget);
+      expect(find.text(AppStrings.navRiwayat), findsOneWidget);
+      expect(find.text(AppStrings.navProfil), findsOneWidget);
+    });
+
+    testWidgets('menu web membuka halaman yang sama seperti mobile',
+        (tester) async {
+      final router = await pumpApp(tester, size: const Size(1440, 900));
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text(AppStrings.navRiwayat));
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.riwayatKosongJudul), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('Dashboard web memakai dua kolom', (tester) async {
+      final router = await pumpApp(
+        tester,
+        size: const Size(1440, 900),
+        targetAwal: const Target(batasBerat: 71),
+        logRepo: FakeWeightLogRepository(awal: contoh()),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      // Hero di kiri, grafik di kanan: titik tengah grafik berada di paruh
+      // kanan layar.
+      final hero = tester.getCenter(find.text(AppStrings.labelBeratSaatIni));
+      final grafik = tester.getCenter(find.byType(LineChart));
+
+      expect(hero.dx, lessThan(grafik.dx));
+      expect(grafik.dx, greaterThan(720));
+    });
+
+    testWidgets('halaman Riwayat web memakai tombol di kanan atas',
+        (tester) async {
+      final router = await pumpApp(tester, size: const Size(1440, 900));
+      router.go(AppRoutes.riwayat);
+      await tester.pumpAndSettle();
+
+      final tombol = find.widgetWithText(FilledButton, AppStrings.catatBerat);
+      expect(tombol, findsOneWidget);
+      // Tidak ada FAB di layar lebar — aksi utama tidak boleh dobel.
+      expect(find.byType(FloatingActionButton), findsNothing);
+      // Posisinya di area header (atas), bukan di tengah konten.
+      expect(tester.getCenter(tombol).dy, lessThan(200));
+    });
+  });
 }

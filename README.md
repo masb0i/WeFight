@@ -55,7 +55,7 @@ Pemeriksaan kualitas:
 
 ```bash
 flutter analyze
-flutter test                 # 93 test
+flutter test                 # 106 test
 flutter build web            # build produksi
 ```
 
@@ -119,6 +119,17 @@ Versi web (sidebar + area konten dua kolom):
 
 ![Dashboard versi web](docs/screenshots/08_dashboard_web.png)
 
+Perilaku per lebar layar:
+
+| Lebar | Navigasi | Dashboard | Aksi "Catat Berat" |
+|---|---|---|---|
+| < 600 px | Bottom nav 3 destinasi | Satu kolom | FAB di tengah bar + tombol di konten |
+| 600–1023 px | Sidebar ringkas (ikon) | Satu kolom, maks 720 px | Tombol di konten |
+| ≥ 1024 px | Sidebar 240 px + label | **Dua kolom** (3 : 2) | Tombol di konten (Dashboard), kanan atas header (Riwayat) |
+
+Isi menu, urutan, label aksi, palet, dan pesan kosong tidak berubah antar breakpoint.
+Diuji otomatis pada 360 / 768 / 1440 px (`test/widget_test.dart`, grup `Responsif`).
+
 Tangkapan layar dibuat otomatis dari pohon widget aplikasi (bukan hasil foto layar),
 sehingga selalu sesuai kode terakhir:
 
@@ -136,7 +147,7 @@ lib/
   app/                      # MaterialApp.router, router (guard login), tema
   core/
     constants/              # warna, gradient, jarak, teks, route, nama menu
-    utils/                  # date_format (kunci yyyy-MM-dd), validators
+    utils/                  # date_format, angka, weight_math, validators
     widgets/                # AppScaffold, AppCard, PrimaryButton, EmptyState, ...
   pages/                    # SATU FILE PER HALAMAN (H1–H7)
     splash_page.dart        #   Splash
