@@ -265,3 +265,4 @@ dipertanggungjawabkan:
 | [`docs/UI_SPEC.md`](docs/UI_SPEC.md) | Token warna, tipografi, komponen, tata letak web & mobile |
 | [`docs/FIREBASE_SETUP.md`](docs/FIREBASE_SETUP.md) | Panduan setup Firebase dari nol |
 | [`docs/UJI_FORM.md`](docs/UJI_FORM.md) | Tabel uji form (kasus, hasil yang diharapkan, hasil nyata) |
+| [`docs/DEMO_UAS.md`](docs/DEMO_UAS.md) | Naskah demo 10 menit untuk pertemuan 16: persiapan, urutan klik, antisipasi pertanyaan |

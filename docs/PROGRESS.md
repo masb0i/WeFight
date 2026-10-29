@@ -194,3 +194,11 @@ LULUS  Akun B menulis catatan atas nama akun A ... ditolak aturan
 - **Verifikasi:** `flutter analyze` bersih, `flutter test` **144/144 lulus**, `flutter build web` OK, Hosting dideploy ulang.
 - **File disentuh:** `lib/core/widgets/app_scaffold.dart`, `lib/core/constants/app_spacing.dart`, `lib/pages/{dashboard,profil,riwayat_berat}_page.dart`, `test/widget_test.dart`, `docs/{PLAN,PROGRESS,UI_SPEC}.md`, `README.md`, `docs/screenshots/*`
 - **Catatan:** README sempat mencantumkan "92 widget test" dan melewatkan `test/models_test.dart` sama sekali. Angka dihitung ulang per berkas: widget 76 + validators 21 + weight_math 19 + weight_log 8 + models 20 = **144**.
+
+## 2026-10-30 01:13 — Dokumen: naskah demo UAS
+- **Status:** selesai
+- **Yang dikerjakan:** `docs/DEMO_UAS.md` — panduan demo 10 menit untuk pertemuan 16, dibagi lima bagian: (1) persiapan 10 menit sebelum tampil, termasuk perintah `seed_demo --bersihkan` dan `cek_isolasi` beserta angka yang seharusnya muncul; (2) alur demo per segmen waktu dengan urutan klik dan kalimat yang diucapkan; (3) tujuh pertanyaan yang kemungkinan muncul beserta jawaban singkat (batasan saran kesehatan, jumlah menu, warna, D24, D26, tempat data, jumlah test); (4) penanganan bila ada yang gagal di tengah demo; (5) daftar tindak lanjut setelah demo.
+- **File disentuh:** `docs/DEMO_UAS.md` (baru), `docs/{PLAN,UJI_FORM}.md`, `README.md`
+- **Keputusan/kompromi:** Naskah mengikuti kondisi aplikasi yang sebenarnya, bukan urutan yang "ideal". Dua hal dikoreksi saat menulis: (a) kartu ajakan "Atur Target Timbang" hanya muncul bila batas berat **dan** tanggal sama-sama kosong (M12-4), jadi langkah demonya mengosongkan keduanya — bukan hanya batas berat; (b) teks chip saat lewat adalah "Hari timbang terlewat N hari", bukan "terlewat N hari".
+- **Perbaikan dokumen lain:** `UJI_FORM.md` menulis "26 otomatis dan 6 manual" padahal kasus manual ada **8** (nomor 5, 6, 9, 10, 17, 18, 31, 32); PLAN §15.1 masih menulis "34/34" test dan §15.4 hanya menyebut empat kasus manual. Ketiganya diperbarui.
+- **Berikutnya:** tidak ada pekerjaan kode. Sisa: mengisi 8 kasus uji manual dan menjalankan `flutter run -d chrome` (P6) — keduanya tindakan pemilik.

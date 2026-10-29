@@ -574,7 +574,7 @@ Teks hasil ekstraksi: `.workbuddy-ai/tmp/modul/*.txt`.
 | Push/pop ke halaman turunan | `context.push` (GoRouter) ke `/weight/new`, `/target` |
 | Keadaan kosong, bukan hanya jalur bahagia | `EmptyState` di Dashboard & Riwayat |
 | `Form` + `GlobalKey<FormState>` + `validator` + controller di-dispose | `login_page.dart`, `daftar_page.dart` |
-| `flutter analyze` bersih, test lulus | 34/34 |
+| `flutter analyze` bersih, test lulus | 144/144 |
 
 ### 15.2 Selisih yang sudah diselesaikan (blok P di §8)
 
@@ -598,8 +598,9 @@ Teks hasil ekstraksi: `.workbuddy-ai/tmp/modul/*.txt`.
 ### 15.4 Yang masih perlu tindakan pemilik
 
 - **P6** `flutter run -d chrome` untuk membuktikan DoD Minggu 5 di perangkat nyata.
-- Kasus uji form nomor 5, 6, 9, 10 di `UJI_FORM.md` baru bisa dibuktikan setelah
-  aplikasi dijalankan dengan Firebase sungguhan.
+- Kasus uji form nomor 5, 6, 9, 10, 17, 18, 31, dan 32 di `UJI_FORM.md` baru bisa
+  dibuktikan setelah aplikasi dijalankan dengan Firebase sungguhan atau lewat
+  aplikasi online; isi kolom "Hasil nyata" setelah dicoba.
 
 ### 15.5 Repository
 
