@@ -12,6 +12,7 @@ import '../core/widgets/app_card.dart';
 import '../core/widgets/app_scaffold.dart';
 import '../core/widgets/app_top_bar.dart';
 import '../core/widgets/empty_state.dart';
+import '../core/widgets/gagal_muat.dart';
 import '../core/widgets/primary_button.dart';
 import '../features/auth/presentation/auth_providers.dart';
 import '../features/dashboard/presentation/widgets/hero_weight_card.dart';
@@ -51,12 +52,19 @@ class DashboardPage extends ConsumerWidget {
     final logs = logsAsync.asData?.value ?? const [];
     final terakhir = logs.isEmpty ? null : logs.first;
 
+    // D25: galat dibedakan dari keadaan kosong. Tanpa ini, query yang gagal
+    // tampil sebagai "Belum ada catatan berat" dan angka "—", sehingga
+    // pengguna mengira catatannya hilang.
+    final gagal = logsAsync.hasError || targetAsync.hasError;
+
     final batas = target.batasBerat;
     final tanggalTimbang = target.tanggalTimbang;
 
     // PLAN §3 poin 4: selisih hanya bisa dihitung bila dua angkanya ada.
     final String deltaLabel;
-    if (terakhir == null) {
+    if (gagal && terakhir == null) {
+      deltaLabel = AppStrings.heroGagalMuat;
+    } else if (terakhir == null) {
       deltaLabel = AppStrings.heroBelumAdaCatatan;
     } else if (batas == null) {
       deltaLabel = AppStrings.heroBelumAdaTarget;
@@ -69,7 +77,9 @@ class DashboardPage extends ConsumerWidget {
       );
     }
 
-    final memuat = targetAsync.isLoading || logsAsync.isLoading;
+    // Selama galat, spinner tidak boleh terus berputar — tampilkan kartu
+    // galat dengan tombol coba lagi (D25).
+    final memuat = !gagal && (targetAsync.isLoading || logsAsync.isLoading);
     final targetKosong = batas == null && tanggalTimbang == null;
 
     // M14-2: mulai 1024 px konten dipecah dua kolom — angka ringkasan di kiri,
@@ -103,18 +113,31 @@ class DashboardPage extends ConsumerWidget {
 
     // Kolom kanan: ajakan target dan grafik tren.
     final kanan = <Widget>[
-      // M12-4: kartu ajakan hanya untuk target yang benar-benar kosong, bukan
-      // untuk target yang tinggal satu kolom.
-      if (targetKosong) ...[
-        _AjakanTarget(onAtur: () => context.push(AppRoutes.target)),
-        const SizedBox(height: AppSpacing.gap),
+      // D25: galat didahulukan — jangan menampilkan "belum ada catatan" atau
+      // grafik kosong saat datanya sebenarnya tidak berhasil diambil.
+      if (gagal)
+        GagalMuat(
+          onCobaLagi: () {
+            ref.invalidate(weightLogsProvider);
+            ref.invalidate(targetProvider);
+          },
+          judul: AppStrings.dashboardGagal,
+          pesan: AppStrings.dashboardGagalPesan,
+        )
+      else ...[
+        // M12-4: kartu ajakan hanya untuk target yang benar-benar kosong,
+        // bukan untuk target yang tinggal satu kolom.
+        if (targetKosong) ...[
+          _AjakanTarget(onAtur: () => context.push(AppRoutes.target)),
+          const SizedBox(height: AppSpacing.gap),
+        ],
+        if (logs.isEmpty)
+          const _KosongCatatan()
+        else
+          // M13: grafik tren. Dengan 1 catatan, kartu ini sendiri yang
+          // menampilkan "data belum cukup" (PLAN §3 poin 7).
+          TrenChart(logs: logs, batasBerat: batas),
       ],
-      if (logs.isEmpty)
-        const _KosongCatatan()
-      else
-        // M13: grafik tren. Dengan 1 catatan, kartu ini sendiri yang
-        // menampilkan "data belum cukup" (PLAN §3 poin 7).
-        TrenChart(logs: logs, batasBerat: batas),
     ];
 
     return AppScaffold(

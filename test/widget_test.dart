@@ -110,14 +110,21 @@ class FakeTargetRepository implements TargetRepository {
 /// dulu, lalu setiap perubahan (tambah/ubah/hapus) — itulah yang membuat
 /// daftar Riwayat ikut berubah tanpa memuat ulang halaman (M11-5).
 class FakeWeightLogRepository implements WeightLogRepository {
-  FakeWeightLogRepository({List<WeightLog>? awal, this.gagalTambah = false})
-      : daftar = [...?awal];
+  FakeWeightLogRepository({
+    List<WeightLog>? awal,
+    this.gagalTambah = false,
+    this.gagalWatch = false,
+  }) : daftar = [...?awal];
 
   final List<WeightLog> daftar;
   final ditambah = <WeightLog>[];
   final diubah = <WeightLog>[];
   final dihapus = <String>[];
   final bool gagalTambah;
+
+  /// Meniru query Firestore yang ditolak server (mis. indeks belum ada atau
+  /// aturan menolak). Dipakai menguji keadaan galat di layar (D25).
+  final bool gagalWatch;
 
   final _perubahan = StreamController<List<WeightLog>>.broadcast();
 
@@ -128,7 +135,7 @@ class FakeWeightLogRepository implements WeightLogRepository {
     return null;
   }
 
-  /// Meniru `orderBy('tanggal', descending: true)` di repository Firestore.
+  /// Meniru `urutkanTerbaruDulu` di repository Firestore (D24).
   List<WeightLog> get _urut => [...daftar]
     ..sort((a, b) => b.tanggal.compareTo(a.tanggal));
 
@@ -140,6 +147,7 @@ class FakeWeightLogRepository implements WeightLogRepository {
 
   @override
   Stream<List<WeightLog>> watchAll(String uid) async* {
+    if (gagalWatch) throw Exception('tidak ada koneksi');
     yield List<WeightLog>.unmodifiable(_urut);
     yield* _perubahan.stream;
   }
@@ -1110,6 +1118,67 @@ void main() {
 
       expect(find.text(AppStrings.grafikBelumCukup), findsOneWidget);
       expect(find.byType(LineChart), findsNothing);
+    });
+  });
+
+  // D25: kegagalan mengambil data tidak boleh tampil sebagai "belum ada data".
+  // Kalau tercampur, pengguna mengira catatannya hilang — persis yang terjadi
+  // saat query Firestore ditolak karena indeks komposit belum ada.
+  group('Keadaan galat', () {
+    testWidgets('Dashboard menampilkan galat, bukan keadaan kosong',
+        (tester) async {
+      final router = await pumpApp(
+        tester,
+        targetAwal: const Target(batasBerat: 71),
+        logRepo: FakeWeightLogRepository(gagalWatch: true),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.dashboardGagal), findsOneWidget);
+      expect(find.text(AppStrings.dashboardGagalPesan), findsOneWidget);
+      // Bukan keadaan kosong, dan bukan angka karangan.
+      expect(find.text(AppStrings.dashboardKosongJudul), findsNothing);
+      expect(find.text(AppStrings.heroGagalMuat), findsOneWidget);
+      expect(find.text(AppStrings.nilaiKosong), findsOneWidget);
+    });
+
+    testWidgets('Dashboard tidak berputar selamanya saat galat', (tester) async {
+      final router = await pumpApp(
+        tester,
+        logRepo: FakeWeightLogRepository(gagalWatch: true),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.widgetWithText(FilledButton, AppStrings.coba), findsOneWidget);
+    });
+
+    testWidgets('Dashboard punya tombol coba lagi', (tester) async {
+      final router = await pumpApp(
+        tester,
+        logRepo: FakeWeightLogRepository(gagalWatch: true),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.widgetWithText(FilledButton, AppStrings.coba), findsOneWidget);
+    });
+
+    testWidgets('Riwayat menampilkan galat dengan tombol coba lagi',
+        (tester) async {
+      final router = await pumpApp(
+        tester,
+        logRepo: FakeWeightLogRepository(gagalWatch: true),
+      );
+      router.go(AppRoutes.riwayat);
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.muatGagal), findsOneWidget);
+      expect(find.text(AppStrings.muatGagalPesan), findsOneWidget);
+      expect(find.text(AppStrings.riwayatKosongJudul), findsNothing);
+      expect(find.widgetWithText(FilledButton, AppStrings.coba), findsOneWidget);
     });
   });
 

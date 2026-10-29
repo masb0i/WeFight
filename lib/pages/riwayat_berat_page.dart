@@ -13,6 +13,7 @@ import '../core/widgets/app_card.dart';
 import '../core/widgets/app_scaffold.dart';
 import '../core/widgets/app_snackbar.dart';
 import '../core/widgets/empty_state.dart';
+import '../core/widgets/gagal_muat.dart';
 import '../core/widgets/status_chip.dart';
 import '../features/weight_log/models/weight_log.dart';
 import '../features/weight_log/presentation/weight_log_providers.dart';
@@ -60,7 +61,7 @@ class RiwayatBeratPage extends ConsumerWidget {
           : null,
       child: catatan.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, _) => _GagalMuat(
+        error: (_, _) => GagalMuatHalaman(
           onCobaLagi: () => ref.invalidate(weightLogsProvider),
         ),
         data: (logs) => logs.isEmpty
@@ -229,33 +230,6 @@ class _Kosong extends StatelessWidget {
               onPrimary: tampilkanTombol
                   ? () => context.push(AppRoutes.catatBerat)
                   : null,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _GagalMuat extends StatelessWidget {
-  const _GagalMuat({required this.onCobaLagi});
-
-  final VoidCallback onCobaLagi;
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.pageMobile),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 720),
-          child: AppCard(
-            child: EmptyState(
-              icon: Icons.cloud_off,
-              title: AppStrings.muatGagal,
-              message: AppStrings.muatGagalPesan,
-              primaryLabel: AppStrings.coba,
-              onPrimary: onCobaLagi,
             ),
           ),
         ),

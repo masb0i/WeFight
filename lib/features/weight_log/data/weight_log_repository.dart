@@ -35,14 +35,19 @@ class FirestoreWeightLogRepository implements WeightLogRepository {
 
   @override
   Stream<List<WeightLog>> watchAll(String uid) {
-    return _logs
-        .where('uid', isEqualTo: uid)
-        .orderBy('tanggal', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => WeightLog.fromMap(doc.id, doc.data()))
-            .whereType<WeightLog>()
-            .toList(growable: false));
+    // Sengaja TANPA `orderBy('tanggal')` (D24). Menggabungkan
+    // `.where('uid', isEqualTo: ...)` dengan `.orderBy('tanggal')` menuntut
+    // indeks komposit yang harus dibuat manual per project; selama indeks itu
+    // belum aktif Firestore menolak query dengan FAILED_PRECONDITION dan
+    // aplikasi tampil seolah "tidak ada koneksi". Pengurutan dilakukan di
+    // [urutkanTerbaruDulu] — hasilnya sama, tanpa syarat infrastruktur.
+    return _logs.where('uid', isEqualTo: uid).snapshots().map(
+          (snapshot) => urutkanTerbaruDulu(
+            snapshot.docs
+                .map((doc) => WeightLog.fromMap(doc.id, doc.data()))
+                .whereType<WeightLog>(),
+          ),
+        );
   }
 
   @override
@@ -84,4 +89,22 @@ class FirestoreWeightLogRepository implements WeightLogRepository {
 
   @override
   Future<void> hapus(String id) => _logs.doc(id).delete();
+}
+
+/// Urutkan catatan dari tanggal terbaru ke terlama (D24).
+///
+/// Ini satu-satunya tempat urutan ditentukan. Halaman Riwayat, Dashboard, dan
+/// grafik tren semuanya membaca daftar yang sudah terurut dari sini — tidak
+/// ada layar yang mengurutkan sendiri, jadi tidak mungkin berbeda urutan.
+///
+/// Kunci tanggal berformat `yyyy-MM-dd` sehingga perbandingan teks biasa
+/// sudah kronologis (D4). Tanggal yang sama diurutkan menurut `id` supaya
+/// hasilnya tetap sama setiap kali dibaca.
+List<WeightLog> urutkanTerbaruDulu(Iterable<WeightLog> logs) {
+  final hasil = logs.toList();
+  hasil.sort((a, b) {
+    final menurutTanggal = b.tanggalKunci.compareTo(a.tanggalKunci);
+    return menurutTanggal != 0 ? menurutTanggal : b.id.compareTo(a.id);
+  });
+  return List<WeightLog>.unmodifiable(hasil);
 }

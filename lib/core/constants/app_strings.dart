@@ -129,6 +129,16 @@ abstract final class AppStrings {
       'Catatan pertamamu akan muncul di sini setelah kamu menimbang.';
   static const aturTarget = 'Atur Target Timbang';
 
+  /// Dashboard saat data gagal diambil (D25).
+  ///
+  /// Dibedakan dari keadaan kosong: "Belum ada catatan" berarti benar-benar
+  /// tidak ada data, sedangkan ini berarti datanya tidak berhasil diambil.
+  static const dashboardGagal = 'Gagal memuat data.';
+  static const dashboardGagalPesan =
+      'Data Dashboard tidak bisa diambil. Periksa koneksi internet lalu coba '
+      'lagi.';
+  static const heroGagalMuat = 'Data belum bisa dimuat';
+
   // Dashboard — selisih & hitung mundur (PLAN §3 poin 4–5).
   static const selisihTepat = 'Tepat di batas';
   static String selisihAtas(String nilai) => '$nilai kg di atas batas';

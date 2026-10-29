@@ -186,6 +186,8 @@ Halaman hanya berisi tampilan; query Firestore tidak pernah ditulis di `lib/page
 | D21 | Dashboard: tombol **"Catat Berat"** selebar konten tepat di bawah hero card; keadaan kosong **tidak** diberi CTA tambahan | Aksi utama hanya boleh punya satu tombol per layar. Kalau kartu kosong juga memuat tombol "Catat Berat", pengguna melihat dua tombol untuk aksi yang sama (M12-5) | disetujui (2026-10-29) |
 | D22 | Sumbu X grafik memakai **indeks titik** (0, 1, 2, …), bukan selisih hari; tanggal asli tampil sebagai label | Jarak antar catatan tidak seragam (3, 4, 7 hari), sehingga sumbu berbasis hari membuat garis menumpuk di satu sisi saat jaraknya tidak rata. Label hanya digambar di awal–tengah–akhir bila titiknya lebih dari 4, supaya tidak bertumpuk di layar 360 px | disetujui (2026-10-29) |
 | D23 | Di layar **≥600 px FAB disembunyikan** dan aksi "Catat Berat" pindah ke tombol di area konten (Dashboard) atau kanan atas header (Riwayat) | Satu aksi cukup satu tombol. FAB tetap wajib di mobile karena merupakan bagian dari bar navigasi (D11, UI_SPEC §6) | disetujui (2026-10-29) |
+| D24 | Query `weightLogs` memakai **`.where('uid')` saja**; pengurutan tanggal dilakukan di Dart (`urutkanTerbaruDulu`) | `where('uid') + orderBy('tanggal')` menuntut **indeks komposit** yang harus dibuat manual per project. Selama indeks itu belum aktif Firestore menolak query dengan `FAILED_PRECONDITION`, dan aplikasi tampil seolah tidak ada koneksi. Pengurutan di Dart memberi hasil sama tanpa syarat infrastruktur, tetap satu tempat, dan bisa diuji sebagai fungsi murni. Kunci tanggal `yyyy-MM-dd` sehingga perbandingan teks sudah kronologis (D4) | disetujui (2026-10-30) |
+| D25 | **Galat memuat dibedakan dari keadaan kosong** di Dashboard dan Riwayat: keduanya memakai widget `GagalMuat` + tombol "Coba lagi" | Sebelumnya kegagalan query tampil sebagai "Belum ada catatan berat" dan angka `—`, sehingga pengguna mengira catatannya hilang. Keadaan kosong berarti benar-benar tidak ada data; galat berarti data tidak berhasil diambil. Spinner juga tidak boleh berputar terus saat galat | disetujui (2026-10-30) |
 
 **Belum diputuskan / perlu tanya pemilik:**
 - (tidak ada)
@@ -512,6 +514,23 @@ selalu selebar konten. Di dalam `Row` (lebar anak tidak dibatasi) nilai itu
 menjadi `width: Infinity` dan melempar `BoxConstraints forces an infinite width`.
 Solusi untuk tombol sekecil aksi di header: override gayanya,
 `FilledButton.styleFrom(minimumSize: const Size(0, 40))`.
+
+**Jebakan: `where('uid')` + `orderBy('tanggal')` menuntut indeks komposit.**
+Menggabungkan filter kesetaraan dengan pengurutan pada field berbeda membuat
+Firestore menolak query dengan `FAILED_PRECONDITION: The query requires an
+index` — bukan mengembalikan daftar kosong. Gejalanya menipu: Dashboard tampil
+seolah memuat lama lalu menunjukkan "belum ada catatan", Riwayat menampilkan
+"Gagal memuat catatan. Periksa koneksi", padahal jaringannya normal.
+Membuat indeks lewat `firebase deploy --only firestore:indexes` tidak langsung
+menolong (statusnya masih dibangun, query tetap ditolak), sehingga solusi yang
+dipilih adalah **tidak memakai `orderBy`** dan mengurutkan di Dart (D24).
+Kalau suatu saat `orderBy` dikembalikan, indeks kompositnya wajib ada lebih dulu.
+
+**Jebakan: galat query tampil sebagai keadaan kosong.**
+`logsAsync.asData?.value ?? const []` membuat kegagalan dan "belum ada data"
+tampak sama. Akibatnya pengguna mengira catatannya hilang. Periksa
+`hasError` lebih dulu dan tampilkan kartu galat + tombol coba lagi (D25).
+Spinner juga harus berhenti saat galat, bukan berputar terus.
 
 ---
 
