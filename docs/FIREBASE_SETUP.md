@@ -152,9 +152,36 @@ dipakai untuk mata kuliah ini, dan menambah konfigurasi yang tidak perlu.
 **Hasil yang benar:** muncul file `lib/firebase_options.dart` dan
 `android/app/google-services.json`.
 
-> Catatan Windows: bila `flutterfire` tidak dikenali, tambahkan
-> `%LOCALAPPDATA%\Pub\Cache\bin` ke `PATH`, atau jalankan lewat
-> `dart pub global run flutterfire_cli:flutterfire configure`.
+### Kalau muncul `flutterfire : The term 'flutterfire' is not recognized`
+
+Ini bukan kegagalan instalasi — launcher-nya ada, hanya foldernya belum masuk
+`PATH`. Buktikan dulu:
+
+```powershell
+dart pub global list
+```
+
+Kalau muncul `flutterfire_cli 1.4.1`, paketnya terpasang. Perbaiki PATH:
+
+```powershell
+# Permanen (berlaku untuk terminal baru)
+$pubBin = "$env:LOCALAPPDATA\Pub\Cache\bin"
+$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+if ($userPath -notlike "*$pubBin*") {
+  [Environment]::SetEnvironmentVariable("Path", "$userPath;$pubBin", "User")
+}
+```
+
+Tutup terminal, buka lagi, lalu `flutterfire --version`.
+
+Bila tidak ingin mengubah PATH, panggil langsung:
+
+```powershell
+dart pub global run flutterfire_cli:flutterfire configure --project=<PROJECT_ID>
+```
+
+Atau jalankan launcher-nya dengan path lengkap:
+`%LOCALAPPDATA%\Pub\Cache\bin\flutterfire.bat`
 
 ---
 
@@ -194,6 +221,7 @@ firebase deploy --only hosting
 
 | Gejala | Penyebab | Solusi |
 |---|---|---|
+| `flutterfire` tidak dikenali padahal sudah `dart pub global activate` | Folder `%LOCALAPPDATA%\Pub\Cache\bin` belum ada di `PATH` (khas Windows) | Lihat §F; tambahkan ke PATH atau pakai `dart pub global run flutterfire_cli:flutterfire` |
 | `flutterfire configure` gagal "no projects found" | Belum `firebase login`, atau akun Google berbeda | Jalankan `firebase login --reauth` |
 | App Android tidak terhubung | `applicationId` tidak sama dengan package name di console | Daftarkan ulang app dengan package yang benar |
 | Error `permission-denied` saat baca data | Rules belum di-Publish, atau query tidak menyaring `uid` | Cek tab Rules; pastikan `.where('uid', isEqualTo: ...)` |
