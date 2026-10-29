@@ -77,6 +77,13 @@ abstract final class AppDate {
   static String pendek(DateTime tanggal) =>
       '${tanggal.day} ${_namaBulanSingkat[tanggal.month - 1]} ${tanggal.year}';
 
+  /// `29 Okt` — label sumbu X grafik.
+  ///
+  /// Tahun sengaja dibuang: pada grafik 6 titik, label bertahun akan saling
+  /// menimpa di layar 360 px.
+  static String sumbu(DateTime tanggal) =>
+      '${tanggal.day} ${_namaBulanSingkat[tanggal.month - 1]}';
+
   /// `Hari ini`, `Kemarin`, `Besok`, atau tanggal pendek.
   ///
   /// Selisih dihitung `tanggal - acuan`, jadi tanggal kemarin menghasilkan

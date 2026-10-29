@@ -184,6 +184,7 @@ Halaman hanya berisi tampilan; query Firestore tidak pernah ditulis di `lib/page
 | D19 | Format & parsing angka kg dipusatkan di **`lib/core/utils/angka.dart`** (`Angka.kg`, `Angka.parseKg`), bukan helper privat per halaman | Target Timbang dan Catat Berat menampilkan angka yang sama; satu tempat untuk aturan "koma diterima, nol desimal dibuang" | disetujui (2026-10-29) |
 | D20 | Baris Riwayat menampilkan **tanggal · berat · catatan**; kolom "Perubahan" (selisih antar catatan) menyusul di M12 | Selisih harus dihitung dengan aturan yang sama seperti kartu Dashboard; menaruhnya di dua tempat sebelum `weight_math` ada berarti dua versi aturan yang bisa berbeda | disetujui (2026-10-29) |
 | D21 | Dashboard: tombol **"Catat Berat"** selebar konten tepat di bawah hero card; keadaan kosong **tidak** diberi CTA tambahan | Aksi utama hanya boleh punya satu tombol per layar. Kalau kartu kosong juga memuat tombol "Catat Berat", pengguna melihat dua tombol untuk aksi yang sama (M12-5) | disetujui (2026-10-29) |
+| D22 | Sumbu X grafik memakai **indeks titik** (0, 1, 2, …), bukan selisih hari; tanggal asli tampil sebagai label | Jarak antar catatan tidak seragam (3, 4, 7 hari), sehingga sumbu berbasis hari membuat garis menumpuk di satu sisi saat jaraknya tidak rata. Label hanya digambar di awal–tengah–akhir bila titiknya lebih dari 4, supaya tidak bertumpuk di layar 360 px | disetujui (2026-10-29) |
 
 **Belum diputuskan / perlu tanya pemilik:**
 - (tidak ada)
@@ -324,10 +325,10 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 - [x] M12-5 Tombol utama "Catat Berat" menonjol dan konsisten di mobile & web
 
 ### M13 — Grafik tren
-- [ ] M13-1 `tren_chart.dart` pakai `fl_chart` `LineChart`, sumbu X tanggal
-- [ ] M13-2 <2 catatan → pesan "data belum cukup"
-- [ ] M13-3 Grafik diperbarui setelah tambah/edit/hapus
-- [ ] M13-4 `RepaintBoundary` membungkus grafik
+- [x] M13-1 `tren_chart.dart` pakai `fl_chart` `LineChart`, sumbu X tanggal
+- [x] M13-2 <2 catatan → pesan "data belum cukup"
+- [x] M13-3 Grafik diperbarui setelah tambah/edit/hapus
+- [x] M13-4 `RepaintBoundary` membungkus grafik
 
 ### M14 — Versi web & responsif
 - [ ] M14-1 Sidebar + header untuk ≥600 px, item menu sama dengan mobile

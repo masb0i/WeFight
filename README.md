@@ -55,7 +55,7 @@ Pemeriksaan kualitas:
 
 ```bash
 flutter analyze
-flutter test                 # 86 test
+flutter test                 # 93 test
 flutter build web            # build produksi
 ```
 
@@ -109,7 +109,9 @@ Akun demo berisi target 71 kg, hari timbang 14 hari ke depan, dan 6 catatan bera
       <code>1 kg di bawah batas</code>), dan hitung mundur hari timbang (<code>14 hari lagi</code> /
       <code>Hari ini hari timbang</code> / <code>Hari timbang terlewat 3 hari</code>).<br><br>
       Keadaan kosong juga ditangani: angka tampil <code>—</code>, kartu "Atur Target Timbang" hanya
-      muncul bila target memang belum diisi, dan tidak ada angka yang dikarang.</sub></td>
+      muncul bila target memang belum diisi, dan tidak ada angka yang dikarang.<br><br>
+      Grafik tren (<code>fl_chart</code>) hanya muncul setelah ada 2 catatan — dengan 0 atau 1
+      catatan, kartunya menampilkan "Data belum cukup". Garis putus-putus adalah batas berat.</sub></td>
   </tr>
 </table>
 

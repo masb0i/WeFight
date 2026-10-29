@@ -150,6 +150,17 @@ abstract final class AppStrings {
   static String perubahanNaik(String nilai) => '+$nilai kg';
   static String perubahanTurun(String nilai) => '-$nilai kg';
 
+  // Grafik tren (M13).
+  static const grafikJudul = 'Grafik Berat Badan';
+  static const grafikSubtitle = 'Dari catatan terlama sampai yang terbaru.';
+  static const grafikBelumCukup = 'Data belum cukup';
+  static const grafikBelumCukupPesan =
+      'Grafik muncul setelah ada minimal 2 catatan berat.';
+  static String grafikJumlah(int jumlah) => '$jumlah titik';
+  static String grafikGarisTarget(String nilai) => 'Batas $nilai kg';
+  static const grafikTanpaTarget =
+      'Atur batas berat untuk menampilkan garis target.';
+
   // Riwayat.
   static const riwayatKosongJudul = 'Belum ada catatan berat';
   static const riwayatKosongPesan =

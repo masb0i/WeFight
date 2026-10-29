@@ -16,6 +16,7 @@ import '../core/widgets/primary_button.dart';
 import '../features/auth/presentation/auth_providers.dart';
 import '../features/dashboard/presentation/widgets/hero_weight_card.dart';
 import '../features/dashboard/presentation/widgets/peach_info_card.dart';
+import '../features/dashboard/presentation/widgets/tren_chart.dart';
 import '../features/target/models/target.dart';
 import '../features/target/presentation/target_providers.dart';
 import '../features/weight_log/presentation/weight_log_providers.dart';
@@ -121,6 +122,11 @@ class DashboardPage extends ConsumerWidget {
                       if (logs.isEmpty) ...[
                         const SizedBox(height: AppSpacing.gap),
                         const _KosongCatatan(),
+                      ] else ...[
+                        // M13: grafik tren. Dengan 1 catatan, kartu ini sendiri
+                        // yang menampilkan "data belum cukup" (PLAN §3 poin 7).
+                        const SizedBox(height: AppSpacing.gap),
+                        TrenChart(logs: logs, batasBerat: batas),
                       ],
                     ],
                   ),

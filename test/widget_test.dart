@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -949,6 +950,137 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(AppStrings.catatSubtitleTambah), findsOneWidget);
+    });
+  });
+
+  group('Grafik tren', () {
+    /// Tiga catatan, urut terbaru lebih dulu seperti keluaran provider.
+    List<WeightLog> tigaCatatan() => [
+          WeightLog(
+            id: 'c',
+            tanggal: AppDate.hariIni(),
+            berat: 73.6,
+          ),
+          WeightLog(
+            id: 'b',
+            tanggal: AppDate.hariIni().subtract(const Duration(days: 1)),
+            berat: 73.9,
+          ),
+          WeightLog(
+            id: 'a',
+            tanggal: AppDate.hariIni().subtract(const Duration(days: 2)),
+            berat: 74.2,
+          ),
+        ];
+
+    testWidgets('satu catatan belum cukup untuk menggambar grafik',
+        (tester) async {
+      final router = await pumpApp(
+        tester,
+        logRepo: FakeWeightLogRepository(
+          awal: [
+            WeightLog(id: 'a', tanggal: AppDate.hariIni(), berat: 73.6),
+          ],
+        ),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.grafikBelumCukup), findsOneWidget);
+      expect(find.byType(LineChart), findsNothing);
+    });
+
+    testWidgets('dua catatan atau lebih menggambar garis', (tester) async {
+      final router = await pumpApp(
+        tester,
+        logRepo: FakeWeightLogRepository(awal: tigaCatatan()),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.grafikJudul), findsOneWidget);
+      expect(find.byType(LineChart), findsOneWidget);
+      expect(find.text(AppStrings.grafikBelumCukup), findsNothing);
+    });
+
+    testWidgets('titik grafik urut dari catatan terlama ke terbaru',
+        (tester) async {
+      final router = await pumpApp(
+        tester,
+        logRepo: FakeWeightLogRepository(awal: tigaCatatan()),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      final chart = tester.widget<LineChart>(find.byType(LineChart));
+      final spots = chart.data.lineBarsData.first.spots;
+
+      expect(spots, hasLength(3));
+      expect(spots.map((s) => s.x), [0, 1, 2]);
+      expect(spots.map((s) => s.y), [74.2, 73.9, 73.6]);
+    });
+
+    testWidgets('garis target hanya muncul bila batas berat diisi',
+        (tester) async {
+      final router = await pumpApp(
+        tester,
+        targetAwal: const Target(batasBerat: 71),
+        logRepo: FakeWeightLogRepository(awal: tigaCatatan()),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      final chart = tester.widget<LineChart>(find.byType(LineChart));
+      final garis = chart.data.extraLinesData.horizontalLines;
+
+      expect(garis, hasLength(1));
+      expect(garis.single.y, 71);
+    });
+
+    testWidgets('tanpa batas berat tidak ada garis target', (tester) async {
+      final router = await pumpApp(
+        tester,
+        logRepo: FakeWeightLogRepository(awal: tigaCatatan()),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      final chart = tester.widget<LineChart>(find.byType(LineChart));
+      expect(chart.data.extraLinesData.horizontalLines, isEmpty);
+      expect(find.text(AppStrings.grafikTanpaTarget), findsOneWidget);
+    });
+
+    testWidgets('grafik dibungkus RepaintBoundary', (tester) async {
+      final router = await pumpApp(
+        tester,
+        logRepo: FakeWeightLogRepository(awal: tigaCatatan()),
+      );
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.ancestor(
+          of: find.byType(LineChart),
+          matching: find.byType(RepaintBoundary),
+        ),
+        findsWidgets,
+      );
+    });
+
+    testWidgets('grafik ikut berubah setelah catatan dihapus', (tester) async {
+      final repo = FakeWeightLogRepository(awal: tigaCatatan());
+      final router = await pumpApp(tester, logRepo: repo);
+      router.go(AppRoutes.dashboard);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(LineChart), findsOneWidget);
+
+      await repo.hapus('a');
+      await repo.hapus('b');
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.grafikBelumCukup), findsOneWidget);
+      expect(find.byType(LineChart), findsNothing);
     });
   });
 }
