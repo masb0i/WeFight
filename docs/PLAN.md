@@ -239,6 +239,7 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 - [x] M6-8 `AppCard`, `AppTopBar`, dan `tool/render_screens_test.dart` (render layar ke `docs/screenshots/`)
 
 ### M7 — Autentikasi
+- [ ] M7-0 Setup Firebase di console (**manual oleh pemilik**) — panduan: [`FIREBASE_SETUP.md`](./FIREBASE_SETUP.md)
 - [ ] M7-1 `Firebase.initializeApp` + `flutterfire configure` (project Firebase baru, Spark)
 - [ ] M7-2 `auth_repository`: `signIn`, `signUp`, `signOut`, `authStateChanges`
 - [ ] M7-3 `login_screen` + state galat (email/password kosong, kredensial salah)
@@ -366,6 +367,7 @@ Setiap kali satu tugas implementasi selesai — sekecil apa pun — lakukan **ti
 - Worksheet asli: `worksheet/*.docx` (Minggu 1–4 + Tutorial Figma)
 - Teks hasil ekstraksi: `.workbuddy-ai/tmp/ws/*.txt`
 - **Spesifikasi UI: [`UI_SPEC.md`](./UI_SPEC.md)**
+- **Panduan setup Firebase: [`FIREBASE_SETUP.md`](./FIREBASE_SETUP.md)**
 - **Gambar referensi UI: `docs/ui-reference/`** (palet gradient, dashboard web, 8 layar mobile)
 - Wireframe Figma (arsip, **bukan acuan lagi**): https://www.figma.com/design/je3J8Dtm45YIgMLQylv0CP/
 - Log progres: [`PROGRESS.md`](./PROGRESS.md)

@@ -49,4 +49,13 @@ Rencana dan checklist ada di [`PLAN.md`](./PLAN.md) — log ini mencatat apa yan
 - **Kendala:** Golden test sempat menggantung (`SIGTERM`) saat memuat font ikon secara sinkron; solusinya membungkus pemuatan font dengan `tester.runAsync`. Aplikasi belum dijalankan di device fisik — verifikasi lewat `flutter build web` dan render golden.
 - **Berikutnya:** M7-1 inisialisasi Firebase (`flutterfire configure`) — butuh project Firebase dari pemilik.
 
+## 2026-10-29 19:02 — Panduan setup Firebase
+- **Status:** selesai
+- **Yang dikerjakan:** Menulis `docs/FIREBASE_SETUP.md` — 8 bagian (buat project, aktifkan Auth email/password, buat Firestore, pasang rules, daftarkan app web + Android, pasang CLI, verifikasi, hosting), tabel masalah umum, dan aturan keamanan Firestore lengkap untuk tiga koleksi. Menu console diverifikasi ke dokumentasi resmi (sekarang **Databases & Storage → Firestore**, bukan Build). Package Android dicek dari `build.gradle.kts`: `com.example.wefight`. Ditambah M7-0 di checklist PLAN sebagai langkah manual pemilik.
+- **File disentuh:** `docs/FIREBASE_SETUP.md` (baru), `docs/PLAN.md` (§8 M7, §12), `docs/PROGRESS.md`
+- **Keputusan/kompromi:** Mode keamanan Firestore disarankan **Production mode** (bukan Test mode) karena aturan sudah disiapkan di dokumen yang sama — Test mode akan membuka data 30 hari lalu mati sendiri. Lokasi `asia-southeast2` (Jakarta) disarankan; dicatat bahwa lokasi permanen. Analytics disarankan dimatikan agar setup lebih singkat.
+- **Kendala:** `firebase-tools` dan `flutterfire_cli` belum terpasang di mesin ini (Node v22.22.2 dan npm 10.9.7 sudah ada). Perlu `npm install -g firebase-tools`, `dart pub global activate flutterfire_cli`, lalu `firebase login`.
+- **Berikutnya:** menunggu Project ID dari pemilik, lalu M7-1.
+
+
 
