@@ -55,7 +55,7 @@ Pemeriksaan kualitas:
 
 ```bash
 flutter analyze
-flutter test                 # 38 test
+flutter test                 # 49 test
 flutter build web            # build produksi
 ```
 
@@ -86,9 +86,13 @@ Akun demo berisi target 71 kg, hari timbang 14 hari ke depan, dan 6 catatan bera
   </tr>
   <tr>
     <td><img src="docs/screenshots/10_target_mobile.png" width="220" alt="Target Timbang"><br><sub>Target Timbang (form)</sub></td>
-    <td colspan="3" valign="top"><sub>Form Target Timbang: batas berat (angka) dan tanggal timbang
+    <td><img src="docs/screenshots/12_catat_berat_mobile.png" width="220" alt="Catat Berat"><br><sub>Catat Berat (tambah)</sub></td>
+    <td colspan="2" valign="top"><sub>Form Target Timbang: batas berat (angka) dan tanggal timbang
       (<code>showDatePicker</code>). Kedua kolom boleh dikosongkan — menyimpan form kosong berarti
-      menghapus target, bukan menghasilkan galat.</sub></td>
+      menghapus target, bukan menghasilkan galat.<br><br>
+      Form Catat Berat: tanggal terisi hari ini, berat 30–200 kg, catatan opsional. Kalau tanggal
+      itu sudah punya catatan, aplikasi menawarkan mengubah catatan lama — tidak pernah membuat
+      duplikat.</sub></td>
   </tr>
 </table>
 
@@ -103,7 +107,7 @@ sehingga selalu sesuai kode terakhir:
 flutter test --update-goldens tool/render_screens_test.dart
 ```
 
-Hasilnya tersimpan di `docs/screenshots/` (11 gambar: mobile, tablet, web).
+Hasilnya tersimpan di `docs/screenshots/` (13 gambar: mobile, tablet, web).
 
 ## Struktur project
 

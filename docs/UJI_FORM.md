@@ -3,8 +3,8 @@
 Latihan 3 modul Minggu 7: setiap aturan validasi diuji, hasil yang diharapkan
 ditulis lebih dulu, lalu hasil nyata dicatat.
 
-Status: **Login**, **Daftar**, dan **Target Timbang** sudah diuji. Tabel untuk
-**Catat Berat** ditambahkan pada M10.
+Status: **Login**, **Daftar**, **Target Timbang**, dan **Catat Berat** sudah
+diuji — 32 kasus, 26 otomatis dan 6 perlu dicoba manual di Chrome.
 
 Cara menjalankan uji otomatis:
 
@@ -23,9 +23,12 @@ env -u HTTP_PROXY -u HTTPS_PROXY -u http_proxy -u https_proxy \
 | Email | Daftar | `TextFormField` | Wajib; format `x@y.z`; belum terdaftar | "Email wajib diisi." / "Format email tidak valid." / "Email sudah terdaftar. Silakan masuk." |
 | Kata sandi | Daftar | `TextFormField` (obscure) | Wajib; minimal 6 karakter | "Kata sandi wajib diisi." / "Kata sandi minimal 6 karakter." |
 | Ulangi kata sandi | Daftar | `TextFormField` (obscure) | Wajib; harus sama dengan kolom kata sandi | "Kata sandi wajib diisi." / "Kata sandi tidak sama." |
+| Tanggal timbang | Catat Berat | `TextFormField` (read-only) | Selalu terisi (default hari ini); dipilih lewat kalender, tidak bisa masa depan | — (tidak bisa kosong) |
+| Berat badan | Catat Berat | `TextFormField` (angka) | Wajib; angka; 30–200 kg | "Berat wajib diisi." / "Berat harus berupa angka." / "Berat harus antara 30 dan 200 kg." |
+| Catatan | Catat Berat | `TextFormField` (3 baris) | Opsional, bebas | — |
 
-Aturan berat badan **30–200 kg** (Catat Berat) sudah disiapkan di
-`lib/core/utils/validators.dart` dan diuji terpisah di M15.
+Aturan berat badan **30–200 kg** dipakai bersama oleh Target Timbang dan Catat
+Berat (`Validators.berat`), sehingga pesan galatnya pasti sama.
 
 ## 2. Tabel uji Login
 
@@ -62,12 +65,35 @@ Halaman H4, dibuka dari kartu Dashboard atau ikon ubah di kartu utama.
 | 17 | Memilih tanggal lewat kalender | ketuk kolom tanggal | `showDatePicker` terbuka; hari yang sudah lewat tidak bisa dipilih | **Perlu dicoba manual** — dialog kalender tidak bisa dirender di test | — |
 | 18 | Menghapus tanggal | ketuk ikon × | Kolom tanggal kosong; Simpan menyimpan `tanggalTimbang` null | **Perlu dicoba manual** | — |
 
-## 5. Catatan pengujian
+## 5. Tabel uji Catat Berat
 
-- Uji otomatis memakai `FakeAuthRepository` dan `FakeUserRepository`, jadi tidak
-  menyentuh Firebase sama sekali — hasilnya tidak berubah karena koneksi internet.
-- Kasus 5, 6, 9, 10 bergantung pada layanan Firebase, sehingga hanya bisa
-  dibuktikan dengan `flutter run -d chrome` dan akun sungguhan.
+Halaman H5, dibuka dari tombol tambah (FAB) di Dashboard atau Riwayat Berat.
+
+| # | Kasus uji | Input | Hasil yang diharapkan | Hasil nyata | Bukti |
+|---|---|---|---|---|---|
+| 19 | Tanggal default | buka halaman | Kolom tanggal terisi tanggal hari ini, bukan kosong | **Sesuai** | test `tanggal default terisi hari ini` |
+| 20 | Berat kosong | — | "Berat wajib diisi."; tidak ada catatan dibuat | **Sesuai** | test `berat kosong ditolak` |
+| 21 | Berat di atas rentang | `250` | "Berat harus antara 30 dan 200 kg."; tidak tersimpan | **Sesuai** | test `berat di luar 30-200 kg ditolak` |
+| 22 | Berat di bawah rentang | `25` | Pesan yang sama seperti #21 | **Sesuai** (aturan yang sama) | `Validators.berat` |
+| 23 | Berat dengan koma desimal | `73,6` | Tersimpan `73.6`; `catatan` null karena dikosongkan | **Sesuai** | test `berat dengan koma tersimpan, catatan opsional` |
+| 24 | Catatan diisi | `73,6` + "Latihan pagi" | Catatan ikut tersimpan sebagai teks | **Sesuai** | test `catatan ikut tersimpan bila diisi` |
+| 25 | Tanggal sudah punya catatan | `73,6` pada tanggal yang ada | Dialog "Tanggal ini sudah ada catatannya" + berat lama; **tidak** ada duplikat | **Sesuai** | test `tanggal yang sudah ada catatannya tidak membuat duplikat` |
+| 26 | Pilih "Ubah Catatan" di dialog | ketuk tombol itu | Pindah ke mode ubah dengan nilai lama terisi | **Sesuai** | test `dialog duplikat menawarkan ubah catatan yang sudah ada` |
+| 27 | Mode ubah memuat nilai | buka `/weight/:id/edit` | Tanggal, berat, dan catatan lama terisi | **Sesuai** | test `mode ubah memuat nilai catatan yang ada` |
+| 28 | Simpan perubahan | ubah berat jadi `73,9` | `ubah` dipanggil, **tidak** ada catatan baru | **Sesuai** | test `mode ubah menyimpan perubahan tanpa menambah catatan baru` |
+| 29 | Gagal simpan (jaringan) | berat valid, simpan | SnackBar "Gagal menyimpan. Periksa koneksi lalu coba lagi."; isian **tidak** hilang | **Sesuai** | test `gagal simpan: pesan galat tampil dan isian tidak hilang` |
+| 30 | Jalur Dashboard → tersimpan | FAB → isi berat → Simpan | Maksimal 3 langkah; kembali ke Dashboard dengan SnackBar sukses | **Sesuai** | test `dari Dashboard ke catatan tersimpan maksimal 3 langkah` |
+| 31 | Memilih tanggal lampau | ketuk kolom tanggal | `showDatePicker` terbuka; hanya hari ini dan sebelumnya yang bisa dipilih | **Perlu dicoba manual** — dialog kalender tidak bisa dirender di test | — |
+| 32 | Membuka id yang sudah dihapus | `/weight/tidak-ada/edit` | Keadaan "Catatan tidak ditemukan." + tombol Kembali | **Perlu dicoba manual** di Chrome | — |
+
+## 6. Catatan pengujian
+
+- Uji otomatis memakai `FakeAuthRepository`, `FakeUserRepository`,
+  `FakeTargetRepository`, dan `FakeWeightLogRepository`, jadi tidak menyentuh
+  Firebase sama sekali — hasilnya tidak berubah karena koneksi internet.
+- Kasus 5, 6, 9, 10, 31, dan 32 bergantung pada layanan Firebase atau dialog
+  bawaan Flutter, sehingga hanya bisa dibuktikan dengan `flutter run -d chrome`
+  dan akun sungguhan.
 - Pesan kesalahan diperbarui otomatis saat pengguna memperbaiki kolom
   (`AutovalidateMode.onUserInteraction` pada `Form`), jadi pesan lama tidak
   tertinggal.

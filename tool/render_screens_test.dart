@@ -21,12 +21,48 @@ import 'package:wefight/core/constants/app_routes.dart';
 import 'package:wefight/features/auth/presentation/auth_providers.dart';
 import 'package:wefight/features/target/models/target.dart';
 import 'package:wefight/features/target/presentation/target_providers.dart';
+import 'package:wefight/features/weight_log/data/weight_log_repository.dart';
+import 'package:wefight/features/weight_log/models/weight_log.dart';
+import 'package:wefight/features/weight_log/presentation/weight_log_providers.dart';
 
 /// Target contoh supaya form terlihat terisi, bukan kosong.
 final _targetContoh = Target(
   batasBerat: 71,
   tanggalTimbang: DateTime(2026, 11, 12),
 );
+
+/// Catatan contoh untuk layar Catat Berat mode ubah.
+final _logContoh = WeightLog(
+  id: 'demo-01',
+  tanggal: DateTime(2026, 10, 29),
+  berat: 73.6,
+  catatan: 'Latihan pagi, badan terasa ringan.',
+);
+
+/// Repository catatan palsu — alat render tidak boleh menyentuh Firestore.
+class _LogPalsu implements WeightLogRepository {
+  const _LogPalsu();
+
+  @override
+  Stream<List<WeightLog>> watchAll(String uid) =>
+      Stream<List<WeightLog>>.value(const []);
+
+  @override
+  Future<WeightLog?> ambil(String id) async =>
+      id == _logContoh.id ? _logContoh : null;
+
+  @override
+  Future<WeightLog?> cariTanggal(String uid, DateTime tanggal) async => null;
+
+  @override
+  Future<String> tambah(String uid, WeightLog log) async => 'baru';
+
+  @override
+  Future<void> ubah(String uid, WeightLog log) async {}
+
+  @override
+  Future<void> hapus(String id) async {}
+}
 
 Future<void> _loadFonts(WidgetTester tester) async {
   await tester.runAsync(() async {
@@ -85,6 +121,7 @@ Future<void> _shoot(
         targetProvider.overrideWith(
           (ref) => Stream<Target>.value(target ?? const Target()),
         ),
+        weightLogRepositoryProvider.overrideWithValue(const _LogPalsu()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
@@ -172,6 +209,20 @@ void main() {
       size: const Size(1440, 900),
       route: AppRoutes.target,
       file: '11_target_web.png',
+      target: _targetContoh,
+    );
+    await _shoot(
+      tester,
+      size: const Size(390, 844),
+      route: AppRoutes.catatBerat,
+      file: '12_catat_berat_mobile.png',
+      target: _targetContoh,
+    );
+    await _shoot(
+      tester,
+      size: const Size(1440, 900),
+      route: AppRoutes.editBeratPath(_logContoh.id),
+      file: '13_catat_berat_web.png',
       target: _targetContoh,
     );
   });

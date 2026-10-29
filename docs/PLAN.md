@@ -180,6 +180,8 @@ Halaman hanya berisi tampilan; query Firestore tidak pernah ditulis di `lib/page
 | D15 | Tujuh halaman dipindah ke **`lib/pages/`** dengan nama `*_page.dart`, kelas `*Page`; lapisan data tetap di `lib/features/` | Modul Minggu 6 menuntut "satu file per halaman di `lib/pages/`". Memisahkan tampilan dari data membuat kode Firestore tidak tercampur dengan kode UI | disetujui (2026-10-29) |
 | D16 | Warna primer **tetap burgundy `#59171B`**, bukan navy `#1F3A5F` style guide mini Minggu 4 | Modul menyebut warna style guide sebagai opsional; pemilik sudah memilih gambar referensi sendiri (D9). Alasan penggantian ditulis di README supaya bisa dipertanggungjawabkan saat penilaian | disetujui (2026-10-29) |
 | D17 | Setiap form memakai **`AutovalidateMode.onUserInteraction`** + **SnackBar** pesan status (`AppSnackBar`) untuk berhasil dan gagal | Rubrik Minggu 7 menilai "validasi & pesan 25%" termasuk pesan status. Inline `ErrorText` tetap dipakai sebagai penjelas tambahan | disetujui (2026-10-29) |
+| D18 | Catat Berat memakai **satu halaman untuk dua mode**: `/weight/new` (tambah) dan `/weight/:id/edit` (ubah), dibedakan oleh `logId` | Menghindari dua halaman yang isinya 95% sama; aturan validasi dan format angka pasti konsisten. Satu-satunya percabangan ada di `_simpan` dan judul | disetujui (2026-10-29) |
+| D19 | Format & parsing angka kg dipusatkan di **`lib/core/utils/angka.dart`** (`Angka.kg`, `Angka.parseKg`), bukan helper privat per halaman | Target Timbang dan Catat Berat menampilkan angka yang sama; satu tempat untuk aturan "koma diterima, nol desimal dibuang" | disetujui (2026-10-29) |
 
 **Belum diputuskan / perlu tanya pemilik:**
 - (tidak ada)
@@ -298,12 +300,12 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 - [x] M9-5 Setelah simpan → kembali ke Dashboard dengan data terbarui
 
 ### M10 — Catat Berat
-- [ ] M10-1 Form: tanggal (default hari ini), berat, catatan opsional
-- [ ] M10-2 Validator berat 30–200 kg + pesan galat
-- [ ] M10-3 Cek tanggal sudah ada catatan → dialog tawarkan edit, tidak membuat duplikat
-- [ ] M10-4 Mode tambah vs edit dibedakan lewat route/parameter
-- [ ] M10-5 Gagal simpan → pesan galat, isian tidak hilang
-- [ ] M10-6 Jalur ≤3 langkah dari Dashboard ke tersimpan
+- [x] M10-1 Form: tanggal (default hari ini), berat, catatan opsional
+- [x] M10-2 Validator berat 30–200 kg + pesan galat
+- [x] M10-3 Cek tanggal sudah ada catatan → dialog tawarkan edit, tidak membuat duplikat
+- [x] M10-4 Mode tambah vs edit dibedakan lewat route/parameter
+- [x] M10-5 Gagal simpan → pesan galat, isian tidak hilang
+- [x] M10-6 Jalur ≤3 langkah dari Dashboard ke tersimpan
 
 ### M11 — Riwayat Berat
 - [ ] M11-1 `ListView.builder` urut tanggal terbaru, `ValueKey` per item
@@ -482,6 +484,16 @@ Aturan yang memakai `request.data.uid` **selalu** menolak dengan
 `request.resource.data` (isi dokumen setelah ditulis). Gejalanya menipu: dokumen
 yang aturannya memakai id (`targets/{uid}`) tetap berhasil, hanya koleksi yang
 memeriksa field (`weightLogs`) yang gagal.
+
+**Jebakan: cek duplikat tanggal harus mengecualikan catatan yang sedang diubah.**
+`cariTanggal` akan menemukan catatan itu sendiri saat mode ubah, sehingga
+tanpa `bentrok.id != widget.logId` setiap penyimpanan edit ditolak dengan
+"tanggal sudah dipakai". Bandingkan **id**, bukan tanggal.
+
+**Jebakan: `showDialog` lalu `context.pushReplacement` memakai context yang bisa
+sudah mati.** Setelah `await` dialog, periksa `mounted` dulu. Kalau pengguna
+memilih "Ubah Catatan", gunakan `pushReplacement` (bukan `push`) supaya tombol
+kembali tidak menumpuk dua form yang isinya bertabrakan.
 
 ---
 

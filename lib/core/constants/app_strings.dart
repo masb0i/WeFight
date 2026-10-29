@@ -92,6 +92,28 @@ abstract final class AppStrings {
   static const targetTersimpan = 'Target timbang tersimpan.';
   static const simpanGagal = 'Gagal menyimpan. Periksa koneksi lalu coba lagi.';
 
+  // Catat Berat.
+  static const catatSubtitleTambah =
+      'Satu catatan per tanggal. Kalau tanggal itu sudah ada, kamu bisa '
+      'mengubah catatannya.';
+  static const catatSubtitleEdit = 'Mengubah catatan yang sudah tersimpan.';
+  static const labelBeratBadan = 'Berat Badan (kg)';
+  static const bantuanBerat = 'Antara 30 dan 200 kg. Contoh: 73,6';
+  static const labelCatatan = 'Catatan (opsional)';
+  static const hintCatatan = 'Misalnya: timbang pagi sebelum latihan';
+  static const duplikatJudul = 'Tanggal ini sudah ada catatannya';
+  static const ubahCatatan = 'Ubah Catatan';
+  static const catatanTersimpan = 'Catatan berat tersimpan.';
+  static const catatanDiperbarui = 'Catatan berat diperbarui.';
+  static const catatanTidakDitemukan = 'Catatan tidak ditemukan.';
+  static const tanggalDipakaiLain =
+      'Sudah ada catatan lain pada tanggal itu. Pilih tanggal lain.';
+
+  /// Pesan dialog saat tanggal yang dipilih sudah punya catatan.
+  static String duplikatPesan(String berat, String tanggal) =>
+      'Sudah ada catatan $berat kg pada $tanggal. '
+      'Ubah catatan itu, atau pilih tanggal lain.';
+
   // Dashboard.
   static const sapaan = 'Halo, Fighter!';
   static const sapaanSub = 'Ayo catat progresmu hari ini.';

@@ -28,6 +28,7 @@ class AppTextField extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
     this.inputFormatters,
+    this.maxLines = 1,
     this.textCapitalization = TextCapitalization.none,
   });
 
@@ -52,6 +53,10 @@ class AppTextField extends StatelessWidget {
 
   final VoidCallback? onTap;
   final List<TextInputFormatter>? inputFormatters;
+
+  /// `1` untuk isian satu baris, lebih besar untuk catatan bebas.
+  final int maxLines;
+
   final TextCapitalization textCapitalization;
 
   @override
@@ -75,6 +80,7 @@ class AppTextField extends StatelessWidget {
       readOnly: readOnly,
       onTap: onTap,
       inputFormatters: inputFormatters,
+      maxLines: maxLines,
       textCapitalization: textCapitalization,
       style: AppTextStyles.body,
       cursorColor: AppColors.burgundy700,

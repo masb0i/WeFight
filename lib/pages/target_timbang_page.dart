@@ -8,6 +8,7 @@ import '../core/constants/app_routes.dart';
 import '../core/constants/app_spacing.dart';
 import '../core/constants/app_strings.dart';
 import '../core/constants/app_text_styles.dart';
+import '../core/utils/angka.dart';
 import '../core/utils/date_format.dart';
 import '../core/utils/validators.dart';
 import '../core/widgets/app_card.dart';
@@ -68,17 +69,10 @@ class _TargetTimbangPageState extends ConsumerState<TargetTimbangPage> {
     _sudahDiisi = true;
 
     final batas = target.batasBerat;
-    _batas.text = batas == null ? '' : _formatAngka(batas);
+    _batas.text = batas == null ? '' : Angka.kg(batas);
     _tanggalTimbang = target.tanggalTimbang;
     _tanggal.text =
         target.tanggalTimbang == null ? '' : AppDate.panjang(target.tanggalTimbang!);
-  }
-
-  /// `71` tetap `71`, bukan `71.0`.
-  static String _formatAngka(double nilai) {
-    return nilai == nilai.roundToDouble()
-        ? nilai.toStringAsFixed(0)
-        : nilai.toStringAsFixed(1);
   }
 
   Future<void> _pilihTanggal() async {
@@ -124,7 +118,7 @@ class _TargetTimbangPageState extends ConsumerState<TargetTimbangPage> {
     setState(() => _loading = true);
     try {
       final target = Target(
-        batasBerat: _parseBatas(_batas.text),
+        batasBerat: Angka.parseKg(_batas.text),
         tanggalTimbang: _tanggalTimbang,
         diperbaruiPada: DateTime.now(),
       );
@@ -140,13 +134,6 @@ class _TargetTimbangPageState extends ConsumerState<TargetTimbangPage> {
     } finally {
       if (mounted) setState(() => _loading = false);
     }
-  }
-
-  /// Kosong → null (target tanpa batas berat). Koma desimal diterima.
-  static double? _parseBatas(String teks) {
-    final bersih = teks.trim().replaceAll(',', '.');
-    if (bersih.isEmpty) return null;
-    return double.tryParse(bersih);
   }
 
   void _kembali() {
