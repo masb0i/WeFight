@@ -55,7 +55,7 @@ Pemeriksaan kualitas:
 
 ```bash
 flutter analyze
-flutter test                 # 106 test
+flutter test                 # 128 test
 flutter build web            # build produksi
 ```
 
@@ -138,6 +138,18 @@ flutter test --update-goldens tool/render_screens_test.dart
 ```
 
 Hasilnya tersimpan di `docs/screenshots/` (15 gambar: mobile, tablet, web).
+
+## Pengujian
+
+**128 test**, semuanya lulus tanpa Firebase (Auth dan Firestore diganti fake):
+
+| Berkas | Isi |
+|---|---|
+| `test/widget_test.dart` | 88 widget test: kerangka & guard login, validasi form autentikasi, Target Timbang, Catat Berat (termasuk aturan satu catatan per tanggal dan mode ubah), Riwayat Berat, ringkasan Dashboard, grafik tren, responsif 360/768/1440 px |
+| `test/validators_test.dart` | 21 unit test `Validators` — batas 30 dan 200 kg diuji **inklusif**, koma desimal, dan target yang boleh kosong |
+| `test/weight_math_test.dart` | 19 unit test `WeightMath` — selisih 0/positif/negatif, pembulatan satu desimal, sisa hari 0 dan negatif |
+
+Logika yang bisa salah tanpa terlihat di layar (aritmetika selisih, hitung mundur, validasi rentang) diuji sebagai fungsi murni lebih dulu, baru ditempel ke widget. Tampilan yang tidak bisa dijamin test — label terpotong, tombol melebar, teks bertumpuk — ditangkap lewat render golden di atas.
 
 ## Struktur project
 

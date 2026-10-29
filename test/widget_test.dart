@@ -509,6 +509,28 @@ void main() {
       expect(repo.ditambah, isEmpty);
     });
 
+    // Kolom berat memakai `FilteringTextInputFormatter` yang membuang huruf,
+    // jadi teks "73kg" tidak pernah sampai ke validator — yang tersisa "73".
+    // Nilai bukan angka tetap bisa lolos lewat pemisah desimal sendirian,
+    // dan di situlah pesan "harus berupa angka" harus muncul.
+    testWidgets('berat bukan angka ditolak', (tester) async {
+      final repo = FakeWeightLogRepository();
+      final router = await pumpApp(tester, logRepo: repo);
+      router.go(AppRoutes.catatBerat);
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextFormField).at(1), '73kg');
+      await tester.pump();
+      expect(find.text('73'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextFormField).at(1), '.');
+      await tester.tap(find.widgetWithText(FilledButton, AppStrings.simpan));
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.validasiBeratAngka), findsOneWidget);
+      expect(repo.ditambah, isEmpty);
+    });
+
     testWidgets('berat dengan koma tersimpan, catatan opsional', (tester) async {
       final repo = FakeWeightLogRepository();
       final router = await pumpApp(tester, logRepo: repo);
@@ -938,7 +960,14 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(AppStrings.dashboardKosongJudul), findsOneWidget);
+      expect(find.text(AppStrings.dashboardKosongPesan), findsOneWidget);
       expect(find.text(AppStrings.heroBelumAdaCatatan), findsOneWidget);
+      // D21: kartu keadaan kosong tidak menambah tombol — aksi utama tetap
+      // satu, yaitu tombol di atasnya.
+      expect(
+        find.widgetWithText(FilledButton, AppStrings.catatBerat),
+        findsOneWidget,
+      );
     });
 
     testWidgets('tombol Catat Berat membuka form', (tester) async {

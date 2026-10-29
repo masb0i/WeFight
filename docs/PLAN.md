@@ -338,11 +338,11 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 - [x] M14-4 Uji 360 / 768 / 1440 px tanpa overflow (`flutter run -d chrome`)
 
 ### M15 — Testing
-- [ ] M15-1 Unit test `weight_math` (selisih 0, positif, negatif; sisa hari 0/negatif)
-- [ ] M15-2 Unit test `validators` (kosong, bukan angka, 29.9, 200.1, 30, 200)
-- [ ] M15-3 Widget test form Catat Berat: input tidak valid menampilkan pesan
-- [ ] M15-4 Widget test `EmptyState` Dashboard
-- [ ] M15-5 `flutter analyze` bersih, `flutter test` hijau
+- [x] M15-1 Unit test `weight_math` (selisih 0, positif, negatif; sisa hari 0/negatif)
+- [x] M15-2 Unit test `validators` (kosong, bukan angka, 29.9, 200.1, 30, 200)
+- [x] M15-3 Widget test form Catat Berat: input tidak valid menampilkan pesan
+- [x] M15-4 Widget test `EmptyState` Dashboard
+- [x] M15-5 `flutter analyze` bersih, `flutter test` hijau
 
 ### M16 — Deploy & penutupan
 - [ ] M16-1 `flutter build web` + `firebase deploy --only hosting`
