@@ -4,7 +4,7 @@ Latihan 3 modul Minggu 7: setiap aturan validasi diuji, hasil yang diharapkan
 ditulis lebih dulu, lalu hasil nyata dicatat.
 
 Status: **Login**, **Daftar**, **Target Timbang**, dan **Catat Berat** sudah
-diuji — 32 kasus, 26 otomatis dan 6 perlu dicoba manual di Chrome.
+diuji — 32 kasus, 24 otomatis dan 8 perlu dicoba manual di Chrome.
 
 Cara menjalankan uji otomatis:
 
@@ -91,9 +91,10 @@ Halaman H5, dibuka dari tombol tambah (FAB) di Dashboard atau Riwayat Berat.
 - Uji otomatis memakai `FakeAuthRepository`, `FakeUserRepository`,
   `FakeTargetRepository`, dan `FakeWeightLogRepository`, jadi tidak menyentuh
   Firebase sama sekali — hasilnya tidak berubah karena koneksi internet.
-- Kasus 5, 6, 9, 10, 31, dan 32 bergantung pada layanan Firebase atau dialog
-  bawaan Flutter, sehingga hanya bisa dibuktikan dengan `flutter run -d chrome`
-  dan akun sungguhan.
+- Kasus 5, 6, 9, 10, 17, 18, 31, dan 32 bergantung pada layanan Firebase atau
+  dialog bawaan Flutter, sehingga hanya bisa dibuktikan dengan
+  `flutter run -d chrome` (atau aplikasi online di `wefight-38409.web.app`) dan
+  akun sungguhan. Isi kolom **Hasil nyata** setelah dicoba.
 - Pesan kesalahan diperbarui otomatis saat pengguna memperbaiki kolom
   (`AutovalidateMode.onUserInteraction` pada `Form`), jadi pesan lama tidak
   tertinggal.
