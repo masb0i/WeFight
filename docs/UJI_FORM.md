@@ -103,3 +103,24 @@ Halaman H5, dibuka dari tombol tambah (FAB) di Dashboard atau Riwayat Berat.
   lebih dulu, supaya pesan baru tidak antre di belakang pesan lama.
 - Status tidak dibedakan hanya dengan warna: setiap SnackBar berisi ikon **dan**
   teks (aturan bisnis PLAN §3 poin 10).
+
+## 7. Di luar tabel form — lupa kata sandi (K8)
+
+Fitur Should **K8** bukan aturan validasi kolom, jadi tidak diberi nomor di tabel
+atas. Pengujiannya ada di `test/widget_test.dart`, grup **`Lupa kata sandi`**
+(7 kasus, semuanya otomatis):
+
+| Kasus | Yang dibuktikan |
+|---|---|
+| Tanpa email tidak membuka dialog | Kolom kosong → pesan galat, dialog tidak muncul, tidak ada permintaan kirim |
+| Format email salah ditolak sebelum dialog | Sama, untuk email yang formatnya tidak sah |
+| Dialog menyebut email yang akan dikirimi | Pengguna melihat alamat tujuan sebelum menyetujui |
+| Batal tidak mengirim tautan | Tombol Batal benar-benar membatalkan, bukan sekadar menutup |
+| Konfirmasi mengirim tautan ke email yang diisi | `sendPasswordReset` dipanggil dengan email yang benar + pesan berhasil |
+| Email belum terdaftar tampil sebagai pesan sendiri | `user-not-found` menjadi "Email belum terdaftar.", bukan "Email atau kata sandi salah." |
+| Tetap utuh di layar 360 px | Tidak overflow dan tautan masih bisa ditekan di layar sempit |
+
+Alur yang diuji: email diambil dari kolom yang sudah diisi (tidak diketik ulang)
+→ diperiksa dulu → dialog konfirmasi → kirim → pesan status. Pengiriman email
+sungguhan tidak diuji otomatis (butuh kotak masuk), jadi saat demo cukup
+ditunjukkan bahwa pesan berhasil muncul.

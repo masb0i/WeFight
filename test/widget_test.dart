@@ -27,9 +27,16 @@ import 'package:wefight/features/weight_log/presentation/weight_log_providers.da
 
 /// Repository palsu — tidak menyentuh Firebase sama sekali.
 class FakeAuthRepository implements AuthRepository {
-  FakeAuthRepository({this.signedIn = false});
+  FakeAuthRepository({this.signedIn = false, this.gagalReset = false});
 
   bool signedIn;
+
+  /// Bila true, [sendPasswordReset] melempar galat seperti Firebase.
+  bool gagalReset;
+
+  /// Email yang pernah diminta atur ulang kata sandi — dipakai test K8.
+  final resetDiminta = <String>[];
+
   final _changes = StreamController<User?>.broadcast();
 
   @override
@@ -64,7 +71,12 @@ class FakeAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> sendPasswordReset(String email) async {}
+  Future<void> sendPasswordReset(String email) async {
+    if (gagalReset) {
+      throw FirebaseAuthException(code: 'user-not-found');
+    }
+    resetDiminta.add(email);
+  }
 }
 
 /// Repository profil palsu — layar Daftar menulis `users/{uid}` setelah
@@ -209,6 +221,7 @@ Future<GoRouter> pumpApp(
     ProviderScope(
       overrides: [
         // Wajib: tanpa ini provider akan memanggil FirebaseAuth.instance.
+        authRepositoryProvider.overrideWithValue(auth ?? FakeAuthRepository()),
         authStateProvider.overrideWith(
           (ref) => auth?.authStateChanges ?? Stream<User?>.value(null),
         ),
@@ -416,6 +429,163 @@ void main() {
       await tester.pump(); // biarkan SnackBar mulai tampil
 
       expect(find.text(AppStrings.periksaIsian), findsOneWidget);
+    });
+  });
+
+  // K8 (Should): kirim tautan atur ulang kata sandi dari halaman Login.
+  group('Lupa kata sandi', () {
+    Future<FakeAuthRepository> bukaLogin(
+      WidgetTester tester, {
+      bool gagalReset = false,
+    }) async {
+      final auth = FakeAuthRepository(gagalReset: gagalReset);
+      final router = await pumpApp(tester, auth: auth);
+      router.go(AppRoutes.login);
+      await tester.pumpAndSettle();
+      return auth;
+    }
+
+    testWidgets('tanpa email tidak membuka dialog', (tester) async {
+      final auth = await bukaLogin(tester);
+
+      await tester.tap(
+        find.widgetWithText(TextButton, AppStrings.lupaKataSandi),
+      );
+      await tester.pump();
+
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.byType(SnackBar), findsOneWidget);
+      expect(auth.resetDiminta, isEmpty);
+    });
+
+    testWidgets('format email salah ditolak sebelum dialog', (tester) async {
+      final auth = await bukaLogin(tester);
+
+      await tester.enterText(find.byType(TextFormField).at(0), 'bukan-email');
+      await tester.tap(
+        find.widgetWithText(TextButton, AppStrings.lupaKataSandi),
+      );
+      await tester.pump();
+
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.byType(SnackBar), findsOneWidget);
+      expect(auth.resetDiminta, isEmpty);
+    });
+
+    testWidgets('dialog menyebut email yang akan dikirimi', (tester) async {
+      await bukaLogin(tester);
+
+      await tester.enterText(
+        find.byType(TextFormField).at(0),
+        'fighter@wefight.demo',
+      );
+      await tester.tap(
+        find.widgetWithText(TextButton, AppStrings.lupaKataSandi),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(
+        find.text(AppStrings.resetPesan('fighter@wefight.demo')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('batal tidak mengirim tautan', (tester) async {
+      final auth = await bukaLogin(tester);
+
+      await tester.enterText(
+        find.byType(TextFormField).at(0),
+        'fighter@wefight.demo',
+      );
+      await tester.tap(
+        find.widgetWithText(TextButton, AppStrings.lupaKataSandi),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(TextButton, AppStrings.batal));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(auth.resetDiminta, isEmpty);
+    });
+
+    testWidgets('konfirmasi mengirim tautan ke email yang diisi', (tester) async {
+      final auth = await bukaLogin(tester);
+
+      await tester.enterText(
+        find.byType(TextFormField).at(0),
+        'fighter@wefight.demo',
+      );
+      await tester.tap(
+        find.widgetWithText(TextButton, AppStrings.lupaKataSandi),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.widgetWithText(FilledButton, AppStrings.resetKirim),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(auth.resetDiminta, ['fighter@wefight.demo']);
+      expect(find.text(AppStrings.resetTerkirim), findsOneWidget);
+    });
+
+    testWidgets('email belum terdaftar tampil sebagai pesan sendiri', (
+      tester,
+    ) async {
+      final auth = await bukaLogin(tester, gagalReset: true);
+
+      await tester.enterText(
+        find.byType(TextFormField).at(0),
+        'tidak-ada@wefight.demo',
+      );
+      await tester.tap(
+        find.widgetWithText(TextButton, AppStrings.lupaKataSandi),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.widgetWithText(FilledButton, AppStrings.resetKirim),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(auth.resetDiminta, isEmpty);
+      expect(
+        find.text(AppStrings.resetEmailBelumTerdaftar),
+        findsOneWidget,
+      );
+      // Bukan pesan login biasa — pada alur ini tidak ada kata sandi yang
+      // sedang diperiksa.
+      expect(find.text(AppStrings.authEmailSalah), findsNothing);
+    });
+
+    testWidgets('tetap utuh di layar 360 px', (tester) async {
+      final auth = FakeAuthRepository();
+      final router = await pumpApp(
+        tester,
+        size: const Size(360, 800),
+        auth: auth,
+      );
+      router.go(AppRoutes.login);
+      await tester.pumpAndSettle();
+
+      final tautan = find.widgetWithText(
+        TextButton,
+        AppStrings.lupaKataSandi,
+      );
+      expect(tautan, findsOneWidget);
+
+      // Overflow akan melempar galat dan menggagalkan test ini; memastikan
+      // tautannya masih bisa ditekan membuktikan tombol tidak terpotong.
+      await tester.enterText(
+        find.byType(TextFormField).at(0),
+        'fighter@wefight.demo',
+      );
+      await tester.tap(tautan);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(auth.resetDiminta, isEmpty);
     });
   });
 

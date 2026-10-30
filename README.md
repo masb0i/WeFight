@@ -61,7 +61,7 @@ Pemeriksaan kualitas:
 
 ```bash
 flutter analyze
-flutter test                 # 144 test
+flutter test                 # 151 test
 flutter build web            # build produksi
 firebase deploy --only hosting   # unggah build/web ke Hosting
 ```
@@ -162,11 +162,11 @@ sebagai bukti aplikasi berjalan lewat `flutter run -d chrome`.
 
 ## Pengujian
 
-**144 test**, semuanya lulus tanpa Firebase (Auth dan Firestore diganti fake):
+**151 test**, semuanya lulus tanpa Firebase (Auth dan Firestore diganti fake):
 
 | Berkas | Isi |
 |---|---|
-| `test/widget_test.dart` | 76 widget test: kerangka & guard login, validasi form autentikasi, Target Timbang, Catat Berat (termasuk aturan satu catatan per tanggal dan mode ubah), Riwayat Berat, ringkasan Dashboard, grafik tren, keadaan galat, geometri navigasi bawah, responsif 360/768/1440 px |
+| `test/widget_test.dart` | 83 widget test: kerangka & guard login, validasi form autentikasi, lupa kata sandi (K8), Target Timbang, Catat Berat (termasuk aturan satu catatan per tanggal dan mode ubah), Riwayat Berat, ringkasan Dashboard, grafik tren, keadaan galat, geometri navigasi bawah, responsif 360/768/1440 px |
 | `test/validators_test.dart` | 21 unit test `Validators` — batas 30 dan 200 kg diuji **inklusif**, koma desimal, dan target yang boleh kosong |
 | `test/weight_math_test.dart` | 19 unit test `WeightMath` — selisih 0/positif/negatif, pembulatan satu desimal, sisa hari 0 dan negatif |
 | `test/weight_log_test.dart` | 8 unit test `urutkanTerbaruDulu` — urutan tanggal terbaru dulu, tanggal sama, daftar masukan tidak berubah, hasil tidak bisa diubah pemanggil |

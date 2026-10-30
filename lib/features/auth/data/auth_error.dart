@@ -16,9 +16,33 @@ String authErrorMessage(Object error) {
       'weak-password' => AppStrings.authSandiLemah,
       'invalid-email' => AppStrings.validasiEmailFormat,
       'network-request-failed' => AppStrings.authJaringan,
-      'too-many-requests' => 'Terlalu banyak percobaan. Tunggu sebentar.',
+      'too-many-requests' => AppStrings.authTerlaluBanyak,
       'operation-not-allowed' =>
         'Metode masuk belum diaktifkan di Firebase Console.',
+      _ => AppStrings.authUmum,
+    };
+  }
+  return AppStrings.authUmum;
+}
+
+/// Pesan galat khusus pengiriman tautan atur ulang kata sandi (K8).
+///
+/// Dipisahkan dari [authErrorMessage] karena `user-not-found` di sini berarti
+/// "email belum terdaftar", bukan "email atau kata sandi salah" — pada alur
+/// ini tidak ada kata sandi yang sedang diperiksa.
+///
+/// Catatan: pesan ini memberi tahu apakah sebuah email terdaftar atau tidak.
+/// Untuk aplikasi ini risikonya dapat diterima (aplikasi pribadi, satu peran,
+/// tanpa data orang lain yang bisa diekspos). Bila kelak dibutuhkan, Firebase
+/// punya opsi "Email enumeration protection" yang membuat Firebase sendiri
+/// membalas sukses tanpa memberi tahu apakah email itu ada.
+String passwordResetErrorMessage(Object error) {
+  if (error is FirebaseAuthException) {
+    return switch (error.code) {
+      'user-not-found' => AppStrings.resetEmailBelumTerdaftar,
+      'invalid-email' => AppStrings.validasiEmailFormat,
+      'network-request-failed' => AppStrings.authJaringan,
+      'too-many-requests' => AppStrings.authTerlaluBanyak,
       _ => AppStrings.authUmum,
     };
   }

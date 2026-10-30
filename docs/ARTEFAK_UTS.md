@@ -301,20 +301,28 @@ Inilah tabel yang perlu ditunjukkan saat presentasi. Setiap baris menjawab:
 | **S6 / K5** Grafik tren | ≥2 catatan tampil garis; <2 tampil "Data belum cukup" | `lib/features/dashboard/presentation/widgets/tren_chart.dart` | grup `Grafik tren` | — (bukti: `docs/screenshots/`) |
 | **K6** Responsif & cepat | Dipakai di HP dan browser, tanpa overflow | `lib/core/constants/app_spacing.dart` (termasuk `AppBreakpoints`) · `lib/core/widgets/app_scaffold.dart` | grup `Responsif` (13 test: 360/768/1440 px, menu, layout web) | — |
 | **K7** Data pribadi | Akun B tidak bisa melihat data akun A | `firestore.rules` | `dart run tool/cek_isolasi.dart` → **5/5** | — |
+| **K8** Lupa kata sandi | Tautan hanya dikirim setelah email sah dan dikonfirmasi | `lib/pages/login_page.dart` (`_lupaSandi`) · `lib/features/auth/data/auth_repository.dart` (`sendPasswordReset`) · `auth_error.dart` (`passwordResetErrorMessage`) | grup `Lupa kata sandi` (7 test) | — |
 
-**Ringkasan angka:** 144 test otomatis lulus (5 berkas) · 32 kasus uji form
+**Ringkasan angka:** 151 test otomatis lulus (5 berkas) · 32 kasus uji form
 (24 otomatis + 8 manual) · 5 pemeriksaan isolasi data.
 
 ### Status fitur Should
 
 | Kode | Status nyata |
 |---|---|
-| K8 lupa kata sandi | Metode `sendPasswordReset` sudah ada di `AuthRepository` (`lib/features/auth/data/auth_repository.dart`), **tetapi belum dipasang sebagai tombol di halaman Login**. Belum selesai |
+| K8 lupa kata sandi | **Selesai.** Tautan "Lupa kata sandi?" ada di bawah kolom kata sandi. Alur: email diambil dari kolom (tidak diketik ulang) → diperiksa dulu → dialog konfirmasi → `sendPasswordReset` → pesan status. Diuji 7 test otomatis |
 | K9 filter riwayat | **Belum dikerjakan** |
 | H2 Daftar | Selesai (`lib/pages/daftar_page.dart`) |
 | H7 Profil | Selesai (`lib/pages/profil_page.dart`) |
 
 Dicatat apa adanya supaya tidak ada klaim berlebih saat ditanya.
+
+> **Catatan untuk demo K8.** Email atur ulang dikirim Firebase memakai template
+> bawaan dari `noreply@wefight-38409.firebaseapp.com`, jadi sering masuk folder
+> spam. Untuk demo, pakai akun `fighter@wefight.demo` — pastikan emailnya benar
+> dan bisa dibuka. Kalau ingin demo tanpa membuka email, cukup tunjukkan bahwa
+> pesan "Tautan atur ulang terkirim" muncul; yang dinilai adalah alurnya, bukan
+> isi kotak masuk.
 
 ---
 

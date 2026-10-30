@@ -33,6 +33,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final _password = TextEditingController();
 
   bool _loading = false;
+  bool _resetLoading = false;
   String? _error;
 
   @override
@@ -40,6 +41,58 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     _email.dispose();
     _password.dispose();
     super.dispose();
+  }
+
+  /// K8 — kirim tautan atur ulang kata sandi ke email yang sudah diisi.
+  ///
+  /// Email diambil dari kolom yang ada, bukan dari dialog terpisah, supaya
+  /// pengguna tidak mengetik alamat yang sama dua kali. Kalau kolomnya masih
+  /// kosong atau formatnya salah, alur dihentikan sebelum dialog dibuka —
+  /// tidak ada gunanya mengonfirmasi pengiriman ke alamat yang belum sah.
+  Future<void> _lupaSandi() async {
+    final email = _email.text.trim();
+    final pesanEmail = Validators.email(email);
+    if (pesanEmail != null) {
+      AppSnackBar.galat(context, pesanEmail);
+      return;
+    }
+
+    final setuju = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text(AppStrings.resetJudul),
+        content: Text(
+          AppStrings.resetPesan(email),
+          style: AppTextStyles.body,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text(AppStrings.batal),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text(AppStrings.resetKirim),
+          ),
+        ],
+      ),
+    );
+
+    // Dialog bisa ditutup dengan tombol kembali atau tap di luar — perlakukan
+    // sama seperti "Batal".
+    if (setuju != true || !mounted) return;
+
+    setState(() => _resetLoading = true);
+    try {
+      await ref.read(authRepositoryProvider).sendPasswordReset(email);
+      if (!mounted) return;
+      AppSnackBar.sukses(context, AppStrings.resetTerkirim);
+    } catch (e) {
+      if (!mounted) return;
+      AppSnackBar.galat(context, passwordResetErrorMessage(e));
+    } finally {
+      if (mounted) setState(() => _resetLoading = false);
+    }
   }
 
   Future<void> _submit() async {
@@ -122,6 +175,31 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               validator: Validators.kataSandi,
               onFieldSubmitted: (_) => _submit(),
               enabled: !_loading,
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: (_loading || _resetLoading) ? null : _lupaSandi,
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  minimumSize: const Size(0, 32),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: Text(
+                  _resetLoading
+                      ? AppStrings.resetMengirim
+                      : AppStrings.lupaKataSandi,
+                  style: AppTextStyles.caption.copyWith(
+                    // Warna burgundy, bukan peach: tombol ini berada di atas
+                    // kartu krem (#FBECE1), dan peach di atas krem hampir tidak
+                    // terbaca. Saat menunggu, warnanya diredupkan.
+                    color: (_loading || _resetLoading)
+                        ? AppColors.ink300
+                        : AppColors.burgundy700,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
             ),
             if (_error != null) ...[
               const SizedBox(height: AppSpacing.md),

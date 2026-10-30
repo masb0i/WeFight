@@ -42,6 +42,16 @@ abstract final class AppStrings {
   static const sudahPunyaAkun = 'Sudah punya akun?';
   static const lupaKataSandi = 'Lupa kata sandi?';
 
+  // Lupa kata sandi (K8 — Should).
+  static const resetJudul = 'Atur ulang kata sandi';
+  static const resetKirim = 'Kirim tautan';
+  static const resetMengirim = 'Mengirim…';
+  static const resetTerkirim = 'Tautan atur ulang terkirim. Periksa emailmu.';
+  static const resetEmailBelumTerdaftar = 'Email belum terdaftar.';
+  static String resetPesan(String email) =>
+      'Tautan untuk mengatur ulang kata sandi akan dikirim ke $email. '
+      'Periksa kotak masuk dan folder spam.';
+
   // Validasi form.
   static const validasiNamaKosong = 'Nama wajib diisi.';
   static const validasiEmailKosong = 'Email wajib diisi.';
@@ -63,6 +73,7 @@ abstract final class AppStrings {
   static const authEmailTerdaftar = 'Email sudah terdaftar. Silakan masuk.';
   static const authSandiLemah = 'Kata sandi terlalu lemah (minimal 6 karakter).';
   static const authJaringan = 'Tidak ada koneksi internet. Coba lagi.';
+  static const authTerlaluBanyak = 'Terlalu banyak percobaan. Tunggu sebentar.';
   static const authUmum = 'Terjadi kesalahan. Coba lagi.';
   static const authResetTerkirim = 'Tautan atur ulang dikirim ke emailmu.';
 

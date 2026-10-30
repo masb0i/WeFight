@@ -281,6 +281,7 @@ Milestone boleh bergeser; **urutan tidak boleh** — jangan mulai M10 sebelum M8
 - [x] M7-5 Auth guard GoRouter: belum login → `/login`; sudah login buka `/login` → `/`
 - [x] M7-6 Tombol Keluar di Profil/AppBar
 - [x] M7-7 Hapus tombol sementara "Lanjut ke Dashboard" di Login
+- [x] M7-8 Fitur **Should K8** — tombol "Lupa kata sandi?" di bawah kolom kata sandi, dialog konfirmasi, `sendPasswordReset`, dan pesan galat khusus `passwordResetErrorMessage` (30 Okt)
 
 ### M8 — Lapisan data Firestore
 - [x] M8-1 Model `Target` + `WeightLog` (immutable, `copyWith`, `fromDoc`/`toMap`)
@@ -575,7 +576,7 @@ Teks hasil ekstraksi: `.workbuddy-ai/tmp/modul/*.txt`.
 | Push/pop ke halaman turunan | `context.push` (GoRouter) ke `/weight/new`, `/target` |
 | Keadaan kosong, bukan hanya jalur bahagia | `EmptyState` di Dashboard & Riwayat |
 | `Form` + `GlobalKey<FormState>` + `validator` + controller di-dispose | `login_page.dart`, `daftar_page.dart` |
-| `flutter analyze` bersih, test lulus | 144/144 |
+| `flutter analyze` bersih, test lulus | 151/151 |
 
 ### 15.2 Selisih yang sudah diselesaikan (blok P di §8)
 
