@@ -273,3 +273,15 @@ LULUS  Akun B menulis catatan atas nama akun A ... ditolak aturan
 - **Verifikasi:** Tidak ada kode yang berubah, jadi tidak perlu `flutter analyze`/`flutter test`/deploy ulang. Tabel markdown baru diperiksa konsistensi kolomnya, dan seluruh berkas yang disentuh dipastikan bebas aksara CJK.
 - **File disentuh:** `docs/UJI_FORM.md`, `docs/ARTEFAK_UTS.md`, `docs/DEMO_UAS.md`, `README.md`, `docs/PROGRESS.md`
 - **Berikutnya:** tidak ada pekerjaan tersisa untuk UTS. K9 (filter riwayat) tetap ditunda sesuai keputusan sebelumnya.
+
+## 2026-10-30 22:35 — Repo dirapikan untuk penilaian dan publik
+- **Status:** selesai
+- **Latar:** Pemilik meminta repo dibuat terlihat profesional, baik untuk penilaian maupun untuk dibaca orang lain. Sebelumnya dua commit berisi pekerjaan yang kemudian dibatalkan pemilik masih ada di riwayat; keduanya dihapus agar riwayat hanya memuat pekerjaan yang benar-benar dipakai.
+- **Yang dikerjakan:**
+  1. **README ditulis ulang** (275 → 313 baris) dengan susunan yang lebih mudah dipindai: badge status (Flutter, Dart, Firebase, 151 test, status), satu baris tautan demo di bawah judul, **daftar isi** 10 bagian, tabel identitas yang lebih ringkas, bagian **Status** yang menyebut apa adanya bahwa filter riwayat belum dikerjakan, dan **diagram arsitektur mermaid** (halaman → provider → repository → Firestore/Auth).
+  2. Grid tangkapan layar dirapikan: 8 gambar dengan keterangan pendek, penjelasan panjang dipindah ke paragraf di bawahnya, bukan di dalam sel tabel.
+  3. Bagian **"Catatan penyimpangan dari modul"** dipindah ke **`docs/CATATAN_MODUL.md`** dan diperluas: tiga penyimpangan dari modul (warna primer, urutan Firebase, pakai paket pub.dev) ditambah satu tabel dua keputusan yang berubah saat implementasi (statistik Profil, `WeightInput`). README hanya menyisakan tautan ke dokumen itu — halaman depan jadi berisi produk, bukan pembelaan ke penguji.
+  4. Menambahkan bagian **Catatan** yang menjelaskan status hak cipta: kode boleh dibaca dan dipelajari, tidak untuk disalin sebagai tugas orang lain, tanpa lisensi terbuka.
+- **Verifikasi:** seluruh 10 tautan internal dan 8 gambar di README diperiksa satu per satu dengan `[ -e ]` — semuanya ada. 10 anchor daftar isi dicocokkan dengan judul H2 hasil normalisasi (tidak ada yang salah). 9 tabel diperiksa konsistensi kolomnya (0 rusak). Tidak ada aksara CJK. `git ls-tree origin/main` menunjukkan tidak ada sisa berkas IDE (`.iml`, `.idea`) maupun berkas pekerjaan yang dibatalkan.
+- **File disentuh:** `README.md` (ditulis ulang), `docs/CATATAN_MODUL.md` (baru), `docs/PROGRESS.md`
+- **Berikutnya:** meta repositori di GitHub (deskripsi, topik, alamat situs) belum diisi — `gh` tidak tersedia di mesin ini, jadi diisi lewat halaman Settings repositori.
