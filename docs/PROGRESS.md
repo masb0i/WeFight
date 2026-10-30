@@ -315,3 +315,11 @@ LULUS  Akun B menulis catatan atas nama akun A ... ditolak aturan
 - **Verifikasi:** penyisiran ulang 226 berkas terlacak — **0** path absolut bergaya Windows (dua pola: `…/Users/…`, `…/Documents/…`, dan drive-letter umum). 9 berkas markdown: 32 tautan internal, **0 putus**, **0** aksara CJK. Delapan gambar README di `raw.githubusercontent.com` semuanya **200**.
 - **File disentuh:** `docs/FIREBASE_SETUP.md`, `docs/PROGRESS.md`
 - **Berikutnya:** satu kotak sidebar GitHub masih kosong — **Releases**. Tag `v1.0.0` sudah ada, tetapi objek rilisnya belum dibuat, sehingga halaman itu masih menampilkan "No releases published".
+
+## 2026-10-30 23:22 — Rilis v1.0.0 terbit
+- **Status:** selesai — menutup kotak terakhir yang masih kosong di halaman repo
+- **Latar:** Entri sebelumnya mencatat tag `v1.0.0` sudah ada tetapi objek Release belum dibuat, sehingga sidebar GitHub masih menampilkan "No releases published". Pemilik membuatnya lewat antarmuka GitHub.
+- **Hasil pemeriksaan (API, bukan asumsi):** tepat **1 rilis** — tag `v1.0.0`, judul "WeFight 1.0.0", `draft: false`, `prerelease: false`, terbit 30 Okt 2026 16:19 UTC, deskripsi 666 karakter. Tautan situs di dalamnya benar-benar menjadi anchor yang bisa diklik (`<a href="https://wefight-38409.web.app" rel="nofollow">`), bukan teks mati.
+- **Catatan kecil:** deskripsi rilis memuat satu karakter tak terlihat (`&#8203;`, zero-width space) setelah kata "Situs:". Tidak berpengaruh pada tampilan maupun pada tautan, tetapi akan terlihat kalau deskripsi itu diedit lagi. Boleh dibiarkan.
+- **Keadaan akhir repositori:** deskripsi, situs, 10 topik, social preview, rilis `v1.0.0`, README 312 baris — semuanya terisi. Wiki dan Projects mati. Lisensi sengaja kosong sesuai pernyataan di README §Catatan. Satu branch (`main`), satu tag.
+- **File disentuh:** `docs/PROGRESS.md` (tidak ada kode yang berubah)
