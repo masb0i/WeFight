@@ -266,6 +266,7 @@ dipertanggungjawabkan:
 
 | Berkas | Isi |
 |---|---|
+| [`docs/ARTEFAK_UTS.md`](docs/ARTEFAK_UTS.md) | Artefak Discover & Design (problem statement, persona, user story, MoSCoW, use case, user flow, sitemap, navigasi) + tabel ketertelusuran ke kode dan kasus uji |
 | [`docs/PLAN.md`](docs/PLAN.md) | Spesifikasi, aturan bisnis, arsitektur, milestone M5–M16, checklist tugas |
 | [`docs/PROGRESS.md`](docs/PROGRESS.md) | Log progres per tugas (append-only) |
 | [`docs/UI_SPEC.md`](docs/UI_SPEC.md) | Token warna, tipografi, komponen, tata letak web & mobile |
