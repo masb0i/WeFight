@@ -290,7 +290,7 @@ LULUS  Akun B menulis catatan atas nama akun A ... ditolak aturan
 - **Status:** selesai
 - **Latar:** Meta repositori sudah terisi (deskripsi dan alamat situs), tetapi **topik masih kosong** dan GitHub memakai kartu social preview bawaan (kotak abu-abu dengan avatar). Selain itu masih ada satu path folder pribadi yang ikut ter-commit di catatan progres.
 - **Yang dikerjakan:**
-  1. **Path pribadi dibuang**: baris `C:/Users/ADVAN/Documents/WeFight-lokal/` di catatan 30 Okt 01:43 diganti "di folder lokal pemilik". Alasannya bukan rahasia, tetapi path absolut milik satu mesin tidak ada gunanya bagi pembaca lain dan terlihat tidak rapi.
+  1. **Path pribadi dibuang**: satu baris di catatan 30 Okt 01:43 menyebut path absolut folder cadangan milik mesin pengembang. Diganti "di folder lokal pemilik" — bukan karena rahasia, tetapi path absolut satu mesin tidak ada gunanya bagi pembaca lain dan terlihat tidak rapi. Path yang sama juga dihapus dari catatan ini sendiri, karena menyebutkannya kembali di sini berarti mengembalikannya ke repo.
   2. **Kartu social preview dibuat** — `docs/social-preview.png`, 1280 x 640 (ukuran yang diminta GitHub). Dirender lewat `tool/render_social_preview_test.dart` dengan `flutter test --update-goldens`, bukan alat gambar luar, supaya font Plus Jakarta Sans, token `AppColors`, dan tangkapan layar Dashboard yang dipakai benar-benar aset repo ini.
 - **Keputusan teknis:** PNG didekode lebih dulu di luar zona fake-async lalu dilukis dengan `RawImage`. Kalau `Image.memory` dipakai langsung, dekode berjalan asinkron di dalam zona test dan golden bisa terekam sebelum gambarnya sempat dilukis — hasilnya kotak kosong. `RawImage` melukis sinkron sehingga hasilnya pasti.
 - **Verifikasi:** `flutter analyze` bersih; `flutter test` **151/151 lulus** (berkas alat ini di `tool/`, di luar folder `test/`, jadi tidak ikut dihitung); PNG hasilnya diperiksa manual — 1280 x 640, 261 KB, tangkapan layar Dashboard terlihat utuh di dalam bingkai ponsel, tidak ada teks terpotong.
@@ -304,3 +304,14 @@ LULUS  Akun B menulis catatan atas nama akun A ... ditolak aturan
 - **Verifikasi:** `git ls-remote --tags origin` menampilkan `refs/tags/v1.0.0` beserta objek tag-nya; `origin` hanya punya satu branch (`main`) dan satu tag.
 - **File disentuh:** `docs/PROGRESS.md` (tidak ada berkas kode yang berubah, jadi tidak perlu analyze/test/deploy)
 - **Berikutnya:** tiga hal masih menunggu tindakan pemilik di GitHub, karena `gh` tidak tersedia dan tidak ada token di mesin ini — mengisi **topik** repositori, mengunggah **social preview**, dan mematikan **Wiki/Projects**. Ketiganya hanya bisa dilakukan lewat antarmuka GitHub, jadi disampaikan langsung ke pemilik dan tidak dicatat sebagai tugas di dalam repo.
+
+## 2026-10-30 23:20 — Tiga setelan GitHub terverifikasi, dua path absolut terakhir dibuang
+- **Status:** selesai
+- **Latar:** Pemilik melaporkan tiga hal yang menunggu tindakannya sudah dikerjakan. Semuanya diperiksa lewat API GitHub, bukan diasumsikan berhasil.
+- **Hasil pemeriksaan:** **topik** terisi 10 buah (`dart`, `firebase`, `firestore`, `flutter`, `flutter-web`, `mobile-app`, `muay-thai`, `riverpod`, `student-project`, `weight-tracker`); **Wiki** dan **Projects** mati; **social preview** terpasang — `og:image` halaman repo mengarah ke `repository-images.githubusercontent.com`, dan berkas yang disajikan di sana **identik byte-per-byte** (MD5 `2715f3f4…`) dengan `docs/social-preview.png`, jadi yang terpasang memang kartu yang dirender repo ini, bukan gambar bawaan GitHub.
+- **Dua cacat yang baru ketahuan saat audit penutup:**
+  1. `docs/FIREBASE_SETUP.md` masih menyuruh pembaca menjalankan perintah "dari akar proyek `D:/dev/wefight`" — path milik satu mesin. Diganti "folder yang memuat `pubspec.yaml`" supaya tetap benar di mesin siapa pun.
+  2. Catatan progres yang saya tulis 23:05 **menyebut kembali** path pribadi yang baru saja dibuang, sebagai kutipan bukti. Itu mengembalikan yang tadi dihapus. Kalimatnya ditulis ulang tanpa path.
+- **Verifikasi:** penyisiran ulang 226 berkas terlacak — **0** path absolut bergaya Windows (dua pola: `…/Users/…`, `…/Documents/…`, dan drive-letter umum). 9 berkas markdown: 32 tautan internal, **0 putus**, **0** aksara CJK. Delapan gambar README di `raw.githubusercontent.com` semuanya **200**.
+- **File disentuh:** `docs/FIREBASE_SETUP.md`, `docs/PROGRESS.md`
+- **Berikutnya:** satu kotak sidebar GitHub masih kosong — **Releases**. Tag `v1.0.0` sudah ada, tetapi objek rilisnya belum dibuat, sehingga halaman itu masih menampilkan "No releases published".

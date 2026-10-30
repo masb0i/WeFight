@@ -154,7 +154,8 @@ Hanya bila punya Mac. Kalau tidak, lewati.
 
 ## F. Pasang CLI dan hubungkan ke proyek
 
-Jalankan di terminal, dari akar proyek `D:\dev\wefight`.
+Jalankan di terminal, dari akar proyek — folder yang memuat `pubspec.yaml`.
+Path-nya berbeda di tiap mesin, jadi sesuaikan sendiri.
 
 ```bash
 # 1. Firebase CLI (butuh Node — sudah ada: v22)
