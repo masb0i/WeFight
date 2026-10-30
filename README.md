@@ -174,7 +174,7 @@ sebagai bukti aplikasi berjalan lewat `flutter run -d chrome`.
 
 Logika yang bisa salah tanpa terlihat di layar (aritmetika selisih, hitung mundur, validasi rentang) diuji sebagai fungsi murni lebih dulu, baru ditempel ke widget. Tampilan yang tidak bisa dijamin test — label terpotong, tombol melebar, teks bertumpuk — ditangkap lewat render golden di atas.
 
-Selain test otomatis, [`docs/UJI_FORM.md`](docs/UJI_FORM.md) mencatat **32 kasus uji form** beserta hasil yang diharapkan dan hasil nyatanya: 24 dibuktikan test, 8 dicoba manual (login/daftar sungguhan, kalender, menghapus tanggal, membuka id yang sudah dihapus). Seluruhnya berstatus sesuai.
+Selain test otomatis, [`docs/UJI_FORM.md`](docs/UJI_FORM.md) mencatat **32 kasus uji form** beserta hasil yang diharapkan dan hasil nyatanya: 24 dibuktikan test, 8 dicoba manual (login/daftar sungguhan, kalender, menghapus tanggal, membuka id yang sudah dihapus). Seluruhnya berstatus sesuai. Ditambah **7 kasus otomatis lupa kata sandi (K8)** di §7, yang juga sudah diverifikasi manual dengan email sungguhan — tautannya benar-benar sampai ke kotak masuk.
 
 ## Struktur project
 

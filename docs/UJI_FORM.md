@@ -7,6 +7,10 @@ Status: **Login**, **Daftar**, **Target Timbang**, dan **Catat Berat** sudah
 diuji seluruhnya — **32 kasus, semua sesuai**: 24 dibuktikan test otomatis dan
 8 dicoba manual di Chrome pada 30 Oktober 2026.
 
+Ditambah **lupa kata sandi (K8)** di §7: 7 kasus otomatis, dan 1 verifikasi
+manual dengan email sungguhan pada 30 Oktober 2026 — tautannya benar-benar
+sampai ke kotak masuk.
+
 Cara menjalankan uji otomatis:
 
 ```bash
@@ -121,6 +125,20 @@ atas. Pengujiannya ada di `test/widget_test.dart`, grup **`Lupa kata sandi`**
 | Tetap utuh di layar 360 px | Tidak overflow dan tautan masih bisa ditekan di layar sempit |
 
 Alur yang diuji: email diambil dari kolom yang sudah diisi (tidak diketik ulang)
-→ diperiksa dulu → dialog konfirmasi → kirim → pesan status. Pengiriman email
-sungguhan tidak diuji otomatis (butuh kotak masuk), jadi saat demo cukup
-ditunjukkan bahwa pesan berhasil muncul.
+→ diperiksa dulu → dialog konfirmasi → kirim → pesan status.
+
+### Bukti manual — email sungguhan (30 Oktober 2026)
+
+Pengiriman email tidak bisa diotomatiskan karena butuh kotak masuk, jadi kasus
+ini dicoba langsung oleh pemilik proyek lewat aplikasi online.
+
+| Kasus | Yang dicoba | Hasil yang diharapkan | Hasil nyata |
+|---|---|---|---|
+| M1 | Daftar akun baru dengan alamat email aktif | Akun terbentuk, masuk ke Dashboard, data tersimpan | **Sesuai** — daftar dan login berjalan lancar |
+| M2 | Keluar, lalu login ulang dengan akun tersebut | Masuk kembali tanpa galat | **Sesuai** |
+| M3 | Tekan "Lupa kata sandi?", konfirmasi dialog, buka kotak masuk | Pesan "Tautan atur ulang terkirim" muncul **dan** email benar-benar sampai | **Sesuai** — email diterima di kotak masuk sungguhan |
+
+Artinya rantai K8 terbukti utuh sampai Firebase, bukan hanya sampai kode:
+tombol → validasi → dialog → `sendPasswordReset` → `sendPasswordResetEmail` →
+email terkirim. Yang tidak diuji otomatis hanyalah bagian terakhirnya, dan itu
+sekarang sudah dibuktikan manual.
