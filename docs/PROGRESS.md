@@ -285,3 +285,14 @@ LULUS  Akun B menulis catatan atas nama akun A ... ditolak aturan
 - **Verifikasi:** seluruh 10 tautan internal dan 8 gambar di README diperiksa satu per satu dengan `[ -e ]` — semuanya ada. 10 anchor daftar isi dicocokkan dengan judul H2 hasil normalisasi (tidak ada yang salah). 9 tabel diperiksa konsistensi kolomnya (0 rusak). Tidak ada aksara CJK. `git ls-tree origin/main` menunjukkan tidak ada sisa berkas IDE (`.iml`, `.idea`) maupun berkas pekerjaan yang dibatalkan.
 - **File disentuh:** `README.md` (ditulis ulang), `docs/CATATAN_MODUL.md` (baru), `docs/PROGRESS.md`
 - **Berikutnya:** meta repositori di GitHub (deskripsi, topik, alamat situs) belum diisi — `gh` tidak tersedia di mesin ini, jadi diisi lewat halaman Settings repositori.
+
+## 2026-10-30 23:05 — Social preview dan penyisiran berkas publik
+- **Status:** selesai
+- **Latar:** Meta repositori sudah terisi (deskripsi dan alamat situs), tetapi **topik masih kosong** dan GitHub memakai kartu social preview bawaan (kotak abu-abu dengan avatar). Selain itu masih ada satu path folder pribadi yang ikut ter-commit di catatan progres.
+- **Yang dikerjakan:**
+  1. **Path pribadi dibuang**: baris `C:/Users/ADVAN/Documents/WeFight-lokal/` di catatan 30 Okt 01:43 diganti "di folder lokal pemilik". Alasannya bukan rahasia, tetapi path absolut milik satu mesin tidak ada gunanya bagi pembaca lain dan terlihat tidak rapi.
+  2. **Kartu social preview dibuat** — `docs/social-preview.png`, 1280 x 640 (ukuran yang diminta GitHub). Dirender lewat `tool/render_social_preview_test.dart` dengan `flutter test --update-goldens`, bukan alat gambar luar, supaya font Plus Jakarta Sans, token `AppColors`, dan tangkapan layar Dashboard yang dipakai benar-benar aset repo ini.
+- **Keputusan teknis:** PNG didekode lebih dulu di luar zona fake-async lalu dilukis dengan `RawImage`. Kalau `Image.memory` dipakai langsung, dekode berjalan asinkron di dalam zona test dan golden bisa terekam sebelum gambarnya sempat dilukis — hasilnya kotak kosong. `RawImage` melukis sinkron sehingga hasilnya pasti.
+- **Verifikasi:** `flutter analyze` bersih; `flutter test` **151/151 lulus** (berkas alat ini di `tool/`, di luar folder `test/`, jadi tidak ikut dihitung); PNG hasilnya diperiksa manual — 1280 x 640, 261 KB, tangkapan layar Dashboard terlihat utuh di dalam bingkai ponsel, tidak ada teks terpotong.
+- **File disentuh:** `tool/render_social_preview_test.dart` (baru), `docs/social-preview.png` (baru), `docs/PROGRESS.md`
+- **Berikutnya:** gambar social preview perlu diunggah manual lewat Settings → General → Social preview; topik repositori juga masih kosong.
