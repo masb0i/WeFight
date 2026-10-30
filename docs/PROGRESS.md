@@ -296,3 +296,11 @@ LULUS  Akun B menulis catatan atas nama akun A ... ditolak aturan
 - **Verifikasi:** `flutter analyze` bersih; `flutter test` **151/151 lulus** (berkas alat ini di `tool/`, di luar folder `test/`, jadi tidak ikut dihitung); PNG hasilnya diperiksa manual — 1280 x 640, 261 KB, tangkapan layar Dashboard terlihat utuh di dalam bingkai ponsel, tidak ada teks terpotong.
 - **File disentuh:** `tool/render_social_preview_test.dart` (baru), `docs/social-preview.png` (baru), `docs/PROGRESS.md`
 - **Berikutnya:** gambar social preview perlu diunggah manual lewat Settings → General → Social preview; topik repositori juga masih kosong.
+
+## 2026-10-30 23:18 — Tag rilis v1.0.0
+- **Status:** selesai
+- **Latar:** Halaman Releases di GitHub masih kosong sehingga tampak seperti proyek yang belum pernah dirilis, padahal seluruh cakupan tugas sudah selesai dan aplikasi sudah terpasang. Riwayat commit juga belum punya satu titik acuan yang bisa disebut "versi yang dinilai".
+- **Yang dikerjakan:** Tag anotasi `v1.0.0` dibuat pada commit `592a071` dan didorong ke `origin`. Pesan tag memuat isi rilis (7 halaman, Firebase Auth + Firestore, grafik tren, tata letak responsif, 151 test, alamat situs) **dan catatan jujur** bahwa filter riwayat (K9) belum dikerjakan karena di luar cakupan yang dinilai.
+- **Verifikasi:** `git ls-remote --tags origin` menampilkan `refs/tags/v1.0.0` beserta objek tag-nya; `origin` hanya punya satu branch (`main`) dan satu tag.
+- **File disentuh:** `docs/PROGRESS.md` (tidak ada berkas kode yang berubah, jadi tidak perlu analyze/test/deploy)
+- **Berikutnya:** tiga hal masih menunggu tindakan pemilik di GitHub, karena `gh` tidak tersedia dan tidak ada token di mesin ini — mengisi **topik** repositori, mengunggah **social preview**, dan mematikan **Wiki/Projects**. Rinciannya ada di `README`? Tidak — sengaja tidak ditulis di repo; disampaikan langsung ke pemilik.
